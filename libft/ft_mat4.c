@@ -91,7 +91,7 @@ t_vec4	mat4_vec4(t_mat4 mat4, t_vec4 vec4)
 
 	n = 4;
 	row = -1;
-	ret = vec4_ini((long double[4]){0, 0, 0, 0});
+	ret = vec4_ini((PRECISION[4]){0, 0, 0, 0});
 	while (++row < n && (col = -1))
 		while (++col < n)
 			ret.vec[row] += mat4.mat[row][col] * vec4.vec[col];
@@ -101,7 +101,7 @@ t_vec4	mat4_vec4(t_mat4 mat4, t_vec4 vec4)
 t_mat4	mat4_rot_inverse(t_mat4 mat)
 {
 	t_mat4		ret;
-	long double	det;
+	PRECISION	det;
 	int			i;
 	int			y;
 

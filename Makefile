@@ -1,4 +1,4 @@
-NAME=wold3d
+NAME=wolf3d
 SRCS=main.c
 BIGO=$(SRCS:.c=.o)
 INC=-I libft 
