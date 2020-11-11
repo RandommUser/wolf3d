@@ -1,11 +1,14 @@
 NAME=wolf3d
-SRCS=main.c
+SRCS=editor.c\
+	editor_coloring.c\
+	exit.c\
+	main.c
 BIGO=$(SRCS:.c=.o)
-INC=-I libft 
-LIB=-L ./libft -lft 
+INC=-I ./minilibx -I libft 
+LIB=-L ./minilibx -lmlx -L ./libft -lft 
 FLAGS=-Wall -Wextra -Werror
-FRAMEWORK=
-PREFRAMEWORK=
+FRAMEWORK=-framework OpenGL -framework AppKit 
+PREFRAMEWORK=-lpthread -pthread 
 
 
 all : $(NAME)

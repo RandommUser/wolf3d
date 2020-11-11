@@ -1,0 +1,30 @@
+V: X.XXX								# map editor version
+Name: Test map							# name of the map
+Desc: Description goes here				# desc goes here
+Next: next_map.map || END				# name of the next map file or END to be the final
+
+
+
+############    ##############
+#S_________#    #Tx1__________E#
+#____##____#    ##############
+#____##____#####
+#____##____###Tx1#
+#______________#
+##-#############
+ #_#
+ #P#
+ ###
+
+
+
+
+# = wall
+_ = floor
+- = no collision wall, one way render
+S = start
+E = end
+P = pack(?)
+T = teleport
+TxN = both way teleport
+Ts/eN = one way teleport
