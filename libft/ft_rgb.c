@@ -42,28 +42,6 @@ t_rgb			rgb_conv(long color)
 	return (rtn);
 }
 
-t_rgb			rgb_calc(t_rgb color1, t_rgb color2, char type)
-{
-	if (type == '+')
-	{
-		floor(color1.red += color2.red);
-		floor(color1.green += color2.green);
-		floor(color1.blue += color2.blue);
-	}
-	else if (type == '-')
-	{
-		floor(color1.red -= color2.red);
-		floor(color1.green -= color2.green);
-		floor(color1.blue -= color2.blue);
-	}
-	return (color1);
-}
-
-int				trgb_conv(t_rgb color)
-{
-	return (rgb_color(color.red, color.green, color.blue));
-}
-
 int				rgb_color(unsigned int red, unsigned int green,
 		unsigned int blue)
 {
@@ -73,4 +51,9 @@ int				rgb_color(unsigned int red, unsigned int green,
 	blue += green * 256;
 	blue += red * 256 * 256;
 	return (blue);
+}
+
+int				trgb_conv(t_rgb color)
+{
+	return (rgb_color(color.red, color.green, color.blue));
 }

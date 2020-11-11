@@ -14,6 +14,13 @@
 # define LIBFT_H
 # define BUFF_SIZE 64
 # define FD_LIMIT 4864
+# define DECIMAL_SPLIT "."
+
+/*
+** You can change the variable type for Matrix and Vector functions.
+** To do that define PRECISION in your project header before calling libft.h
+*/
+
 # ifndef PRECISION
 #  define PRECISION long double
 # endif
@@ -152,6 +159,7 @@ t_list			*ft_lstmap(t_list *lst, t_list *(*f)(t_list *elem));
 
 t_rgb			rgb_conv(long color);
 t_rgb			rgb_calc(t_rgb color1, t_rgb color2, char type);
+t_rgb			rgb_ope(t_rgb color, char op, double num);
 
 char			**ft_strsplit(char const *s, char c);
 
@@ -175,6 +183,7 @@ char			*ft_strjoin(char const *s1, char const *s2);
 char			*ft_strtrim(char const *s);
 char			*ft_itoa(int n);
 char			*ft_itoa_base(long value, int base);
+char			*ft_fitoa(double val, int prec);
 char			*ft_hxdm(long n);
 
 char			base_conv(long value, int base);
@@ -222,5 +231,7 @@ long			ft_power_to(long num, int power);
 long			ft_power_base(long num, int power, int base);
 
 float			ft_fabs(float c);
+
+double			ft_pow(double val, int power);
 
 #endif
