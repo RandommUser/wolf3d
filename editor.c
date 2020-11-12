@@ -12,103 +12,7 @@
 
 #include "header.h"
 
-static void		texts_init(void *mlx_ptr, void **text, t_box para)
-{
-	if (!(text[(para.i = B_START + BLOCKSE)] = mlx_new_image(mlx_ptr,
-		para.size.x, para.size.y)))
-		err_exit(ERR_MLX, "texture normal init failed");
-	para.img_dat = (int*)mlx_get_data_addr(text[para.i], &para.bpp, &para.line_size,
-		&para.endian);
-	spawn_color(para.img_dat, para.size, SPAWN_1, SPAWN_2);
-	outline_color(para.img_dat, para.size, BAR_SELECTC, -1);
-	if (!(text[(para.i = B_END + BLOCKSE)] = mlx_new_image(mlx_ptr,
-		para.size.x, para.size.y)))
-		err_exit(ERR_MLX, "texture normal init failed");
-	para.img_dat = (int*)mlx_get_data_addr(text[para.i], &para.bpp, &para.line_size,
-		&para.endian);
-	spawn_color(para.img_dat, para.size, SPAWN_2, SPAWN_1);
-	outline_color(para.img_dat, para.size, BAR_SELECTC, -1);
-	if (!(text[(para.i = B_WALL + BLOCKSE)] = mlx_new_image(mlx_ptr,
-		para.size.x, para.size.y)))
-		err_exit(ERR_MLX, "texture normal init failed");
-	para.img_dat = (int*)mlx_get_data_addr(text[para.i], &para.bpp, &para.line_size,
-		&para.endian);
-	wall_color(para.img_dat, para.size, WALL_1, WALL_2);
-	outline_color(para.img_dat, para.size, BAR_SELECTC, -1);
-	if (!(text[(para.i = B_FLOOR + BLOCKSE)] = mlx_new_image(mlx_ptr,
-		para.size.x, para.size.y)))
-		err_exit(ERR_MLX, "texture normal init failed");
-	para.img_dat = (int*)mlx_get_data_addr(text[para.i], &para.bpp, &para.line_size,
-		&para.endian);
-	solid_color(para.img_dat, para.size, FLOOR);
-	outline_color(para.img_dat, para.size, BAR_SELECTC, -1);
-}
 
-static void		texth_init(void *mlx_ptr, void **text, t_box para)
-{
-	if (!(text[(para.i = B_START + BLOCKH)] = mlx_new_image(mlx_ptr,
-		para.size.x, para.size.y)))
-		err_exit(ERR_MLX, "texture normal init failed");
-	para.img_dat = (int*)mlx_get_data_addr(text[para.i], &para.bpp, &para.line_size,
-		&para.endian);
-	spawn_color(para.img_dat, para.size, SPAWN_1, SPAWN_2);
-	outline_color(para.img_dat, para.size, BAR_HOVERC, -1);
-	if (!(text[(para.i = B_END + BLOCKH)] = mlx_new_image(mlx_ptr,
-		para.size.x, para.size.y)))
-		err_exit(ERR_MLX, "texture normal init failed");
-	para.img_dat = (int*)mlx_get_data_addr(text[para.i], &para.bpp, &para.line_size,
-		&para.endian);
-	spawn_color(para.img_dat, para.size, SPAWN_2, SPAWN_1);
-	outline_color(para.img_dat, para.size, BAR_HOVERC, -1);
-	if (!(text[(para.i = B_WALL + BLOCKH)] = mlx_new_image(mlx_ptr,
-		para.size.x, para.size.y)))
-		err_exit(ERR_MLX, "texture normal init failed");
-	para.img_dat = (int*)mlx_get_data_addr(text[para.i], &para.bpp, &para.line_size,
-		&para.endian);
-	wall_color(para.img_dat, para.size, WALL_1, WALL_2);
-	outline_color(para.img_dat, para.size, BAR_HOVERC, -1);
-	if (!(text[(para.i = B_FLOOR + BLOCKH)] = mlx_new_image(mlx_ptr,
-		para.size.x, para.size.y)))
-		err_exit(ERR_MLX, "texture normal init failed");
-	para.img_dat = (int*)mlx_get_data_addr(text[para.i], &para.bpp, &para.line_size,
-		&para.endian);
-	solid_color(para.img_dat, para.size, FLOOR);
-	outline_color(para.img_dat, para.size, BAR_HOVERC, -1);
-	texts_init(mlx_ptr, text, para);
-}
-
-static void		text_init(void *mlx_ptr, void **text, int width, int height)
-{
-	t_box	para;
-
-	para.size.x = width;
-	para.size.y = height;
-	if (!(text[(para.i = B_START)] = mlx_new_image(mlx_ptr, para.size.x,
-		para.size.y)))
-		err_exit(ERR_MLX, "texture normal init failed");
-	para.img_dat = (int*)mlx_get_data_addr(text[para.i], &para.bpp, &para.line_size,
-		&para.endian);
-	spawn_color(para.img_dat, para.size, SPAWN_1, SPAWN_2);
-	if (!(text[(para.i = B_END)] = mlx_new_image(mlx_ptr, para.size.x,
-		para.size.y)))
-		err_exit(ERR_MLX, "texture normal init failed");
-	para.img_dat = (int*)mlx_get_data_addr(text[para.i], &para.bpp, &para.line_size,
-		&para.endian);
-	spawn_color(para.img_dat, para.size, SPAWN_2, SPAWN_1);
-	if (!(text[(para.i = B_WALL)] = mlx_new_image(mlx_ptr, para.size.x,
-		para.size.y)))
-		err_exit(ERR_MLX, "texture normal init failed");
-	para.img_dat = (int*)mlx_get_data_addr(text[para.i], &para.bpp, &para.line_size,
-		&para.endian);
-	wall_color(para.img_dat, para.size, WALL_1, WALL_2);
-	if (!(text[(para.i = B_FLOOR)] = mlx_new_image(mlx_ptr, para.size.x,
-		para.size.y)))
-		err_exit(ERR_MLX, "texture normal init failed");
-	para.img_dat = (int*)mlx_get_data_addr(text[para.i], &para.bpp, &para.line_size,
-		&para.endian);
-	solid_color(para.img_dat, para.size, FLOOR);
-	texth_init(mlx_ptr, text, para);
-}
 
 static t_editor	editor_init(int width, int height, void **img)
 {
@@ -126,56 +30,10 @@ static t_editor	editor_init(int width, int height, void **img)
 	ret.zoom = 1;
 	ret.select = 0;
 	ret.port = 1;
+	ft_memset(ret.key, NO_KEY,sizeof(int[KEY_DOWN]));
+	ft_memset(ret.button, NO_KEY, sizeof(int[MOUSE_DOWN]));
+	ret.start = block_add(NULL, B_START, dot(0, 0), ft_strdup("START"));
 	return (ret);
-}
-
-int				key(int key, void *param)
-{
-	t_editor	*edi;
-
-	edi = param;
-	if (key == ESC_KEY)
-		good_exit(EXIT_SUCCESS, "esc quit");
-	else if (key == K_R)
-		mlx_clear_window(edi->mlx_ptr, edi->mlx_win);
-	else if (key == K_1)
-		edi->select = 0;
-	else if (key == K_2)
-		edi->select = 1;
-	else if (key == K_3)
-		edi->select = 2;
-	else if (key == K_4)
-		edi->select = 3;
-	return (0);
-}
-
-int				mouse(int button, int x, int y, void *param)
-{
-	t_editor	*edi;
-
-	edi = param;
-	if (button == MOU_L)
-	{
-		//x -= BLOCKW / 2;
-		//y -= BLOCKW / 2;
-		x = x / BLOCKW * BLOCKW;
-		y = y / BLOCKW * BLOCKW;
-		mlx_put_image_to_window(edi->mlx_ptr, edi->mlx_win, edi->mlx_img[edi->select], x, y);
-	}
-	else if (button == MOU_R)
-	{
-		//x -= BLOCKW / 2;
-		//y -= BLOCKW / 2;
-		x = x / BLOCKW * BLOCKW;
-		y = y / BLOCKW * BLOCKW;
-		mlx_put_image_to_window(edi->mlx_ptr, edi->mlx_win, edi->mlx_img[B_FLOOR], x, y);
-	}
-	else if (button == MOU_S_D)
-		edi->select = edi->select == 0 ? BLOCKS + BLOCKSE - 1 : edi->select - 1;
-	else if (button == MOU_S_U)
-		edi->select = edi->select ==  BLOCKS + BLOCKSE - 1 ? 0 : edi->select + 1;
-	printf("B: %d X: %d Y: %d select: %d\n", button, x, y, edi->select);
-	return (0);
 }
 
 void	editor(void)
@@ -183,6 +41,7 @@ void	editor(void)
 	void		*mlx_ptr;
 	t_editor	editor;
 	//t_toolbar	toolbar;
+	t_box		box;
 	void		*windows[2];
 	void		*textures[EDI_BLOCK * 3];
 
@@ -195,8 +54,19 @@ void	editor(void)
 	editor = editor_init(EDI_WIDTH, EDI_HEIGHT, textures);
 	editor.mlx_ptr = mlx_ptr;
 	editor.mlx_win = windows[0];
+	if (!(editor.map_img = mlx_new_image(mlx_ptr, EDI_WIDTH, EDI_HEIGHT)))
+		err_exit(ERR_MLX, "editor map_img start failed");
+	editor.map_data = (int*)mlx_get_data_addr(editor.map_img, &box.bpp, &box.line_size, &box.endian);
 	text_init(mlx_ptr, textures, BLOCKW, BLOCKW);
 	mlx_mouse_hook(windows[0], &mouse, &editor);
 	mlx_key_hook(windows[0], &key, &editor);
+
+	mlx_hook(windows[0], KEY_PRESS, 0, &key_press, &editor);
+	mlx_hook(windows[0], KEY_RELEASE, 0, &key_release, &editor);
+	mlx_hook(windows[0], BUTTON_PRESS, 0, &button_pressed, &editor);
+	mlx_hook(windows[0], BUTTON_RELEASE, 0, &button_released, &editor);
+	mlx_hook(windows[0], MOTION_NOTIFY, 0, &motion_notify, &editor);
+	mlx_hook(windows[0], ENTER_NOTIFY, 0, &enter_notify, &editor);
+	mlx_hook(windows[0], LEAVE_NOTIFY, 0, &leave_notify, &editor);
 	mlx_loop(mlx_ptr);
 }

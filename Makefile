@@ -1,7 +1,12 @@
 NAME=wolf3d
 SRCS=editor.c\
+	editor_actions.c\
 	editor_coloring.c\
+	editor_textures.c\
+	editor_loops.c\
 	exit.c\
+	helpers.c\
+	key_active.c\
 	main.c
 BIGO=$(SRCS:.c=.o)
 INC=-I ./minilibx -I libft 

@@ -31,6 +31,8 @@
 ** Key definitions
 */
 
+# define KEY_DOWN 5
+# define NO_KEY -1
 # define ESC_KEY 53
 # define K_R 15
 # define K_1 18
@@ -42,6 +44,7 @@
 ** Mouse definitions
 */
 
+# define MOUSE_DOWN 2
 # define MOU_L 1
 # define MOU_R 2
 # define MOU_M 3
@@ -57,6 +60,20 @@
 # define MIN_HEIGHT 50
 # define MAX_WIDTH 2560
 # define MAX_HEIGHT 1440
+
+/*
+** MLX hook definitions
+*/
+
+# define KEY_PRESS 2
+# define KEY_RELEASE 3
+# define BUTTON_PRESS 4
+# define BUTTON_RELEASE 5
+# define MOTION_NOTIFY 6
+# define ENTER_NOTIFY 7
+# define LEAVE_NOTIFY 8
+# define EXPOSE 12
+# define WINDOW_CLOSE 17
 
 /*
 ** Game defitions
@@ -75,10 +92,10 @@
 # define MAP_NEXT "Next: "
 # define MAP_END "END"
 # define MAP_MAX_PORT 64
-# define MAP_MIN_X -200
-# define MAP_MAX_X 200
-# define MAP_MIN_Y -200
-# define MAP_MAX_Y 200
+# define MAP_MIN_X -50
+# define MAP_MAX_X 50
+# define MAP_MIN_Y -50
+# define MAP_MAX_Y 50
 
 /*
 ** Editor definitions
@@ -143,13 +160,13 @@
 # define X_EXIT 6//EXIT_SUCCESS
 
 
-typedef struct		s_dot
+typedef struct		s_dot // checks for too much offset
 {
 	int	x;
 	int	y;
 }					t_dot;
 
-typedef struct		s_pdot
+typedef struct		s_pdot // checks for too much offset
 {
 	PRECISION	x;
 	PRECISION	y;
@@ -159,7 +176,8 @@ typedef struct		s_mapb
 {
 	t_dot	base_s;
 	t_dot	top_s;
-	char	*block;
+	int		block;
+	char	*param;
 	void	*next;
 }					t_mapb;
 
@@ -168,6 +186,8 @@ typedef struct		s_editor
 	void		*mlx_ptr;
 	void		*mlx_win;
 	void		**mlx_img;
+	void		*map_img;
+	int			*map_data;
 	char		*version;	// map file data // NEEDED?? just use MAP_V
 	char		*name;
 	char		*desc;
@@ -178,6 +198,9 @@ typedef struct		s_editor
 	t_dot		size;
 	t_pdot		offset;
 	PRECISION	zoom;
+	int			key[KEY_DOWN];
+	int			button[MOUSE_DOWN];
+	t_dot		mouse_pos;
 }					t_editor;
 
 typedef struct		s_toolbar
@@ -201,10 +224,34 @@ void				good_exit(int code, char *msg);
 void				err_exit(int error, char *msg);
 
 void				editor(void);
+void				text_init(void *mlx_ptr, void **text, int width, int height);
+
+t_mapb				*block_add(t_mapb *start, int block, t_dot spot, char *param);
+void				block_edit(t_mapb *start, int block, t_dot spot, char *param);
+void				block_list(t_mapb *start);
+int					block_cut(t_mapb *start, t_dot spot);
+void				block_to_image(t_editor *edit);
+
+int					key(int key, void *param);
+int					mouse(int button, int x, int y, void *param);
+int					key_press(int key, void *para);
+int 				key_release(int key, void *para);
+int 				button_pressed(int button, int x, int y, void *para);
+int 				button_released(int button, int x, int y, void *para);
+int					motion_notify(int x, int y, void *para);
+int 				enter_notify(void *para);
+int 				leave_notify(void *para);
+
+int					is_pressed(int *tab, int n, int key);
+int					key_controls(int *tab, int n, int key, char ac);
 
 void				spawn_color(int *text, t_dot size, int color1, int color2);
 void				wall_color(int *text, t_dot size, int color1, int color2);
 void				outline_color(int *text, t_dot size, int color1, int color2);
 void				solid_color(int *text, t_dot size, int color);
+
+
+t_dot				dot(int x, int y);
+
 
 #endif
