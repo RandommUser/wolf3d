@@ -12,6 +12,27 @@
 
 #include "header.h"
 
+static void		b_block_place(t_editor *edi, int x, int y)
+{
+	t_dot		point;
+	t_pdot		spot;
+
+	spot.x = x - edi->size.x / 2;
+	spot.y = y - edi->size.y / 2;
+		//printf("stage 1 %f %f\n", spot.x, spot.y);
+	spot.x = spot.x * edi->zoom + edi->offset.x;
+	spot.y = spot.y * edi->zoom + edi->offset.y;
+		//printf("stage 2 %f %f\n", spot.x, spot.y);
+	point.x = iround(spot.x) / (BLOCKW / 2) / 2;
+	point.x += iround(spot.x) / (BLOCKW / 2) % 2;
+	point.y = iround(spot.y) / (BLOCKW / 2) / 2;
+	point.y += iround(spot.y) / (BLOCKW / 2) % 2;
+	block_edit(edi->start, edi->select, point, NULL);
+	//block_list(edi->start);
+	printf("block placed at %d %d\n", point.x ,point.y);
+	block_to_image(edi);
+}
+
 int				key(int key, void *param)
 {
 	t_editor	*edi;
@@ -75,6 +96,16 @@ int	key_press(int key, void *para)
 	edi = para;
 	if (key == ESC_KEY)
 		good_exit(EXIT_SUCCESS, "esc quit");
+	else if (key == K_R)
+		mlx_clear_window(edi->mlx_ptr, edi->mlx_win);
+	else if (key == K_1)
+		edi->select = 0;
+	else if (key == K_2)
+		edi->select = 1;
+	else if (key == K_3)
+		edi->select = 2;
+	else if (key == K_4)
+		edi->select = 3;
 	if (key_controls(edi->key, KEY_DOWN, key, '+'))
 	{
 		printf("pressed %d\n", key);
@@ -99,8 +130,6 @@ int key_release(int key, void *para)
 int button_pressed(int button, int x, int y, void *para) // Limit listed buttons?
 {
 	t_editor	*edi;
-	t_pdot		spot;
-	t_dot		point;
 
 	edi = para;
 	if (button != MOU_S_D && button != MOU_S_U)
@@ -111,21 +140,21 @@ int button_pressed(int button, int x, int y, void *para) // Limit listed buttons
 	edi->mouse_pos.x = x;
 	edi->mouse_pos.y = y;
 	if (button == MOU_L)
-	{
-		spot.x = x - edi->size.x / 2;
-		spot.y = y - edi->size.y / 2;
-			//printf("stage 1 %f %f\n", spot.x, spot.y);
-		spot.x = spot.x * edi->zoom - edi->offset.x;
-		spot.y = spot.y * edi->zoom - edi->offset.y;
-			//printf("stage 2 %f %f\n", spot.x, spot.y);
-		point.x = spot.x / BLOCKW;
-		point.y = spot.y / BLOCKW;
-		block_edit(edi->start, edi->select, point, NULL);
-		//block_list(edi->start);
-		printf("block placed at %d %d\n", x ,y);
-	}
+		b_block_place(edi, x, y);
 	else if (button == MOU_R)
 	{
+		block_to_image(edi);
+	}
+	else if (button == MOU_S_D)
+	{
+		edi->zoom *= 1 - EDI_ZOOM_STEP;
+		edi->zoom = edi->zoom < EDI_MIN_ZOOM ? EDI_MIN_ZOOM : edi->zoom;
+		block_to_image(edi);
+	}
+	else if (button == MOU_S_U)
+	{
+		edi->zoom *= 1 + EDI_ZOOM_STEP;
+		edi->zoom = edi->zoom > EDI_MAX_ZOOM ? EDI_MAX_ZOOM : edi->zoom;
 		block_to_image(edi);
 	}
 	return (0);
@@ -157,13 +186,18 @@ int	motion_notify(int x, int y, void *para)
 	{
 		//x -= edi->size.x / 2;
 		//y -= edi->size.y / 2;
-		edi->offset.x -= (edi->mouse_pos.x - x) * edi->zoom;
-		edi->offset.y -= (edi->mouse_pos.y - y) * edi->zoom;
+		edi->offset.x += ((edi->mouse_pos.x - x) * edi->zoom);
+		edi->offset.y += ((edi->mouse_pos.y - y) * edi->zoom);
+		//edi->offset.x += (x - edi->mouse_pos.x) * edi->zoom;
+		//edi->offset.y += (y - edi->mouse_pos.y) * edi->zoom;
 		edi->mouse_pos.x = x;
 		edi->mouse_pos.y = y;
 		//printf("offset %f %f\n", edi->offset.x, edi->offset.y);
+		block_to_image(edi);
 		mlx_pixel_put(edi->mlx_ptr, edi->mlx_win, edi->size.x / 2 - edi->offset.x, edi->size.y / 2 - edi->offset.y, 0xff0000);
 	}
+	else if (is_pressed(edi->button, MOUSE_DOWN, MOU_L))
+		b_block_place(edi, x, y);
 	//printf("motion at %d %d\n", dot.x, dot.y);
 	return (0);
 }

@@ -26,6 +26,7 @@
 */
 
 # define THREADS 4
+# define ROUNDING >= 0.5
 
 /*
 ** Key definitions
@@ -104,7 +105,7 @@
 # define EDI_WIDTH 600
 # define EDI_HEIGHT 400
 # define EDI_BLOCK 4 			// amount of blocks placeable
-# define EDI_BLOCKW 50			// block pixel size
+# define EDI_BLOCKW 25			// block pixel size
 # define EDI_MIN_ZOOM 0.25
 # define EDI_MAX_ZOOM 4
 # define EDI_ZOOM_STEP 0.1
@@ -210,14 +211,31 @@ typedef struct		s_toolbar
 	t_editor	editor;
 }					t_toolbar;
 
+typedef struct		s_nmap
+{
+	PRECISION	ran11;
+	PRECISION	ran12;
+	PRECISION	ran21;
+	PRECISION	ran22;
+	PRECISION	p;
+}					t_nmap;
+
+
 typedef struct		s_box
 {
-	int		*img_dat;
-	int		endian;
-	int		bpp;
-	int		line_size;
-	int		i;
-	t_dot	size;
+	int			*img_dat;
+	int			endian;
+	int			bpp;
+	int			line_size;
+	int			i;
+	t_dot		size;
+	t_pdot		spot;
+	t_mapb		*curr;
+	t_editor	*edit;
+	PRECISION	blockw;
+	PRECISION	w;
+	PRECISION	h;
+	PRECISION	step;
 }					t_box;
 
 void				good_exit(int code, char *msg);
@@ -231,6 +249,9 @@ void				block_edit(t_mapb *start, int block, t_dot spot, char *param);
 void				block_list(t_mapb *start);
 int					block_cut(t_mapb *start, t_dot spot);
 void				block_to_image(t_editor *edit);
+
+void				edi_block_image(t_box box);
+void				image_wipe(int *img_dat, int color, int width, int height);
 
 int					key(int key, void *param);
 int					mouse(int button, int x, int y, void *param);
@@ -252,6 +273,11 @@ void				solid_color(int *text, t_dot size, int color);
 
 
 t_dot				dot(int x, int y);
+t_pdot				pdot(PRECISION x, PRECISION y);
+t_nmap				nmap(PRECISION ran11, PRECISION ran12, PRECISION ran21, PRECISION ran22);
 
+
+PRECISION			map(PRECISION p, t_nmap ran);
+int					iround(PRECISION in);
 
 #endif

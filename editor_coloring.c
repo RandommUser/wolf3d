@@ -97,5 +97,4 @@ void	outline_color(int *text, t_dot size, int color1, int color2)
 				text[spot.x + spot.y * size.y] = color1;
 		}
 	}
-
 }

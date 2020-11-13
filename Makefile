@@ -6,6 +6,8 @@ SRCS=editor.c\
 	editor_loops.c\
 	exit.c\
 	helpers.c\
+	image.c\
+	struct.c\
 	key_active.c\
 	main.c
 BIGO=$(SRCS:.c=.o)

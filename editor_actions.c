@@ -114,33 +114,40 @@ void	block_list(t_mapb *start)
 
 void	block_to_image(t_editor *edit)
 {
-	t_mapb		*curr;
-	PRECISION	blockw;
-	PRECISION	w;
-	PRECISION	h;
+
+	t_box		box;
 	t_pdot		spot;
 //	t_dot		text;
-	int			i;
 
-	if (!(curr = edit->start))
+	if (!(box.curr = edit->start))
 		return ;
-	blockw = BLOCKW * edit->zoom;
-	w = edit->size.x / 2 * edit->zoom;
-	h = edit->size.y / 2 * edit->zoom;
-	i = 0;
-	while (curr)
+	image_wipe(edit->map_data, 0x000000, edit->size.x, edit->size.y);
+	box.blockw = BLOCKW * edit->zoom;
+	box.w = edit->size.x / 2 * edit->zoom;
+	box.h = edit->size.y / 2 * edit->zoom;
+	box.i = 0;
+	while (box.curr)
 	{
-		spot.x = curr->base_s.x * blockw + BLOCKW / 2;
-		spot.y = curr->base_s.y * blockw + BLOCKW / 2;
-		if (spot.x >= edit->offset.x - w && spot.x <= edit->offset.x + w)
+		//spot.x = box.curr->base_s.x * box.blockw - box.blockw / 2;
+		//spot.y = box.curr->base_s.y * box.blockw - box.blockw / 2;
+		spot.x = box.curr->base_s.x * BLOCKW - BLOCKW / 2;
+		spot.y = box.curr->base_s.y * BLOCKW - BLOCKW / 2;
+		if ((spot.x >= edit->offset.x - box.w && spot.x <= edit->offset.x + box.w) ||
+		(spot.x + BLOCKW >= edit->offset.x - box.w && spot.x + BLOCKW <= edit->offset.x + box.w))
 		{
-			if (spot.y >= edit->offset.y - h && spot.y <= edit->offset.y + h)
+			if ((spot.y >= edit->offset.y - box.h && spot.y <= edit->offset.y + box.h) ||
+			(spot.y + BLOCKW >= edit->offset.y - box.h && spot.y + BLOCKW <= edit->offset.y + box.h))
 			{
+				box.edit = edit;
+				box.spot = spot; // blockw, w, h, spot, edit, curr
 				mlx_pixel_put(edit->mlx_ptr, edit->mlx_win, spot.x + edit->size.x / 2 - edit->offset.x, spot.y + edit->size.y / 2 - edit->offset.y, 0xffffff);
-				printf("block #%d in view, X %f Y %f | base %d %d\n", i, spot.x, spot.y, curr->base_s.x, curr->base_s.y);
+				//printf("block #%d in view, X %f Y %f | base %d %d\n", box.i, spot.x, spot.y, box.curr->base_s.x, box.curr->base_s.y);
+				edi_block_image(box);
 			}
 		}
-		curr = curr->next;
-		i++;
+		box.curr = box.curr->next;
+		box.i++;
 	}
+	mlx_clear_window(edit->mlx_ptr, edit->mlx_win);
+	mlx_put_image_to_window(edit->mlx_ptr, edit->mlx_win, edit->map_img, 0, 0);
 }

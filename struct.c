@@ -1,30 +1,43 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   helpers.c                                          :+:      :+:    :+:   */
+/*   struct.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: phakakos <phakakos@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/11/12 15:56:42 by phakakos          #+#    #+#             */
-/*   Updated: 2020/11/12 15:56:43 by phakakos         ###   ########.fr       */
+/*   Created: 2020/11/13 12:08:28 by phakakos          #+#    #+#             */
+/*   Updated: 2020/11/13 12:08:30 by phakakos         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "header.h"
 
-PRECISION	map(PRECISION p, t_nmap ran)
+t_dot	dot(int x, int y)
 {
-	ran.p = p;
-	ran.p = (ran.p - ran.ran11) / (ran.ran12 - ran.ran11);
-	ran.p = (ran.ran22 - ran.ran21) * ran.p + ran.ran21;
-	return (ran.p);
+	t_dot	this;
+
+	this.x = x;
+	this.y = y;
+	return (this);
 }
 
-int			iround(PRECISION in)
+t_pdot	pdot(PRECISION x, PRECISION y)
 {
-	if (in < 0 && !(ft_fabs(in) - ft_abs((int)in) ROUNDING))
-		return ((int)(in) + 1);
-	else if (in - (int)in ROUNDING)
-		return ((int)(in) + 1);
-	return ((int)in);
+	t_pdot	this;
+
+	this.x = x;
+	this.y = y;
+	return (this);
+}
+
+t_nmap	nmap(PRECISION ran11, PRECISION ran12, PRECISION ran21, PRECISION ran22)
+{
+	t_nmap	ret;
+
+	ret.p = 0;
+	ret.ran11 = ran11;
+	ret.ran12 = ran12;
+	ret.ran21 = ran21;
+	ret.ran22 = ran22;
+	return (ret);
 }
