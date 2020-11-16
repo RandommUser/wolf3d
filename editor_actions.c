@@ -12,11 +12,90 @@
 
 #include "header.h"
 
+t_mapb		*find_spot(t_mapb *start, t_dot spot)
+{
+	t_mapb	*curr;
+
+	if (!start)
+		return (NULL);
+	curr = start;
+	while(curr)
+	{
+		if (curr->base_s.x == spot.x && curr->base_s.y == spot.y)
+			return (curr);
+		curr = curr->next;
+	}
+	return (NULL);
+}
+
+static int block_check(t_mapb *block, char *str)
+{
+	return (block && block->param && ft_strstr(block->param, str));
+}
+
+static void block_param(t_mapb *block, char *param)
+{
+	if (block->param)
+		free(block->param);
+	block->param = NULL;
+	if (param && !(block->param = ft_strdup(param)))
+	{
+		free(block);
+		err_exit(ERR_MEMORY, "block param alloc fail");
+	}
+}
+
 static void	block_free(t_mapb *block)
 {	// FREE STUFF HERE
 	free(block->param);
 	free(block);
 	block = NULL;
+}
+
+int		map_valid(t_editor *edit, t_mapb *start)
+{
+	t_dot	goals;
+	t_mapb	*curr;
+
+	goals = dot(0, 0);
+	curr = start;
+	while (curr)
+	{
+		if(block_check(curr, MAP_SPAWN_FLAG))
+			if (goals.x++)
+			{
+				mlx_string_put(edit->mlx_ptr, edit->mlx_win, 20, 10, 0xff0000, "TOO MANY SPAWNS");
+				return (0);
+			}
+		if (block_check(curr, MAP_END_FLAG))
+			goals.y++;
+		if (curr->base_s.x < -MAP_SIZE / 2 || curr->base_s.x > MAP_SIZE / 2 ||
+		curr->base_s.y < -MAP_SIZE / 2 || curr->base_s.y > MAP_SIZE / 2)
+		{
+			mlx_string_put(edit->mlx_ptr, edit->mlx_win, 20, 10, 0xff0000, "BLOCK OUT OF MAP");
+			return (0);
+		}
+		curr = curr->next;
+	}
+	if (!goals.x)
+		mlx_string_put(edit->mlx_ptr, edit->mlx_win, 20, 10, 0xff0000, "NO START");
+	else if (!goals.y)
+		mlx_string_put(edit->mlx_ptr, edit->mlx_win, 20, 10, 0xff0000, "NO END");
+	return (goals.x && goals.y);
+}
+
+void	block_tree_del(t_mapb *start)
+{
+	t_mapb	*curr;
+	t_mapb	*next;
+
+	curr = start;
+	while (curr)
+	{
+		next = curr->next;
+		block_free(curr);
+		curr = next;
+	}
 }
 
 int		block_cut(t_mapb *start, t_dot spot)
@@ -57,10 +136,11 @@ t_mapb	*block_add(t_mapb *start, int block, t_dot spot, char *param)
 
 	if (!(this = malloc(sizeof(t_mapb))))
 		err_exit(ERR_MEMORY, "block add alloc fail");
+	this->param = NULL;
+	block_param(this, param);
 	this->base_s.x = spot.x;
 	this->base_s.y = spot.y;
 	this->block = block;
-	this->param = param;
 	this->next = NULL;
 	if (!start)
 		return (this);
@@ -71,20 +151,27 @@ t_mapb	*block_add(t_mapb *start, int block, t_dot spot, char *param)
 	return (this);
 }
 
-void	block_edit(t_mapb *start, int block, t_dot spot, char *param)
+int		block_edit(t_mapb *start, int block, t_dot spot, char *param)
 {
 	t_mapb	*curr;
 
 	if (!start)
-		return ;
+		return (0);
 	curr = start;
+	if (spot.x < -MAP_SIZE / 2 || spot.x > MAP_SIZE / 2 ||
+		spot.y < -MAP_SIZE / 2 || spot.y > MAP_SIZE / 2)
+			return (0);
 	while (curr)
 	{
 		if (curr->base_s.x == spot.x && curr->base_s.y == spot.y)
 		{
-			curr->block = block;
-			curr->param = param;
-			return ;
+			if (!block_check(curr, MAP_SPAWN_FLAG))
+			{
+				curr->block = block;
+				block_param(curr, param);
+				return (1);
+			}
+			break ;
 		}
 		if (!curr->next)
 		{
@@ -93,7 +180,7 @@ void	block_edit(t_mapb *start, int block, t_dot spot, char *param)
 		}
 		curr = curr->next;
 	}
-
+	return (0);
 }
 
 void	block_list(t_mapb *start)

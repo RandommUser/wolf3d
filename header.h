@@ -36,6 +36,8 @@
 # define NO_KEY -1
 # define ESC_KEY 53
 # define K_R 15
+# define K_S 1
+# define K_G 5
 # define K_1 18
 # define K_2 19
 # define K_3 20
@@ -86,13 +88,20 @@
 ** Map definitions
 */
 
+# define MAP_ENDING ".map"
 # define MAP_VERSION "0.01"
 # define MAP_V "V: "MAP_VERSION
 # define MAP_NAME "Name: "
 # define MAP_DESC "Desc: "
 # define MAP_NEXT "Next: "
 # define MAP_END "END"
+# define MAP_EMPTY " "
+# define MAP_SPLIT ':'
+# define MAP_SPLIT_END ';'
+# define MAP_SPAWN_FLAG "START"
+# define MAP_END_FLAG "END"
 # define MAP_MAX_PORT 64
+# define MAP_SIZE 30
 # define MAP_MIN_X -50
 # define MAP_MAX_X 50
 # define MAP_MIN_Y -50
@@ -105,7 +114,7 @@
 # define EDI_WIDTH 600
 # define EDI_HEIGHT 400
 # define EDI_BLOCK 4 			// amount of blocks placeable
-# define EDI_BLOCKW 25			// block pixel size
+# define EDI_BLOCKW 20			// block pixel size // NEEDS TO BE EVEN FOR PLACEMENT TO WORK PROPERLY
 # define EDI_MIN_ZOOM 0.25
 # define EDI_MAX_ZOOM 4
 # define EDI_ZOOM_STEP 0.1
@@ -245,10 +254,14 @@ void				editor(void);
 void				text_init(void *mlx_ptr, void **text, int width, int height);
 
 t_mapb				*block_add(t_mapb *start, int block, t_dot spot, char *param);
-void				block_edit(t_mapb *start, int block, t_dot spot, char *param);
+int					block_edit(t_mapb *start, int block, t_dot spot, char *param);
 void				block_list(t_mapb *start);
 int					block_cut(t_mapb *start, t_dot spot);
+void				block_tree_del(t_mapb *start);
 void				block_to_image(t_editor *edit);
+int					map_valid(t_editor *edit, t_mapb *start);
+t_mapb				*find_spot(t_mapb *start, t_dot spot);
+int					map_write(t_editor *edit);
 
 void				edi_block_image(t_box box);
 void				image_wipe(int *img_dat, int color, int width, int height);

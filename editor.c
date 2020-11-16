@@ -32,7 +32,8 @@ static t_editor	editor_init(int width, int height, void **img)
 	ret.port = 1;
 	ft_memset(ret.key, NO_KEY,sizeof(int[KEY_DOWN]));
 	ft_memset(ret.button, NO_KEY, sizeof(int[MOUSE_DOWN]));
-	ret.start = block_add(NULL, B_START, dot(0, 0), ft_strdup("START"));
+	ret.start = block_add(NULL, B_START + BLOCKH, dot(0, 0), MAP_SPAWN_FLAG);
+	block_edit(ret.start, B_END + BLOCKSE, dot(0, 5), MAP_END_FLAG);
 	return (ret);
 }
 
@@ -49,8 +50,8 @@ void	editor(void)
 		err_exit(ERR_MLX, "editor mlx_ptr init failed");
 	if (!(windows[0] = mlx_new_window(mlx_ptr, EDI_WIDTH, EDI_HEIGHT, "Map editor")))
 		err_exit(ERR_MLX, "editor main window start failed");
-	if (!(windows[1] = mlx_new_window(mlx_ptr, BAR_WIDTH, BAR_HEIGHT, "Editor toolbar")))
-		err_exit(ERR_MLX, "editor toolbar window start failed");
+	//if (!(windows[1] = mlx_new_window(mlx_ptr, BAR_WIDTH, BAR_HEIGHT, "Editor toolbar")))
+	//	err_exit(ERR_MLX, "editor toolbar window start failed");
 	editor = editor_init(EDI_WIDTH, EDI_HEIGHT, textures);
 	editor.mlx_ptr = mlx_ptr;
 	editor.mlx_win = windows[0];
@@ -68,5 +69,6 @@ void	editor(void)
 	mlx_hook(windows[0], MOTION_NOTIFY, 0, &motion_notify, &editor);
 	mlx_hook(windows[0], ENTER_NOTIFY, 0, &enter_notify, &editor);
 	mlx_hook(windows[0], LEAVE_NOTIFY, 0, &leave_notify, &editor);
+	block_to_image(&editor);
 	mlx_loop(mlx_ptr);
 }
