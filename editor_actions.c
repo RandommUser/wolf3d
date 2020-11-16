@@ -28,6 +28,16 @@ t_mapb		*find_spot(t_mapb *start, t_dot spot)
 	return (NULL);
 }
 
+static t_mapb	*find_last(t_mapb *start)
+{
+	t_mapb *curr;
+
+	curr = start;
+	while (curr->next)
+		curr = curr->next;
+	return (curr);
+}
+
 static int block_check(t_mapb *block, char *str)
 {
 	return (block && block->param && ft_strstr(block->param, str));
@@ -157,28 +167,24 @@ int		block_edit(t_mapb *start, int block, t_dot spot, char *param)
 
 	if (!start)
 		return (0);
-	curr = start;
 	if (spot.x < -MAP_SIZE / 2 || spot.x > MAP_SIZE / 2 ||
 		spot.y < -MAP_SIZE / 2 || spot.y > MAP_SIZE / 2)
 			return (0);
-	while (curr)
+	curr = find_spot(start, spot);
+	//printf("curr is %p\n", curr);
+	if (curr && !block_check(curr, MAP_SPAWN_FLAG))
 	{
-		if (curr->base_s.x == spot.x && curr->base_s.y == spot.y)
-		{
-			if (!block_check(curr, MAP_SPAWN_FLAG))
-			{
-				curr->block = block;
-				block_param(curr, param);
-				return (1);
-			}
-			break ;
-		}
-		if (!curr->next)
-		{
-			curr->next = block_add(curr, block, spot, param);
-			break ;
-		}
-		curr = curr->next;
+		curr->block = block;
+		block_param(curr, param);
+		return (1);
+	}
+	else if (!curr)
+	{
+		curr = find_last(start);
+		//printf("adding to start end\n");
+		curr->next = block_add(curr, block, spot, param);
+		//printf("added to the list\n");
+		return (1);
 	}
 	return (0);
 }
@@ -193,8 +199,10 @@ void	block_list(t_mapb *start)
 	while (curr)
 	{
 		i++;
-		printf("Block #%d\nX: %d Y: %d\nBlock: %d\nParam: %s\nNext: %p\n", i,
-		curr->base_s.x, curr->base_s.y, curr->block, curr->param, curr->next);
+		printf("Block #%d\nX: %d Y: %d\n",i,curr->base_s.x, curr->base_s.y);
+		printf("Block: %d\n",curr->block);
+		printf("Param: %s\n", curr->param);
+		printf("Next: %p\n", curr->next);
 		curr = curr->next;
 	}
 }
