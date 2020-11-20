@@ -7,6 +7,7 @@ SRCS=editor.c\
 	exit.c\
 	helpers.c\
 	image.c\
+	map_reader.c\
 	map_writer.c\
 	struct.c\
 	key_active.c\

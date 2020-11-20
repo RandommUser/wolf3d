@@ -24,17 +24,15 @@ static void	map_loop(FILE *fd, t_editor *edit)
 {
 	t_dot	map;
 	t_mapb	*block;
-	int		limit;
 
-	limit = MAP_SIZE / 2;
-	map.y = -(limit) - 1;
-	while (++map.y <= limit)
+	map.y = -edit->map_size.y - 1;
+	while (++map.y <= edit->map_size.y)
 	{
-		map.x = -limit - 1;
-		while (++map.x <= limit)
+		map.x = -edit->map_size.x - 1;
+		while (++map.x <= edit->map_size.x)
 		{
 			if (!(block = find_spot(edit->start, map)))
-				fprintf(fd, "%s", MAP_EMPTY);
+				fprintf(fd, "%c", MAP_EMPTY);
 			else
 			{
 				fprintf(fd, "%d", block->block);

@@ -27,17 +27,19 @@ static t_editor	editor_init(int width, int height, void **img)
 	ret.version = NULL;
 	ret.offset.x = 0;
 	ret.offset.y = 0;
+	ret.map_size.x = MAP_SIZE;
+	ret.map_size.y = MAP_SIZE;
 	ret.zoom = 1;
 	ret.select = 0;
 	ret.port = 1;
 	ft_memset(ret.key, NO_KEY,sizeof(int[KEY_DOWN]));
 	ft_memset(ret.button, NO_KEY, sizeof(int[MOUSE_DOWN]));
-	ret.start = block_add(NULL, B_START + BLOCKH, dot(0, 0), MAP_SPAWN_FLAG);
-	block_edit(ret.start, B_END + BLOCKSE, dot(0, 5), MAP_END_FLAG);
+	ret.start = block_add(&ret, B_START + BLOCKH, dot(0, 0), MAP_SPAWN_FLAG);
+	block_edit(&ret, B_END + BLOCKSE, dot(0, 5), MAP_END_FLAG);
 	return (ret);
 }
 
-void	editor(void)
+void	editor(char *arg)
 {
 	void		*mlx_ptr;
 	t_editor	editor;
@@ -58,6 +60,8 @@ void	editor(void)
 	if (!(editor.map_img = mlx_new_image(mlx_ptr, EDI_WIDTH, EDI_HEIGHT)))
 		err_exit(ERR_MLX, "editor map_img start failed");
 	editor.map_data = (int*)mlx_get_data_addr(editor.map_img, &box.bpp, &box.line_size, &box.endian);
+	if (arg)
+		map_reader(arg, &editor);
 	text_init(mlx_ptr, textures, BLOCKW, BLOCKW);
 	mlx_mouse_hook(windows[0], &mouse, &editor);
 	mlx_key_hook(windows[0], &key, &editor);

@@ -33,7 +33,7 @@ static void		b_block_place(t_editor *edi, int x, int y)
 	point.y += (int)(blocks.y) % 2;
 //	printf("half-blocks %f %f | rounded %d %d\nfinal %d %d\n", blocks.x, blocks.y, (int)(blocks.x), (int)(blocks.y),
 //	point.x, point.y);
-	if (block_edit(edi->start, edi->select, point, NULL))
+	if (block_edit(edi, edi->select, point, NULL))
 		printf("block placed at %d %d\n", point.x ,point.y);
 	block_to_image(edi);
 }
@@ -126,14 +126,21 @@ int	key_press(int key, void *para)
 	{
 		char	*str;
 		ft_putendl("Write the name");
-		mlx_string_put(edi->mlx_ptr, edi->mlx_win, 20, 300, 0x00ff00, "Write name in console");
+		if (edi->name)
+		{
+			ft_putstr("or press enter for current (");
+			ft_putstr(edi->name);
+			ft_putstr(")\n");
+		}
+
+		mlx_string_put(edi->mlx_ptr, edi->mlx_win, 20, 300, 0x00ff00, "Write name in console"); // ADD LOOP TO CHECK IT NEEDS A VALUE
 		mlx_do_sync(edi->mlx_ptr);
-		if (!get_next_line(0, &str))
-			str = NULL;
-		else
+		if (get_next_line(0, &str) == 1 && str[0])
 			edi->name = str;
+		printf("current name> '%s'\n", edi->name);
 		block_to_image(edi);
 		ft_putendl("Write the description");
+		ft_putstr(edi->desc);
 		mlx_string_put(edi->mlx_ptr, edi->mlx_win, 20, 300, 0x00ff00, "Write description in console");
 		mlx_do_sync(edi->mlx_ptr);
 		if (!get_next_line(0, &str))
@@ -148,6 +155,8 @@ int	key_press(int key, void *para)
 			else
 				printf("Map printing failed\n");
 		}
+		else
+			printf("not valid map!\n");
 		block_to_image(edi);
 		//free(str);
 	}
@@ -235,10 +244,10 @@ int	motion_notify(int x, int y, void *para)
 		edi->offset.y += ((edi->mouse_pos.y - y) * edi->zoom);
 		//edi->offset.x += (x - edi->mouse_pos.x) * edi->zoom;
 		//edi->offset.y += (y - edi->mouse_pos.y) * edi->zoom;
-		edi->offset.x =  edi->offset.x < -BLOCKW * (MAP_SIZE / 2) ? BLOCKW * -(MAP_SIZE / 2) : edi->offset.x;
-		edi->offset.x =  edi->offset.x > BLOCKW * (MAP_SIZE / 2) ? BLOCKW * MAP_SIZE / 2 : edi->offset.x;
-		edi->offset.y =  edi->offset.y < -BLOCKW * (MAP_SIZE / 2) ? BLOCKW * -(MAP_SIZE / 2) : edi->offset.y;
-		edi->offset.y =  edi->offset.y > BLOCKW * (MAP_SIZE / 2) ? BLOCKW * MAP_SIZE / 2 : edi->offset.y;
+		edi->offset.x =  edi->offset.x < -BLOCKW * edi->map_size.x ? BLOCKW * -edi->map_size.x : edi->offset.x;
+		edi->offset.x =  edi->offset.x > BLOCKW * edi->map_size.x ? BLOCKW * edi->map_size.x : edi->offset.x;
+		edi->offset.y =  edi->offset.y < -BLOCKW * edi->map_size.y ? BLOCKW * -edi->map_size.y : edi->offset.y;
+		edi->offset.y =  edi->offset.y > BLOCKW * edi->map_size.y ? BLOCKW * edi->map_size.y : edi->offset.y;
 		edi->mouse_pos.x = x;
 		edi->mouse_pos.y = y;
 		//printf("offset %f %f\n", edi->offset.x, edi->offset.y);

@@ -38,7 +38,7 @@ static t_mapb	*find_last(t_mapb *start)
 	return (curr);
 }
 
-static int block_check(t_mapb *block, char *str)
+int 		block_check(t_mapb *block, char *str)
 {
 	return (block && block->param && ft_strstr(block->param, str));
 }
@@ -79,8 +79,8 @@ int		map_valid(t_editor *edit, t_mapb *start)
 			}
 		if (block_check(curr, MAP_END_FLAG))
 			goals.y++;
-		if (curr->base_s.x < -MAP_SIZE / 2 || curr->base_s.x > MAP_SIZE / 2 ||
-		curr->base_s.y < -MAP_SIZE / 2 || curr->base_s.y > MAP_SIZE / 2)
+		if ((edit->map_size.x > 0 && (curr->base_s.x < -edit->map_size.x || curr->base_s.x > edit->map_size.x )) ||
+		(edit->map_size.y > 0 && (curr->base_s.y < -edit->map_size.y || curr->base_s.y > edit->map_size.y)))
 		{
 			mlx_string_put(edit->mlx_ptr, edit->mlx_win, 20, 10, 0xff0000, "BLOCK OUT OF MAP");
 			return (0);
@@ -139,11 +139,14 @@ int		block_cut(t_mapb *start, t_dot spot)
 	return (0);
 }
 
-t_mapb	*block_add(t_mapb *start, int block, t_dot spot, char *param)
+t_mapb	*block_add(t_editor *edit, int block, t_dot spot, char *param)
 {
 	t_mapb	*curr;
 	t_mapb	*this;
 
+	if ((edit->map_size.x > 0 && (spot.x < -edit->map_size.x || spot.x > edit->map_size.x )) ||
+		(edit->map_size.y > 0 && (spot.y < -edit->map_size.y || spot.y > edit->map_size.y)))
+			return (NULL);
 	if (!(this = malloc(sizeof(t_mapb))))
 		err_exit(ERR_MEMORY, "block add alloc fail");
 	this->param = NULL;
@@ -152,25 +155,26 @@ t_mapb	*block_add(t_mapb *start, int block, t_dot spot, char *param)
 	this->base_s.y = spot.y;
 	this->block = block;
 	this->next = NULL;
-	if (!start)
+	if (!edit->start)
 		return (this);
-	curr = start;
+	curr = edit->start;
 	while (curr->next)
 		curr = curr->next;
 	curr->next = &this;
 	return (this);
 }
 
-int		block_edit(t_mapb *start, int block, t_dot spot, char *param)
+int		block_edit(t_editor *edit, int block, t_dot spot, char *param)
 {
 	t_mapb	*curr;
 
-	if (!start)
+	if (!edit->start)
 		return (0);
-	if (spot.x < -MAP_SIZE / 2 || spot.x > MAP_SIZE / 2 ||
-		spot.y < -MAP_SIZE / 2 || spot.y > MAP_SIZE / 2)
-			return (0);
-	curr = find_spot(start, spot);
+	/*
+	if ((edit->map_size.x > 0 && (spot.x < -edit->map_size.x || spot.x > edit->map_size.x )) ||
+		(edit->map_size.y > 0 && (spot.y < -edit->map_size.y || spot.y > edit->map_size.y)))
+			return (0);*/
+	curr = find_spot(edit->start, spot);
 	//printf("curr is %p\n", curr);
 	if (curr && !block_check(curr, MAP_SPAWN_FLAG))
 	{
@@ -180,11 +184,9 @@ int		block_edit(t_mapb *start, int block, t_dot spot, char *param)
 	}
 	else if (!curr)
 	{
-		curr = find_last(start);
-		//printf("adding to start end\n");
-		curr->next = block_add(curr, block, spot, param);
-		//printf("added to the list\n");
-		return (1);
+		curr = find_last(edit->start);
+		if ((curr->next = block_add(edit, block, spot, param)))
+			return (1);
 	}
 	return (0);
 }

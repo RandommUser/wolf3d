@@ -18,8 +18,10 @@
 # include "mlx.h"
 # include <math.h>
 # include <stdlib.h>
+# include <fcntl.h> // open
+# include <unistd.h> // close
 # include <pthread.h>
-#	include <stdio.h>//
+#	include <stdio.h>// <printf>, fprintf
 
 /*
 ** General definitions
@@ -95,13 +97,13 @@
 # define MAP_DESC "Desc: "
 # define MAP_NEXT "Next: "
 # define MAP_END "END"
-# define MAP_EMPTY " "
+# define MAP_EMPTY ' '
 # define MAP_SPLIT ':'
 # define MAP_SPLIT_END ';'
 # define MAP_SPAWN_FLAG "START"
 # define MAP_END_FLAG "END"
 # define MAP_MAX_PORT 64
-# define MAP_SIZE 30
+# define MAP_SIZE 15 // to both directions
 # define MAP_MIN_X -50
 # define MAP_MAX_X 50
 # define MAP_MIN_Y -50
@@ -199,13 +201,14 @@ typedef struct		s_editor
 	void		*map_img;
 	int			*map_data;
 	char		*version;	// map file data // NEEDED?? just use MAP_V
-	char		*name;
+	char		*name; // map file data pointers
 	char		*desc;
 	char		*next;
 	t_mapb		*start;	// start point pointer
 	int			select;	// selected block
 	char		port;	// teleport number
-	t_dot		size;
+	t_dot		map_size;
+	t_dot		size; // screen
 	t_pdot		offset;
 	PRECISION	zoom;
 	int			key[KEY_DOWN];
@@ -250,17 +253,21 @@ typedef struct		s_box
 void				good_exit(int code, char *msg);
 void				err_exit(int error, char *msg);
 
-void				editor(void);
+void				editor(char *arg);
 void				text_init(void *mlx_ptr, void **text, int width, int height);
 
-t_mapb				*block_add(t_mapb *start, int block, t_dot spot, char *param);
-int					block_edit(t_mapb *start, int block, t_dot spot, char *param);
+t_mapb				*block_add(t_editor *edit, int block, t_dot spot, char *param);
+int					block_edit(t_editor *edit, int block, t_dot spot, char *param);
 void				block_list(t_mapb *start);
 int					block_cut(t_mapb *start, t_dot spot);
+int 				block_check(t_mapb *block, char *str);
 void				block_tree_del(t_mapb *start);
 void				block_to_image(t_editor *edit);
 int					map_valid(t_editor *edit, t_mapb *start);
 t_mapb				*find_spot(t_mapb *start, t_dot spot);
+
+
+int					map_reader(char *name, t_editor *edit);
 int					map_write(t_editor *edit);
 
 void				edi_block_image(t_box box);
@@ -292,5 +299,4 @@ t_nmap				nmap(PRECISION ran11, PRECISION ran12, PRECISION ran21, PRECISION ran2
 
 PRECISION			map(PRECISION p, t_nmap ran);
 int					iround(PRECISION in);
-
 #endif

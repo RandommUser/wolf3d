@@ -18,8 +18,8 @@ int	main(int argc, char **argv)
 	int	size = 10;
 	t_dot	tsize;
 
-	if (argc == 2 && !ft_strcmp(argv[1], "editor"))
-		editor();
+	if (argc > 1 && !ft_strcmp(argv[1], "editor"))
+		argc > 2 ? editor(argv[2]) : editor(NULL);
 	printf("%s\n", MAP_V);
 	tsize.x = size;
 	tsize.y = size;
