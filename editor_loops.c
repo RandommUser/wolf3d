@@ -12,6 +12,147 @@
 
 #include "header.h"
 
+static void		*input_loop(t_editor *edit, char *smsg, char *cmsg, char *curr)
+{
+	char	*str;
+
+	block_to_image(edit);
+	mlx_string_put(edit->mlx_ptr, edit->mlx_win, 20, 10, 0x00ff00, smsg);
+	mlx_do_sync(edit->mlx_ptr);
+	ft_putstr(cmsg);
+	if (curr) // has old value
+	{
+		ft_putstr("or press Enter for current (");
+		ft_putstr(curr);
+		ft_putstr(")\n");
+	}
+	if (get_next_line(0, &str) != 1)
+		err_exit(ERR_MEMORY, "input_loop gnl alloc error");
+	if (str[0]) // good input
+		return (str);
+	else if (curr && !str[0]) // has already a value, new input empty
+	{
+		free(str);
+		return (curr);
+	}
+	else // (!curr && !str[0]) // no value, no input
+	{
+		free(str);
+		ft_putstr("Please give an input!!\n");
+		return (input_loop(edit, smsg, cmsg, curr));
+	}
+}
+
+static void		map_save(t_editor *edit)
+{
+	//char	*str;
+
+
+	edit->name = input_loop(edit, "Write name in console", "Write the name\n", edit->name);
+	/*
+	ft_putendl("Write the name");
+	if (edit->name)
+	{
+		ft_putstr("or press enter for current (");
+		ft_putstr(edit->name);
+		ft_putstr(")\n");
+	}
+
+	mlx_string_put(edit->mlx_ptr, edit->mlx_win, 20, 300, 0x00ff00, "Write name in console"); // ADD LOOP TO CHECK IT NEEDS A VALUE
+	mlx_do_sync(edit->mlx_ptr);
+	if (get_next_line(0, &str) == 1 && str[0]) // leak
+		edit->name = str;
+	*/
+	printf("current name> '%s'\n", edit->name);
+	edit->desc = input_loop(edit, "Write description in console", "Write the description\n", edit->desc);
+	/*
+	block_to_image(edit);
+	ft_putendl("Write the description");
+	ft_putstr(edit->desc);
+	mlx_string_put(edit->mlx_ptr, edit->mlx_win, 20, 300, 0x00ff00, "Write description in console");
+	mlx_do_sync(edit->mlx_ptr);
+	if (!get_next_line(0, &str))
+		str = NULL;
+	else
+		edit->desc = str;
+	*/
+	printf("current desc> '%s'\n", edit->desc);
+	if (map_valid(edit, edit->start))
+	{
+		if (map_write(edit))
+			printf("map printed\n");
+		else
+			printf("Map printing failed\n");
+	}
+	else
+		printf("not valid map!\n");
+	block_to_image(edit);
+}
+
+static	void	edit_param(t_editor *edit, t_mapb *block)
+{
+	char	*param;
+
+	mlx_string_put(edit->mlx_ptr, edit->mlx_win, 20, 10, 0x00ff00, "Write selected block's param in console");
+	mlx_do_sync(edit->mlx_ptr);
+	if (block->param) // has old value
+	{
+		ft_putstr("Press enter for current (");
+		ft_putstr(block->param);
+		ft_putstr(")\n");
+	}
+	if (get_next_line(0, &param) != 1)
+		err_exit(ERR_MEMORY, "edit_param gnl alloc error");
+	else if (!param[0]) // new input empty
+	{
+		free(param);
+		param = ft_strdup(block->param); // alloc check
+	}
+	else if (!ft_strcmp(param, "NULL")) // input is NULL
+	{
+		free(param);
+		param = NULL;
+	}
+	if (block->param)
+		free(block->param);
+	block->param = param;
+	block_to_image(edit);
+	
+}
+
+static t_mapb	*block_read(t_editor *edi, int x, int y)
+{
+	t_dot		point;
+	t_pdot		blocks;
+	t_pdot		spot;
+	t_mapb		*block;
+
+	spot.x = x - edi->size.x / 2;
+	spot.y = y - edi->size.y / 2;
+	spot.x = spot.x * edi->zoom + edi->offset.x;
+	spot.y = spot.y * edi->zoom + edi->offset.y;
+	blocks.x = spot.x / (BLOCKW / 2);
+	blocks.y = spot.y / (BLOCKW / 2);
+	point.x = (int)(blocks.x) / 2;
+	point.x += (int)(blocks.x) % 2;
+	point.y = (int)(blocks.y) / 2;
+	point.y += (int)(blocks.y) % 2;
+	block = find_spot(edi->start, point);
+	if (edi->edit == block)
+	{
+		edit_param(edi, block);
+		return (NULL);
+	}
+	else if (block)
+	{
+		printf("Block X: %d Y: %d\n", block->base_s.x, block->base_s.y);
+		printf("Block: %d\n",block->block);
+		printf("Param: %s\n", block->param);
+		printf("Next: %p\n", block->next);
+	}
+	return (block);
+}
+
 static void		b_block_place(t_editor *edi, int x, int y)
 {
 	t_dot		point;
@@ -38,7 +179,7 @@ static void		b_block_place(t_editor *edi, int x, int y)
 	block_to_image(edi);
 }
 
-int				key(int key, void *param)
+int				key(int key, void *param) // NOT IN USE
 {
 	t_editor	*edi;
 
@@ -55,10 +196,12 @@ int				key(int key, void *param)
 		edi->select = 2;
 	else if (key == K_4)
 		edi->select = 3;
+	else if (key == K_E)
+		edi->select = B_EMPTY;
 	return (0);
 }
 
-int				mouse(int button, int x, int y, void *param)
+int				mouse(int button, int x, int y, void *param) // NOT IN USE
 {
 	t_editor	*edi;
 	t_pdot		spot;
@@ -111,54 +254,22 @@ int	key_press(int key, void *para)
 	else if (key == K_R)
 		mlx_clear_window(edi->mlx_ptr, edi->mlx_win);
 	else if (key == K_1)
-		edi->select = 0;
+		edi->select = BLOCK1;
 	else if (key == K_2)
-		edi->select = 1;
+		edi->select = BLOCK2;
 	else if (key == K_3)
-		edi->select = 2;
+		edi->select = BLOCK3;
 	else if (key == K_4)
-		edi->select = 3;
+		edi->select = BLOCK4;
+	else if (key == K_E)
+		edi->select = B_EMPTY;
 	else if (key == K_S)
 	{
 		map_valid(edi, edi->start);
 	}
 	else if (key == K_G)
 	{
-		char	*str;
-		ft_putendl("Write the name");
-		if (edi->name)
-		{
-			ft_putstr("or press enter for current (");
-			ft_putstr(edi->name);
-			ft_putstr(")\n");
-		}
-
-		mlx_string_put(edi->mlx_ptr, edi->mlx_win, 20, 300, 0x00ff00, "Write name in console"); // ADD LOOP TO CHECK IT NEEDS A VALUE
-		mlx_do_sync(edi->mlx_ptr);
-		if (get_next_line(0, &str) == 1 && str[0])
-			edi->name = str;
-		printf("current name> '%s'\n", edi->name);
-		block_to_image(edi);
-		ft_putendl("Write the description");
-		ft_putstr(edi->desc);
-		mlx_string_put(edi->mlx_ptr, edi->mlx_win, 20, 300, 0x00ff00, "Write description in console");
-		mlx_do_sync(edi->mlx_ptr);
-		if (!get_next_line(0, &str))
-			str = NULL;
-		else
-			edi->desc = str;
-		
-		if (map_valid(edi, edi->start))
-		{
-			if (map_write(edi))
-				printf("map printed\n");
-			else
-				printf("Map printing failed\n");
-		}
-		else
-			printf("not valid map!\n");
-		block_to_image(edi);
-		//free(str);
+		map_save(edi);
 	}
 	if (key_controls(edi->key, KEY_DOWN, key, '+'))
 	{
@@ -197,7 +308,8 @@ int button_pressed(int button, int x, int y, void *para) // Limit listed buttons
 		b_block_place(edi, x, y);
 	else if (button == MOU_R)
 	{
-		block_to_image(edi);
+		//block_to_image(edi);
+		edi->edit = block_read(edi, x, y);
 	}
 	else if (button == MOU_S_D)
 	{

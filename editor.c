@@ -12,7 +12,24 @@
 
 #include "header.h"
 
+static	t_mapb	*map_init(t_editor *edit)
+{
+	t_dot	spot;
 
+	edit->start = block_add(edit, B_START + BLOCKH, dot(0, 0), ft_strdup(MAP_SPAWN_FLAG));
+	spot.y = -(edit->map_size.y) - 1;
+	while (++spot.y <= edit->map_size.y)
+	{
+		spot.x = -(edit->map_size.x) - 1;
+		while (++spot.x <= edit->map_size.x)
+		{
+			if (block_edit(edit, B_EMPTY, spot, NULL))
+				printf("block added %d %d\n", spot.x, spot.y);
+		}
+	}
+	block_edit(edit, B_END + BLOCKSE, dot(0, 5), ft_strdup(MAP_END_FLAG));
+	return (edit->start);
+}
 
 static t_editor	editor_init(int width, int height, void **img)
 {
@@ -27,15 +44,16 @@ static t_editor	editor_init(int width, int height, void **img)
 	ret.version = NULL;
 	ret.offset.x = 0;
 	ret.offset.y = 0;
-	ret.map_size.x = MAP_SIZE;
-	ret.map_size.y = MAP_SIZE;
+	ret.map_size = dot(MAP_SIZE, MAP_SIZE);
 	ret.zoom = 1;
-	ret.select = 0;
+	ret.select = B_FLOOR;
 	ret.port = 1;
 	ft_memset(ret.key, NO_KEY,sizeof(int[KEY_DOWN]));
 	ft_memset(ret.button, NO_KEY, sizeof(int[MOUSE_DOWN]));
-	ret.start = block_add(&ret, B_START + BLOCKH, dot(0, 0), MAP_SPAWN_FLAG);
-	block_edit(&ret, B_END + BLOCKSE, dot(0, 5), MAP_END_FLAG);
+	ret.start = map_init(&ret);
+	ret.edit = NULL;
+	//block_add(&ret, B_START + BLOCKH, dot(0, 0), MAP_SPAWN_FLAG);
+	//block_edit(&ret, B_END + BLOCKSE, dot(0, 5), MAP_END_FLAG);
 	return (ret);
 }
 

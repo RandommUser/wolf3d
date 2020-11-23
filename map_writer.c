@@ -12,12 +12,46 @@
 
 #include "header.h"
 
+static char	*file_format(char *name)
+{
+	int	i;
+
+	i = -1;
+	while (name[++i])
+	{
+		if (!ft_strcmp(&name[i], MAP_ENDING)) // ignore .map part at the end
+			break ;
+		name[i] = ft_iswspace(name[i]) ? '_' : name[i];
+		name[i] = name[i] != '_' && !ft_isalnum(name[i]) ? '-' : name[i];
+		name[i] = ft_isupper(name[i]) ? ft_tolower(name[i]) : name[i];
+		/*
+		name[i] = name[i] == '/' ? '-' : name[i];
+		name[i] = name[i] == '\\' ? '-' : name[i];
+		name[i] = name[i] == '"' ? '-' : name[i];
+		name[i] = name[i] == '\'' ? '-' : name[i];
+		name[i] = name[i] == '`' ? '-' : name[i];
+		name[i] = name[i] == '!' ? '-' : name[i];
+		name[i] = name[i] == '@' ? '-' : name[i];
+		name[i] = name[i] == '#' ? '-' : name[i];
+		name[i] = name[i] == '$' ? '-' : name[i];
+		name[i] = name[i] == '%' ? '-' : name[i];
+		name[i] = name[i] == '^' ? '-' : name[i];
+		name[i] = name[i] == '&' ? '-' : name[i];
+		name[i] = name[i] == '*' ? '-' : name[i];
+		name[i] = name[i] == ',' ? '-' : name[i];
+		name[i] = name[i] == ':' ? '-' : name[i];
+		name[i] = name[i] == ';' ? '-' : name[i];
+		*/
+	}
+	return (name);
+}
+
 static void	map_header(FILE *fd, t_editor *edit)
 {
 	fprintf(fd, "%s\n", MAP_V);
 	fprintf(fd, "%s%s\n", MAP_NAME, edit->name);
 	fprintf(fd, "%s%s\n", MAP_DESC, edit->desc);
-	fprintf(fd, "%s%s\n", MAP_NEXT, MAP_END); // MAKE THIS LATER
+	fprintf(fd, "%s%s\n", MAP_NEXT, MAP_END); // ADD A FEATURE TO CONNECT MAPS LATER
 }
 
 static void	map_loop(FILE *fd, t_editor *edit)
@@ -31,7 +65,7 @@ static void	map_loop(FILE *fd, t_editor *edit)
 		map.x = -edit->map_size.x - 1;
 		while (++map.x <= edit->map_size.x)
 		{
-			if (!(block = find_spot(edit->start, map)))
+			if (!(block = find_spot(edit->start, map)) || !block->block)
 				fprintf(fd, "%c", MAP_EMPTY);
 			else
 			{
@@ -52,6 +86,7 @@ int	map_write(t_editor *edit)
 
 	if (!(temp = ft_strjoin(edit->name, MAP_ENDING)))
 		err_exit(ERR_MEMORY, "map_write file name alloc");
+	temp = file_format(temp);
 	if (!(fd = fopen(temp, "w")))
 	{
 		free(temp);

@@ -40,6 +40,7 @@
 # define K_R 15
 # define K_S 1
 # define K_G 5
+# define K_E 14
 # define K_1 18
 # define K_2 19
 # define K_3 20
@@ -91,7 +92,7 @@
 */
 
 # define MAP_ENDING ".map"
-# define MAP_VERSION "0.01"
+# define MAP_VERSION "0.02"
 # define MAP_V "V: "MAP_VERSION
 # define MAP_NAME "Name: "
 # define MAP_DESC "Desc: "
@@ -113,9 +114,9 @@
 ** Editor definitions
 */
 
-# define EDI_WIDTH 600
-# define EDI_HEIGHT 400
-# define EDI_BLOCK 4 			// amount of blocks placeable
+# define EDI_WIDTH 1200
+# define EDI_HEIGHT 900
+# define EDI_BLOCK 5 			// amount of blocks placeable
 # define EDI_BLOCKW 20			// block pixel size // NEEDS TO BE EVEN FOR PLACEMENT TO WORK PROPERLY
 # define EDI_MIN_ZOOM 0.25
 # define EDI_MAX_ZOOM 4
@@ -145,10 +146,11 @@
 # define BLOCK3 3
 # define BLOCK4 4
 # define BLOCK5 5
-# define B_START BLOCK0
-# define B_END BLOCK1
-# define B_WALL BLOCK2
-# define B_FLOOR BLOCK3
+# define B_EMPTY BLOCK0
+# define B_START BLOCK1
+# define B_END BLOCK2
+# define B_WALL BLOCK3
+# define B_FLOOR BLOCK4
 
 /*
 ** "Texture" color definitions
@@ -205,6 +207,7 @@ typedef struct		s_editor
 	char		*desc;
 	char		*next;
 	t_mapb		*start;	// start point pointer
+	t_mapb		*edit; // selected block for param edit
 	int			select;	// selected block
 	char		port;	// teleport number
 	t_dot		map_size;

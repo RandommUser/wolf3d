@@ -51,15 +51,16 @@ static void	block_norm(t_editor *edit, t_mapb *start)
 		spawn = dot(iround(limit.x / 2), iround(limit.y / 2));
 		printf("no spawn found\n");
 	}
-	edit->map_size = dot(iround(limit.x / 2), iround(limit.y / 2));
+	edit->map_size.x = iround(limit.x / 2) < MAP_SIZE ? MAP_SIZE : iround(limit.x / 2);
+	edit->map_size.y = iround(limit.y / 2) < MAP_SIZE ? MAP_SIZE : iround(limit.y / 2);
 	printf("spawn is at %d %d\nmap size %d %d\n", spawn.x, spawn.y, limit.x, limit.y);
 	curr = start;
 	while (curr)
 	{
-		printf("base %d %d", curr->base_s.x, curr->base_s.y);
+	//	printf("base %d %d", curr->base_s.x, curr->base_s.y);
 		curr->base_s.x -= spawn.x;
 		curr->base_s.y -= spawn.y;
-		printf(" normed %d %d\n", curr->base_s.x, curr->base_s.y);
+	//	printf(" normed %d %d\n", curr->base_s.x, curr->base_s.y);
 		curr = curr->next;
 	}
 }
@@ -96,12 +97,7 @@ static int	block_read(int fd, t_editor *edit)
 		pad = 0;
 		while (line[++spot.x + pad])
 		{
-			if (line[spot.x + pad] == MAP_EMPTY)
-				continue ;
-			block[0] = line[spot.x + pad];
-			if (!edit->start)
-				edit->start = block_add(edit, ft_atoi(block), spot, block_param(&line[spot.x + pad]));
-			else if (line[spot.x + pad] == MAP_SPLIT)
+			if (line[spot.x + pad] == MAP_SPLIT)
 			{
 				while (line[spot.x + pad])
 					if (line[spot.x + pad++] == MAP_SPLIT_END)
@@ -109,6 +105,12 @@ static int	block_read(int fd, t_editor *edit)
 				if (!line[spot.x + pad])
 					return (0);
 			}
+			if (line[spot.x + pad] == MAP_EMPTY)
+				block[0] = '0';
+			else
+				block[0] = line[spot.x + pad];
+			if (!edit->start)
+				edit->start = block_add(edit, ft_atoi(block), spot, block_param(&line[spot.x + pad]));
 			else
 			{
 				block_edit(edit, ft_atoi(block), spot, block_param(&line[spot.x + pad]));
@@ -156,7 +158,7 @@ static int	map_header(int fd, t_editor *edit)
 	int		ret;
 
 	ret = get_next_line(fd, &line); // version
-	if (ret == 1 && !ft_strcmp(line, MAP_VERSION))
+	if (ret == 1 && !ft_strcmp(line, MAP_VERSION)) // DOES NOT WORK
 		ret = 0;
 	ft_memdel((void*)&line);
 	ret == 1 ? ret = get_next_line(fd, &line) : ret; // name

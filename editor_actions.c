@@ -47,12 +47,15 @@ static void block_param(t_mapb *block, char *param)
 {
 	if (block->param)
 		free(block->param);
+	block->param = param;
+	/*
 	block->param = NULL;
 	if (param && !(block->param = ft_strdup(param)))
 	{
 		free(block);
 		err_exit(ERR_MEMORY, "block param alloc fail");
 	}
+	*/
 }
 
 static void	block_free(t_mapb *block)
@@ -156,7 +159,7 @@ t_mapb	*block_add(t_editor *edit, int block, t_dot spot, char *param)
 	this->block = block;
 	this->next = NULL;
 	if (!edit->start)
-		return (this);
+		return ((edit->start = this));
 	curr = edit->start;
 	while (curr->next)
 		curr = curr->next;

@@ -83,6 +83,12 @@ void				text_init(void *mlx_ptr, void **text, int width, int height)
 
 	para.size.x = width;
 	para.size.y = height;
+	if (!(text[(para.i = B_EMPTY)] = mlx_new_image(mlx_ptr, para.size.x,
+		para.size.y)))
+		err_exit(ERR_MLX, "texture normal init failed");
+	para.img_dat = (int*)mlx_get_data_addr(text[para.i], &para.bpp, &para.line_size,
+		&para.endian);
+	solid_color(para.img_dat, para.size, 0x111111);
 	if (!(text[(para.i = B_START)] = mlx_new_image(mlx_ptr, para.size.x,
 		para.size.y)))
 		err_exit(ERR_MLX, "texture normal init failed");
