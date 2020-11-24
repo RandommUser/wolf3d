@@ -11,7 +11,9 @@ SRCS=editor.c\
 	map_writer.c\
 	struct.c\
 	key_active.c\
-	main.c
+	main.c\
+	toolbar.c\
+	toolbar_loops.c
 BIGO=$(SRCS:.c=.o)
 INC=-I ./minilibx -I libft 
 LIB=-L ./minilibx -lmlx -L ./libft -lft 

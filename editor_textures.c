@@ -12,30 +12,37 @@
 
 #include "header.h"
 
-static void		texts_init(void *mlx_ptr, void **text, t_box para)
+static void		texts_init(void *mlx_ptr, void **text, t_box para) // SELECTED
 {
-	if (!(text[(para.i = B_START + BLOCKSE)] = mlx_new_image(mlx_ptr,
+	if (!(text[(para.i = B_EMPTY + BLOCKSE)] = mlx_new_image(mlx_ptr, para.size.x, // empty
+		para.size.y)))
+		err_exit(ERR_MLX, "texture normal init failed");
+	para.img_dat = (int*)mlx_get_data_addr(text[para.i], &para.bpp, &para.line_size,
+		&para.endian);
+	solid_color(para.img_dat, para.size, EMPTY);
+	outline_color(para.img_dat, para.size, BAR_SELECTC, -1);
+	if (!(text[(para.i = B_START + BLOCKSE)] = mlx_new_image(mlx_ptr, // spawn
 		para.size.x, para.size.y)))
 		err_exit(ERR_MLX, "texture normal init failed");
 	para.img_dat = (int*)mlx_get_data_addr(text[para.i], &para.bpp, &para.line_size,
 		&para.endian);
 	spawn_color(para.img_dat, para.size, SPAWN_1, SPAWN_2);
 	outline_color(para.img_dat, para.size, BAR_SELECTC, -1);
-	if (!(text[(para.i = B_END + BLOCKSE)] = mlx_new_image(mlx_ptr,
+	if (!(text[(para.i = B_END + BLOCKSE)] = mlx_new_image(mlx_ptr, // exit
 		para.size.x, para.size.y)))
 		err_exit(ERR_MLX, "texture normal init failed");
 	para.img_dat = (int*)mlx_get_data_addr(text[para.i], &para.bpp, &para.line_size,
 		&para.endian);
 	spawn_color(para.img_dat, para.size, SPAWN_2, SPAWN_1);
 	outline_color(para.img_dat, para.size, BAR_SELECTC, -1);
-	if (!(text[(para.i = B_WALL + BLOCKSE)] = mlx_new_image(mlx_ptr,
+	if (!(text[(para.i = B_WALL + BLOCKSE)] = mlx_new_image(mlx_ptr, // wall
 		para.size.x, para.size.y)))
 		err_exit(ERR_MLX, "texture normal init failed");
 	para.img_dat = (int*)mlx_get_data_addr(text[para.i], &para.bpp, &para.line_size,
 		&para.endian);
 	wall_color(para.img_dat, para.size, WALL_1, WALL_2);
 	outline_color(para.img_dat, para.size, BAR_SELECTC, -1);
-	if (!(text[(para.i = B_FLOOR + BLOCKSE)] = mlx_new_image(mlx_ptr,
+	if (!(text[(para.i = B_FLOOR + BLOCKSE)] = mlx_new_image(mlx_ptr, // floor
 		para.size.x, para.size.y)))
 		err_exit(ERR_MLX, "texture normal init failed");
 	para.img_dat = (int*)mlx_get_data_addr(text[para.i], &para.bpp, &para.line_size,
@@ -44,30 +51,37 @@ static void		texts_init(void *mlx_ptr, void **text, t_box para)
 	outline_color(para.img_dat, para.size, BAR_SELECTC, -1);
 }
 
-static void		texth_init(void *mlx_ptr, void **text, t_box para)
+static void		texth_init(void *mlx_ptr, void **text, t_box para) // HOVER
 {
-	if (!(text[(para.i = B_START + BLOCKH)] = mlx_new_image(mlx_ptr,
+	if (!(text[(para.i = B_EMPTY + BLOCKH)] = mlx_new_image(mlx_ptr, para.size.x, // empty
+		para.size.y)))
+		err_exit(ERR_MLX, "texture normal init failed");
+	para.img_dat = (int*)mlx_get_data_addr(text[para.i], &para.bpp, &para.line_size,
+		&para.endian);
+	solid_color(para.img_dat, para.size, EMPTY);
+	outline_color(para.img_dat, para.size, BAR_HOVERC, -1);
+	if (!(text[(para.i = B_START + BLOCKH)] = mlx_new_image(mlx_ptr, // spawn
 		para.size.x, para.size.y)))
 		err_exit(ERR_MLX, "texture normal init failed");
 	para.img_dat = (int*)mlx_get_data_addr(text[para.i], &para.bpp, &para.line_size,
 		&para.endian);
 	spawn_color(para.img_dat, para.size, SPAWN_1, SPAWN_2);
 	outline_color(para.img_dat, para.size, BAR_HOVERC, -1);
-	if (!(text[(para.i = B_END + BLOCKH)] = mlx_new_image(mlx_ptr,
+	if (!(text[(para.i = B_END + BLOCKH)] = mlx_new_image(mlx_ptr, // exit
 		para.size.x, para.size.y)))
 		err_exit(ERR_MLX, "texture normal init failed");
 	para.img_dat = (int*)mlx_get_data_addr(text[para.i], &para.bpp, &para.line_size,
 		&para.endian);
 	spawn_color(para.img_dat, para.size, SPAWN_2, SPAWN_1);
 	outline_color(para.img_dat, para.size, BAR_HOVERC, -1);
-	if (!(text[(para.i = B_WALL + BLOCKH)] = mlx_new_image(mlx_ptr,
+	if (!(text[(para.i = B_WALL + BLOCKH)] = mlx_new_image(mlx_ptr, // wall
 		para.size.x, para.size.y)))
 		err_exit(ERR_MLX, "texture normal init failed");
 	para.img_dat = (int*)mlx_get_data_addr(text[para.i], &para.bpp, &para.line_size,
 		&para.endian);
 	wall_color(para.img_dat, para.size, WALL_1, WALL_2);
 	outline_color(para.img_dat, para.size, BAR_HOVERC, -1);
-	if (!(text[(para.i = B_FLOOR + BLOCKH)] = mlx_new_image(mlx_ptr,
+	if (!(text[(para.i = B_FLOOR + BLOCKH)] = mlx_new_image(mlx_ptr, // floor
 		para.size.x, para.size.y)))
 		err_exit(ERR_MLX, "texture normal init failed");
 	para.img_dat = (int*)mlx_get_data_addr(text[para.i], &para.bpp, &para.line_size,
@@ -83,31 +97,31 @@ void				text_init(void *mlx_ptr, void **text, int width, int height)
 
 	para.size.x = width;
 	para.size.y = height;
-	if (!(text[(para.i = B_EMPTY)] = mlx_new_image(mlx_ptr, para.size.x,
+	if (!(text[(para.i = B_EMPTY)] = mlx_new_image(mlx_ptr, para.size.x, // empty
 		para.size.y)))
 		err_exit(ERR_MLX, "texture normal init failed");
 	para.img_dat = (int*)mlx_get_data_addr(text[para.i], &para.bpp, &para.line_size,
 		&para.endian);
-	solid_color(para.img_dat, para.size, 0x111111);
-	if (!(text[(para.i = B_START)] = mlx_new_image(mlx_ptr, para.size.x,
+	solid_color(para.img_dat, para.size, EMPTY);
+	if (!(text[(para.i = B_START)] = mlx_new_image(mlx_ptr, para.size.x, // spawn
 		para.size.y)))
 		err_exit(ERR_MLX, "texture normal init failed");
 	para.img_dat = (int*)mlx_get_data_addr(text[para.i], &para.bpp, &para.line_size,
 		&para.endian);
 	spawn_color(para.img_dat, para.size, SPAWN_1, SPAWN_2);
-	if (!(text[(para.i = B_END)] = mlx_new_image(mlx_ptr, para.size.x,
+	if (!(text[(para.i = B_END)] = mlx_new_image(mlx_ptr, para.size.x, // exit
 		para.size.y)))
 		err_exit(ERR_MLX, "texture normal init failed");
 	para.img_dat = (int*)mlx_get_data_addr(text[para.i], &para.bpp, &para.line_size,
 		&para.endian);
 	spawn_color(para.img_dat, para.size, SPAWN_2, SPAWN_1);
-	if (!(text[(para.i = B_WALL)] = mlx_new_image(mlx_ptr, para.size.x,
+	if (!(text[(para.i = B_WALL)] = mlx_new_image(mlx_ptr, para.size.x, // wall
 		para.size.y)))
 		err_exit(ERR_MLX, "texture normal init failed");
 	para.img_dat = (int*)mlx_get_data_addr(text[para.i], &para.bpp, &para.line_size,
 		&para.endian);
 	wall_color(para.img_dat, para.size, WALL_1, WALL_2);
-	if (!(text[(para.i = B_FLOOR)] = mlx_new_image(mlx_ptr, para.size.x,
+	if (!(text[(para.i = B_FLOOR)] = mlx_new_image(mlx_ptr, para.size.x, // floor
 		para.size.y)))
 		err_exit(ERR_MLX, "texture normal init failed");
 	para.img_dat = (int*)mlx_get_data_addr(text[para.i], &para.bpp, &para.line_size,

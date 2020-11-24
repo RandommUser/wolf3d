@@ -45,37 +45,9 @@ static void		*input_loop(t_editor *edit, char *smsg, char *cmsg, char *curr)
 
 static void		map_save(t_editor *edit)
 {
-	//char	*str;
-
-
 	edit->name = input_loop(edit, "Write name in console", "Write the name\n", edit->name);
-	/*
-	ft_putendl("Write the name");
-	if (edit->name)
-	{
-		ft_putstr("or press enter for current (");
-		ft_putstr(edit->name);
-		ft_putstr(")\n");
-	}
-
-	mlx_string_put(edit->mlx_ptr, edit->mlx_win, 20, 300, 0x00ff00, "Write name in console"); // ADD LOOP TO CHECK IT NEEDS A VALUE
-	mlx_do_sync(edit->mlx_ptr);
-	if (get_next_line(0, &str) == 1 && str[0]) // leak
-		edit->name = str;
-	*/
 	printf("current name> '%s'\n", edit->name);
 	edit->desc = input_loop(edit, "Write description in console", "Write the description\n", edit->desc);
-	/*
-	block_to_image(edit);
-	ft_putendl("Write the description");
-	ft_putstr(edit->desc);
-	mlx_string_put(edit->mlx_ptr, edit->mlx_win, 20, 300, 0x00ff00, "Write description in console");
-	mlx_do_sync(edit->mlx_ptr);
-	if (!get_next_line(0, &str))
-		str = NULL;
-	else
-		edit->desc = str;
-	*/
 	printf("current desc> '%s'\n", edit->desc);
 	if (map_valid(edit, edit->start))
 	{
@@ -87,6 +59,31 @@ static void		map_save(t_editor *edit)
 	else
 		printf("not valid map!\n");
 	block_to_image(edit);
+}
+
+
+static int	param_check(char *str)
+{
+	static char	params[MAP_PARAMS + 1][100] = {
+		"START" ,  "END", "\0"
+	};
+	int	i;
+	int	s;
+	//params[MAP_PARAMS][0] = '\0';
+	i = -1;
+	s = 0;
+	while (!s && params[++i][0])
+		if (str == ft_strstr(str, params[i]))
+			s = 1;
+	if (s)
+	{
+		i = ft_strlen(params[i]);
+		if (str[i] == MAP_PARAM_SPLIT)
+			return (param_check(&str[++i]));
+		else if (str[i] == '\0')
+			return (1);
+	}
+	return (0);
 }
 
 static	void	edit_param(t_editor *edit, t_mapb *block)
@@ -113,11 +110,17 @@ static	void	edit_param(t_editor *edit, t_mapb *block)
 		free(param);
 		param = NULL;
 	}
-	if (block->param)
-		free(block->param);
-	block->param = param;
+	if (!param || param_check(param))
+	{
+		if (block->param)
+			free(block->param);
+		block->param = param;
+	}
+	else
+	{
+		printf("invalid param!!\n");
+	}
 	block_to_image(edit);
-	
 }
 
 static t_mapb	*block_read(t_editor *edi, int x, int y)
@@ -277,6 +280,7 @@ int	key_press(int key, void *para)
 		printf("currently pressed: [%d, %d, %d, %d, %d]\n",
 		edi->key[0],edi->key[1],edi->key[2],edi->key[3],edi->key[4]);
 	}
+	tool_render(edi->toolbar);
 	return (0);
 }
 

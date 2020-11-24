@@ -49,17 +49,17 @@ void	edi_block_image(t_box box)
 	}
 	if (image.y < 0)
 	{
-		pcorr.y = ft_abs(image.y);
-		tcorr.y = pcorr.y * box.step;
+		prog.y = ft_abs(image.y);
+		texture.y = prog.y * box.step;
 	}
 	text_data = (int*)mlx_get_data_addr(box.edit->mlx_img[box.curr->block], &box.bpp, &box.line_size, &box.endian);
-
 	while (iround(texture.y) < BLOCKW && image.y + prog.y < box.edit->size.y)
 	{
 		texture.x = tcorr.x;
 		prog.x = pcorr.x;
 		while (iround(texture.x) < BLOCKW && image.x + prog.x < box.edit->size.x)
 		{
+			//printf("text %f %f corr %f %f\nimage %d %d corr %d %d\n", texture.x, texture.y, tcorr.x, tcorr.y, prog.x + image.x, prog.y + image.y, pcorr.x, pcorr.y);
 			box.edit->map_data[prog.x + image.x + (prog.y + image.y) * box.edit->size.x] = 
 				text_data[iround(texture.x) + iround(texture.y) * BLOCKW];
 			prog.x++;

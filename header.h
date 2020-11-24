@@ -100,7 +100,9 @@
 # define MAP_END "END"
 # define MAP_EMPTY ' '
 # define MAP_SPLIT ':'
+# define MAP_PARAM_SPLIT ','
 # define MAP_SPLIT_END ';'
+# define MAP_PARAMS 2
 # define MAP_SPAWN_FLAG "START"
 # define MAP_END_FLAG "END"
 # define MAP_MAX_PORT 64
@@ -117,7 +119,7 @@
 # define EDI_WIDTH 1200
 # define EDI_HEIGHT 900
 # define EDI_BLOCK 5 			// amount of blocks placeable
-# define EDI_BLOCKW 20			// block pixel size // NEEDS TO BE EVEN FOR PLACEMENT TO WORK PROPERLY
+# define EDI_BLOCKW 40			// block pixel size // NEEDS TO BE EVEN FOR PLACEMENT TO WORK PROPERLY
 # define EDI_MIN_ZOOM 0.25
 # define EDI_MAX_ZOOM 4
 # define EDI_ZOOM_STEP 0.1
@@ -126,11 +128,14 @@
 ** Editor toolbar definitions
 */
 
-# define BAR_WIDTH 300
-# define BAR_HEIGHT 50
+# define BAR_BLOCKW EDI_BLOCKW
+# define BAR_WIDTH BLOCKS * BAR_BLOCKW
+# define BAR_HEIGHT BAR_BLOCKW + 30
 # define BAR_HOVERC 0xfff700
 # define BAR_SELECTC 0xff0000
-
+# define BAR_C_GOOD 0x00ff00
+# define BAR_C_WARN 0xff800
+# define BAR_C_BAD 0xff0000
 
 /*
 ** Editor block definitions
@@ -158,9 +163,11 @@
 
 # define SPAWN_1 0x888888
 # define SPAWN_2 0xffffff
-# define WALL_1 0x52504d
-# define WALL_2 0xdddddd
-# define FLOOR 0x333333
+# define WALL_1 0xa33903
+# define WALL_2 0xc4bdb9
+# define FLOOR 0x1c8f18
+# define EMPTY 0x4a2505
+# define MAP_BASE 0x098785
 
 /*
 ** Exit codes
@@ -217,13 +224,16 @@ typedef struct		s_editor
 	int			key[KEY_DOWN];
 	int			button[MOUSE_DOWN];
 	t_dot		mouse_pos;
+	void		*toolbar;
 }					t_editor;
 
 typedef struct		s_toolbar
 {
-	void		**mlx_img;
+	void		*mlx_ptr;
+	void		*mlx_win;
+	int			hover; // default -1
 	t_dot		size;
-	t_editor	editor;
+	t_editor	*editor;
 }					t_toolbar;
 
 typedef struct		s_nmap
@@ -275,6 +285,10 @@ int					map_write(t_editor *edit);
 
 void				edi_block_image(t_box box);
 void				image_wipe(int *img_dat, int color, int width, int height);
+
+void				tool_render(t_toolbar *bar);
+int					bar_mouse_hover(int x, int y, void *param);
+int					bar_mouse_click(int button, int x, int y, void *para);
 
 int					key(int key, void *param);
 int					mouse(int button, int x, int y, void *param);

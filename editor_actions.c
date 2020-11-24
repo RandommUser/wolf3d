@@ -221,7 +221,7 @@ void	block_to_image(t_editor *edit)
 
 	if (!(box.curr = edit->start))
 		return ;
-	image_wipe(edit->map_data, 0x000000, edit->size.x, edit->size.y);
+	image_wipe(edit->map_data, MAP_BASE, edit->size.x, edit->size.y);
 	box.blockw = BLOCKW * edit->zoom;
 	box.w = edit->size.x / 2 * edit->zoom;
 	box.h = edit->size.y / 2 * edit->zoom;
