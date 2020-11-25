@@ -250,4 +250,6 @@ void	block_to_image(t_editor *edit)
 	}
 	mlx_clear_window(edit->mlx_ptr, edit->mlx_win);
 	mlx_put_image_to_window(edit->mlx_ptr, edit->mlx_win, edit->map_img, 0, 0);
+	write_to_editor(edit, dot(0, 0), 0xffffff, "[TEST STRING] []()!.,\nlinebreak");
+	//mlx_string_put(edit->mlx_ptr, edit->mlx_win, 0, 0, 0xffffff, "[TEST STRING] []()!.,\nlinebreak");
 }

@@ -12,6 +12,7 @@ SRCS=editor.c\
 	struct.c\
 	key_active.c\
 	main.c\
+	text_writer.c\
 	toolbar.c\
 	toolbar_loops.c
 BIGO=$(SRCS:.c=.o)

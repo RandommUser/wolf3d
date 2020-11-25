@@ -245,6 +245,12 @@ int	key_press(int key, void *para)
 	t_editor	*edi;
 
 	edi = para;
+	if (key_controls(edi->key, KEY_DOWN, key, '+'))
+	{
+		printf("pressed %d\n", key);
+		printf("currently pressed: [%d, %d, %d, %d, %d]\n",
+		edi->key[0],edi->key[1],edi->key[2],edi->key[3],edi->key[4]);
+	}
 	if (key == ESC_KEY)
 	{
 		block_tree_del(edi->start);
@@ -254,6 +260,8 @@ int	key_press(int key, void *para)
 		mlx_destroy_window(edi->mlx_ptr, edi->mlx_win);
 		good_exit(EXIT_SUCCESS, "esc quit");
 	}
+	else if (is_pressed(edi->key, KEY_DOWN, L_CTRL) && is_pressed(edi->key, KEY_DOWN, K_S))
+		map_save(edi);
 	else if (key == K_R)
 		mlx_clear_window(edi->mlx_ptr, edi->mlx_win);
 	else if (key == K_1)
@@ -266,19 +274,13 @@ int	key_press(int key, void *para)
 		edi->select = BLOCK4;
 	else if (key == K_E)
 		edi->select = B_EMPTY;
-	else if (key == K_S)
-	{
-		map_valid(edi, edi->start);
-	}
+	//else if (key == K_S)
+	//{
+	//	map_valid(edi, edi->start);
+	//}
 	else if (key == K_G)
 	{
 		map_save(edi);
-	}
-	if (key_controls(edi->key, KEY_DOWN, key, '+'))
-	{
-		printf("pressed %d\n", key);
-		printf("currently pressed: [%d, %d, %d, %d, %d]\n",
-		edi->key[0],edi->key[1],edi->key[2],edi->key[3],edi->key[4]);
 	}
 	tool_render(edi->toolbar);
 	return (0);
@@ -313,7 +315,9 @@ int button_pressed(int button, int x, int y, void *para) // Limit listed buttons
 	else if (button == MOU_R)
 	{
 		//block_to_image(edi);
-		edi->edit = block_read(edi, x, y);
+		/*edi->edit = */block_read(edi, x, y);
+		mlx_clear_window(edi->mlx_ptr, edi->mlx_win);
+		write_to_editor(edi, dot(x, y), 0xffffff, "this is to test the word-wrapping\tthat was a tabulator\nLINEBREAK!!!");
 	}
 	else if (button == MOU_S_D)
 	{

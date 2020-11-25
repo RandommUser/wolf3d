@@ -37,6 +37,7 @@
 # define KEY_DOWN 5
 # define NO_KEY -1
 # define ESC_KEY 53
+# define L_CTRL 256
 # define K_R 15
 # define K_S 1
 # define K_G 5
@@ -66,6 +67,8 @@
 # define MIN_HEIGHT 50
 # define MAX_WIDTH 2560
 # define MAX_HEIGHT 1440
+# define TEXT_WIDTH 10
+# define TEXT_HEIGHT 16
 
 /*
 ** MLX hook definitions
@@ -263,6 +266,17 @@ typedef struct		s_box
 	PRECISION	step;
 }					t_box;
 
+typedef struct		s_print
+{
+	void	*mlx_ptr;
+	void	*mlx_win;
+	t_dot	pos;
+	t_dot	size;
+	int		color;
+	char	*str;
+}					t_print;
+
+
 void				good_exit(int code, char *msg);
 void				err_exit(int error, char *msg);
 
@@ -313,6 +327,7 @@ t_dot				dot(int x, int y);
 t_pdot				pdot(PRECISION x, PRECISION y);
 t_nmap				nmap(PRECISION ran11, PRECISION ran12, PRECISION ran21, PRECISION ran22);
 
+void				write_to_editor(t_editor *edit, t_dot pos, int color, char *str);
 
 PRECISION			map(PRECISION p, t_nmap ran);
 int					iround(PRECISION in);
