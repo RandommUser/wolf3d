@@ -38,10 +38,12 @@
 # define NO_KEY -1
 # define ESC_KEY 53
 # define L_CTRL 256
+# define L_CMND 259
 # define K_R 15
 # define K_S 1
 # define K_G 5
 # define K_E 14
+# define K_Z 6
 # define K_1 18
 # define K_2 19
 # define K_3 20
@@ -126,6 +128,7 @@
 # define EDI_MIN_ZOOM 0.25
 # define EDI_MAX_ZOOM 4
 # define EDI_ZOOM_STEP 0.1
+# define EDI_HISTORY 50
 
 /*
 ** Editor toolbar definitions
@@ -198,8 +201,7 @@ typedef struct		s_pdot // checks for too much offset
 
 typedef struct		s_mapb
 {
-	t_dot	base_s;
-	t_dot	top_s;
+	t_dot	pos;
 	int		block;
 	char	*param;
 	void	*next;
@@ -287,8 +289,10 @@ t_mapb				*block_add(t_editor *edit, int block, t_dot spot, char *param);
 int					block_edit(t_editor *edit, int block, t_dot spot, char *param);
 void				block_list(t_mapb *start);
 int					block_cut(t_mapb *start, t_dot spot);
+void				block_free(t_mapb *block);
 int 				block_check(t_mapb *block, char *str);
 void				block_tree_del(t_mapb *start);
+void				block_undo(t_editor *edit, t_mapb *block, int b, char *param);
 void				block_to_image(t_editor *edit);
 int					map_valid(t_editor *edit, t_mapb *start);
 t_mapb				*find_spot(t_mapb *start, t_dot spot);
@@ -303,6 +307,7 @@ void				image_wipe(int *img_dat, int color, int width, int height);
 void				tool_render(t_toolbar *bar);
 int					bar_mouse_hover(int x, int y, void *param);
 int					bar_mouse_click(int button, int x, int y, void *para);
+int					tool_exit(t_toolbar *param);
 
 int					key(int key, void *param);
 int					mouse(int button, int x, int y, void *param);
@@ -313,6 +318,7 @@ int 				button_released(int button, int x, int y, void *para);
 int					motion_notify(int x, int y, void *para);
 int 				enter_notify(void *para);
 int 				leave_notify(void *para);
+int					editor_exit(t_editor *edit);
 
 int					is_pressed(int *tab, int n, int key);
 int					key_controls(int *tab, int n, int key, char ac);

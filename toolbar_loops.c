@@ -34,6 +34,7 @@ int			bar_mouse_hover(int x, int y, void *param)
 	t_toolbar	*bar;
 
 	bar = param;
+	//printf("motion at %d %d\n", x, y);
 	if (y < 0 || y > BAR_HEIGHT || x < 0 || x > BAR_WIDTH)
 		return ((bar->hover = -1));
 	bar->hover = block_select(x, y);
@@ -48,7 +49,7 @@ int			bar_mouse_click(int button, int x, int y, void *param)
 	bar = param;
 	if (y < 0 || y > BAR_HEIGHT || x < 0 || x > BAR_WIDTH)
 		return (0);
-	if (button == MOU_L)
+	if (button == MOU_R)
 	{
 		bar->editor->select = block_select(x, y) != -1 ? block_select(x, y) : bar->editor->select;
 	}

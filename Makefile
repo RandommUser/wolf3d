@@ -2,6 +2,7 @@ NAME=wolf3d
 SRCS=editor.c\
 	editor_actions.c\
 	editor_coloring.c\
+	editor_history.c\
 	editor_textures.c\
 	editor_loops.c\
 	exit.c\

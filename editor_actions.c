@@ -21,7 +21,7 @@ t_mapb		*find_spot(t_mapb *start, t_dot spot)
 	curr = start;
 	while(curr)
 	{
-		if (curr->base_s.x == spot.x && curr->base_s.y == spot.y)
+		if (curr->pos.x == spot.x && curr->pos.y == spot.y)
 			return (curr);
 		curr = curr->next;
 	}
@@ -58,8 +58,10 @@ static void block_param(t_mapb *block, char *param)
 	*/
 }
 
-static void	block_free(t_mapb *block)
+void	block_free(t_mapb *block)
 {	// FREE STUFF HERE
+	if (!block)
+		return ;
 	free(block->param);
 	free(block);
 	block = NULL;
@@ -82,8 +84,8 @@ int		map_valid(t_editor *edit, t_mapb *start)
 			}
 		if (block_check(curr, MAP_END_FLAG))
 			goals.y++;
-		if ((edit->map_size.x > 0 && (curr->base_s.x < -edit->map_size.x || curr->base_s.x > edit->map_size.x )) ||
-		(edit->map_size.y > 0 && (curr->base_s.y < -edit->map_size.y || curr->base_s.y > edit->map_size.y)))
+		if ((edit->map_size.x > 0 && (curr->pos.x < -edit->map_size.x || curr->pos.x > edit->map_size.x )) ||
+		(edit->map_size.y > 0 && (curr->pos.y < -edit->map_size.y || curr->pos.y > edit->map_size.y)))
 		{
 			mlx_string_put(edit->mlx_ptr, edit->mlx_win, 20, 10, 0xff0000, "BLOCK OUT OF MAP");
 			return (0);
@@ -120,8 +122,8 @@ int		block_cut(t_mapb *start, t_dot spot)
 	previous = NULL;
 	while (curr)
 	{
-		if (curr->base_s.x == spot.x &&
-			curr->base_s.y == spot.y)
+		if (curr->pos.x == spot.x &&
+			curr->pos.y == spot.y)
 		{
 			if (previous)
 			{
@@ -154,8 +156,8 @@ t_mapb	*block_add(t_editor *edit, int block, t_dot spot, char *param)
 		err_exit(ERR_MEMORY, "block add alloc fail");
 	this->param = NULL;
 	block_param(this, param);
-	this->base_s.x = spot.x;
-	this->base_s.y = spot.y;
+	this->pos.x = spot.x;
+	this->pos.y = spot.y;
 	this->block = block;
 	this->next = NULL;
 	if (!edit->start)
@@ -181,6 +183,7 @@ int		block_edit(t_editor *edit, int block, t_dot spot, char *param)
 	//printf("curr is %p\n", curr);
 	if (curr && !block_check(curr, MAP_SPAWN_FLAG))
 	{
+		block_undo(edit, curr, block, param);
 		curr->block = block;
 		block_param(curr, param);
 		return (1);
@@ -204,7 +207,7 @@ void	block_list(t_mapb *start)
 	while (curr)
 	{
 		i++;
-		printf("Block #%d\nX: %d Y: %d\n",i,curr->base_s.x, curr->base_s.y);
+		printf("Block #%d\nX: %d Y: %d\n",i,curr->pos.x, curr->pos.y);
 		printf("Block: %d\n",curr->block);
 		printf("Param: %s\n", curr->param);
 		printf("Next: %p\n", curr->next);
@@ -228,10 +231,10 @@ void	block_to_image(t_editor *edit)
 	box.i = 0;
 	while (box.curr)
 	{
-		//spot.x = box.curr->base_s.x * box.blockw - box.blockw / 2;
-		//spot.y = box.curr->base_s.y * box.blockw - box.blockw / 2;
-		spot.x = box.curr->base_s.x * BLOCKW - BLOCKW / 2;
-		spot.y = box.curr->base_s.y * BLOCKW - BLOCKW / 2;
+		//spot.x = box.curr->pos.x * box.blockw - box.blockw / 2;
+		//spot.y = box.curr->pos.y * box.blockw - box.blockw / 2;
+		spot.x = box.curr->pos.x * BLOCKW - BLOCKW / 2;
+		spot.y = box.curr->pos.y * BLOCKW - BLOCKW / 2;
 		if ((spot.x >= edit->offset.x - box.w && spot.x <= edit->offset.x + box.w) ||
 		(spot.x + BLOCKW >= edit->offset.x - box.w && spot.x + BLOCKW <= edit->offset.x + box.w))
 		{
@@ -250,6 +253,4 @@ void	block_to_image(t_editor *edit)
 	}
 	mlx_clear_window(edit->mlx_ptr, edit->mlx_win);
 	mlx_put_image_to_window(edit->mlx_ptr, edit->mlx_win, edit->map_img, 0, 0);
-	write_to_editor(edit, dot(0, 0), 0xffffff, "[TEST STRING] []()!.,\nlinebreak");
-	//mlx_string_put(edit->mlx_ptr, edit->mlx_win, 0, 0, 0xffffff, "[TEST STRING] []()!.,\nlinebreak");
 }

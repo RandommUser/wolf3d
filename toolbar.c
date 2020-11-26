@@ -81,3 +81,13 @@ void		tool_render(t_toolbar *bar)
 			bar->editor->mlx_img[i], spot.x, spot.y);
 	tool_hover(bar);
 }
+
+int			tool_exit(t_toolbar *param)
+{
+	t_toolbar	*bar;
+
+	bar = param;
+	mlx_destroy_window(bar->mlx_ptr, bar->mlx_win);
+	key_press(ESC_KEY, bar->editor);
+	return (0);
+}

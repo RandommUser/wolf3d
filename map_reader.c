@@ -40,10 +40,10 @@ static void	block_norm(t_editor *edit, t_mapb *start)
 		if(!found && block_check(curr, MAP_SPAWN_FLAG))
 		{
 			found = 1;
-			spawn = dot(curr->base_s.x, curr->base_s.y);
+			spawn = curr->pos;
 		}
-		limit.x = limit.x < curr->base_s.x ? curr->base_s.x : limit.x; // EMPTY NOT ADDED TO THE LIST
-		limit.y = limit.y < curr->base_s.y ? curr->base_s.y : limit.y;
+		limit.x = limit.x < curr->pos.x ? curr->pos.x : limit.x; // EMPTY NOT ADDED TO THE LIST
+		limit.y = limit.y < curr->pos.y ? curr->pos.y : limit.y;
 		curr = curr->next;
 	}
 	if (!found)
@@ -57,10 +57,10 @@ static void	block_norm(t_editor *edit, t_mapb *start)
 	curr = start;
 	while (curr)
 	{
-	//	printf("base %d %d", curr->base_s.x, curr->base_s.y);
-		curr->base_s.x -= spawn.x;
-		curr->base_s.y -= spawn.y;
-	//	printf(" normed %d %d\n", curr->base_s.x, curr->base_s.y);
+	//	printf("base %d %d", curr->pos.x, curr->pos.y);
+		curr->pos.x -= spawn.x;
+		curr->pos.y -= spawn.y;
+	//	printf(" normed %d %d\n", curr->pos.x, curr->pos.y);
 		curr = curr->next;
 	}
 }

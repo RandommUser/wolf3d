@@ -148,7 +148,7 @@ static t_mapb	*block_read(t_editor *edi, int x, int y)
 	}
 	else if (block)
 	{
-		printf("Block X: %d Y: %d\n", block->base_s.x, block->base_s.y);
+		printf("Block X: %d Y: %d\n", block->pos.x, block->pos.y);
 		printf("Block: %d\n",block->block);
 		printf("Param: %s\n", block->param);
 		printf("Next: %p\n", block->next);
@@ -262,6 +262,11 @@ int	key_press(int key, void *para)
 	}
 	else if (is_pressed(edi->key, KEY_DOWN, L_CTRL) && is_pressed(edi->key, KEY_DOWN, K_S))
 		map_save(edi);
+	else if (is_pressed(edi->key, KEY_DOWN, L_CMND) && is_pressed(edi->key, KEY_DOWN, K_Z))
+	{
+		printf("cmnd + z\n");
+		block_undo(edi, NULL, 0, NULL);
+	}
 	else if (key == K_R)
 		mlx_clear_window(edi->mlx_ptr, edi->mlx_win);
 	else if (key == K_1)
@@ -376,7 +381,7 @@ int	motion_notify(int x, int y, void *para)
 	}
 	else if (is_pressed(edi->button, MOUSE_DOWN, MOU_L))
 		b_block_place(edi, x, y);
-	//printf("motion at %d %d\n", dot.x, dot.y);
+	//printf("motion in editor at %d %d\n", dot.x, dot.y);
 	return (0);
 }
 
@@ -395,5 +400,11 @@ int leave_notify(void *para)
 
 	edi = para;
 	printf("leave\n");
+	return (0);
+}
+
+int	editor_exit(t_editor *edit)
+{
+	tool_exit(edit->toolbar);
 	return (0);
 }

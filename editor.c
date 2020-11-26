@@ -27,7 +27,7 @@ static	t_mapb	*map_init(t_editor *edit)
 				printf("block added %d %d\n", spot.x, spot.y);
 		}
 	}
-	block_edit(edit, B_END + BLOCKSE, dot(0, 5), ft_strdup(MAP_END_FLAG));
+	block_edit(edit, B_END + BLOCKSE, dot(0, 5), ft_strdup(MAP_END_FLAG)); // no alloc checking
 	return (edit->start);
 }
 
@@ -110,9 +110,11 @@ void	editor(char *arg)
 	mlx_hook(windows[0], MOTION_NOTIFY, 0, &motion_notify, &editor);
 	mlx_hook(windows[0], ENTER_NOTIFY, 0, &enter_notify, &editor);
 	mlx_hook(windows[0], LEAVE_NOTIFY, 0, &leave_notify, &editor);
+	mlx_hook(windows[0], WINDOW_CLOSE, 0, &editor_exit, &editor);
 
 	mlx_hook(windows[1], BUTTON_PRESS, 0, &bar_mouse_click, &toolbar);
 	mlx_hook(windows[1], MOTION_NOTIFY, 0, &bar_mouse_hover, &toolbar);
+	mlx_hook(windows[1], WINDOW_CLOSE, 0, &tool_exit, &toolbar);
 
 	block_to_image(&editor);
 	tool_render(&toolbar);
