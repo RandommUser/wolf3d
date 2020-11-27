@@ -308,6 +308,7 @@ void				tool_render(t_toolbar *bar);
 int					bar_mouse_hover(int x, int y, void *param);
 int					bar_mouse_click(int button, int x, int y, void *para);
 int					tool_exit(t_toolbar *param);
+int					bar_key_press(int key, t_toolbar *bar);
 
 int					key(int key, void *param);
 int					mouse(int button, int x, int y, void *param);

@@ -49,10 +49,19 @@ int			bar_mouse_click(int button, int x, int y, void *param)
 	bar = param;
 	if (y < 0 || y > BAR_HEIGHT || x < 0 || x > BAR_WIDTH)
 		return (0);
-	if (button == MOU_R)
-	{
-		bar->editor->select = block_select(x, y) != -1 ? block_select(x, y) : bar->editor->select;
-	}
+	if (button == MOU_R || button == MOU_L)
+		bar->editor->select = block_select(x, y) != -1 ?
+			block_select(x, y) : bar->editor->select;
 	tool_render(bar);
+	return (0);
+}
+
+int			bar_key_press(int key, t_toolbar *bar)
+{
+	if (key == ESC_KEY)
+	{
+		mlx_destroy_window(bar->mlx_ptr, bar->mlx_win);
+		key_press(ESC_KEY, bar->editor);
+	}
 	return (0);
 }

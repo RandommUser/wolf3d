@@ -115,6 +115,7 @@ void	editor(char *arg)
 	mlx_hook(windows[1], BUTTON_PRESS, 0, &bar_mouse_click, &toolbar);
 	mlx_hook(windows[1], MOTION_NOTIFY, 0, &bar_mouse_hover, &toolbar);
 	mlx_hook(windows[1], WINDOW_CLOSE, 0, &tool_exit, &toolbar);
+	mlx_hook(windows[1], KEY_PRESS, 0, &bar_key_press, &toolbar);
 
 	block_to_image(&editor);
 	tool_render(&toolbar);
