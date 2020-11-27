@@ -27,15 +27,15 @@ static t_mapb	*dube_block(t_mapb *block)
 	return (ret);
 }
 
-static int	block_comp(t_mapb *block1, t_mapb *history, int b, char *param)
+static int	block_comp(t_mapb *block, t_mapb *history, int b, char *param)
 {
 	if (!history)
 		return (1);
-	if (block1->block != b)
+	if (block->block != b)
 		return (1);
-	if ((block1->param && !param) || (!block1->param && param))
+	if ((block->param && !param) || (!block->param && param))
 		return (1);
-	if (block1->param && param && ft_strcmp(block1->param, param))
+	if (block->param && param && ft_strcmp(block->param, param))
 		return (1);
 	return (0);
 }
@@ -44,14 +44,13 @@ void		block_undo(t_editor *edit, t_mapb *block, int b, char *param)
 {
 	static t_mapb	*history[EDI_HISTORY + 1];
 	t_mapb			temp;
+	static int		undo = 0;
 	int				i;
 
 	i = 0;
-//	block_free(history[EDI_HISTORY]);
-//	history[EDI_HISTORY] = NULL;
-	if (block && block_comp(block, history[i], b, param))
+	if (!undo && block && block_comp(block, history[i], b, param))
 	{
-		printf("added\n");
+	//	printf("added\n");
 		while (history[i])
 			i++;
 		if (i == EDI_HISTORY)
@@ -59,6 +58,7 @@ void		block_undo(t_editor *edit, t_mapb *block, int b, char *param)
 		while (i-- > 0)
 			history[i + 1] = history[i];
 		history[0] = dube_block(block);
+	//	printf("+++\nnew block %d x %d\nblock: %d\nparam: %s\n+++\n", history[0]->pos.x, history[0]->pos.y, history[0]->block, history[0]->param);
 	}
 	else if (!block)
 	{
@@ -68,10 +68,14 @@ void		block_undo(t_editor *edit, t_mapb *block, int b, char *param)
 			temp.block = history[i]->block;
 			temp.pos = history[i]->pos;
 			temp.param = history[i]->param;
-			free(history[i]);
-			history[i] = NULL;
+		//	printf("---\nundoing block %d x %d\nblock: %d\nparam: %s\n---\n", temp.pos.x, temp.pos.y, temp.block, temp.param);
+			//free(history[i]); // MAYBE NOT NEEDED?? logic needed
+			//history[i] = NULL;
+			undo = 1;
 			block_edit(edit, temp.block, temp.pos, temp.param);
-			block_free(history[i]);
+			undo = 0;
+			//block_free(history[i]);
+			free(history[i]);
 		}
 		while (i++ < EDI_HISTORY)
 			history[i - 1] = history[i];

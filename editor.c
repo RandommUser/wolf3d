@@ -79,20 +79,22 @@ void	editor(char *arg)
 	void		*windows[2];
 	void		*textures[EDI_BLOCK * 3];
 
+	editor = editor_init(EDI_WIDTH, EDI_HEIGHT, textures);
+	if (arg && !map_reader(arg, &editor))
+		err_exit(ERR_PARA, "Bad map\n");
 	if (!(mlx_ptr = mlx_init()))
 		err_exit(ERR_MLX, "editor mlx_ptr init failed");
 	if (!(windows[0] = mlx_new_window(mlx_ptr, EDI_WIDTH, EDI_HEIGHT, "Map editor")))
 		err_exit(ERR_MLX, "editor main window start failed");
 	if (!(windows[1] = mlx_new_window(mlx_ptr, BAR_WIDTH, BAR_HEIGHT, "Editor toolbar")))
 		err_exit(ERR_MLX, "editor toolbar window start failed");
-	editor = editor_init(EDI_WIDTH, EDI_HEIGHT, textures);
+	//editor = editor_init(EDI_WIDTH, EDI_HEIGHT, textures);
 	editor.mlx_ptr = mlx_ptr;
 	editor.mlx_win = windows[0];
 	if (!(editor.map_img = mlx_new_image(mlx_ptr, EDI_WIDTH, EDI_HEIGHT)))
 		err_exit(ERR_MLX, "editor map_img start failed");
 	editor.map_data = (int*)mlx_get_data_addr(editor.map_img, &box.bpp, &box.line_size, &box.endian);
-	if (arg)
-		map_reader(arg, &editor);
+	
 	text_init(mlx_ptr, textures, BLOCKW, BLOCKW);
 
 	toolbar = toolbar_init(BAR_WIDTH, BAR_HEIGHT, &editor);

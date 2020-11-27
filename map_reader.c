@@ -158,22 +158,25 @@ static int	map_header(int fd, t_editor *edit)
 	int		ret;
 
 	ret = get_next_line(fd, &line); // version
-	if (ret == 1 && !ft_strcmp(line, MAP_VERSION)) // DOES NOT WORK
+	if (ret == 1 && ft_strcmp(line, MAP_V))
+	{
+		printf("'%s' vs '%s'\n", line, MAP_V);
 		ret = 0;
+	}
 	ft_memdel((void*)&line);
-	ret == 1 ? ret = get_next_line(fd, &line) : ret; // name
+	ret = ret == 1 ? ret = get_next_line(fd, &line) : ret; // name
 	if (ret == 1  && line && !(start = moved_str(line, MAP_NAME)))
 		ret = 0;
 	if (ret == 1  && start && !(edit->name = ft_strdup(start)))
 		err_exit(ERR_MEMORY, "map_header name alloc");
 	ft_memdel((void*)&line);
-	ret == 1 ? ret = get_next_line(fd, &line) : ret; // desc
+	ret = ret == 1 ? ret = get_next_line(fd, &line) : ret; // desc
 	if (ret == 1  && line && !(start = moved_str(line, MAP_DESC)))
 		ret = 0;
 	if (ret && start && !(edit->desc = ft_strdup(start)))
 		err_exit(ERR_MEMORY, "map_header desc alloc");
 	ft_memdel((void*)&line);
-	ret == 1 ? ret = get_next_line(fd, &line) : ret; // end
+	ret = ret == 1 ? ret = get_next_line(fd, &line) : ret; // end
 	if (ret == 1  && line && !(start = moved_str(line, MAP_NEXT)))
 		ret = 0;
 	if (ret == 1  && start && !(edit->next = ft_strdup(start)))

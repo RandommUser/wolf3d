@@ -180,8 +180,7 @@ int		block_edit(t_editor *edit, int block, t_dot spot, char *param)
 		(edit->map_size.y > 0 && (spot.y < -edit->map_size.y || spot.y > edit->map_size.y)))
 			return (0);*/
 	curr = find_spot(edit->start, spot);
-	//printf("curr is %p\n", curr);
-	if (curr && !block_check(curr, MAP_SPAWN_FLAG))
+	if (curr && !(curr->block == 6 && block_check(curr, MAP_SPAWN_FLAG)))
 	{
 		block_undo(edit, curr, block, param);
 		curr->block = block;

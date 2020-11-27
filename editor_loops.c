@@ -49,15 +49,15 @@ static void		map_save(t_editor *edit)
 	printf("current name> '%s'\n", edit->name);
 	edit->desc = input_loop(edit, "Write description in console", "Write the description\n", edit->desc);
 	printf("current desc> '%s'\n", edit->desc);
-	if (map_valid(edit, edit->start))
-	{
+	//if (map_valid(edit, edit->start))	// NO VALID MAP CHECKING, MOVE TO PLAYING THE MAP
+	//{
 		if (map_write(edit))
 			printf("map printed\n");
 		else
 			printf("Map printing failed\n");
-	}
-	else
-		printf("not valid map!\n");
+	//}
+	//else
+	//	printf("not valid map!\n");
 	block_to_image(edit);
 }
 
@@ -99,22 +99,23 @@ static	void	edit_param(t_editor *edit, t_mapb *block)
 		ft_putstr(")\n");
 	}
 	if (get_next_line(0, &param) != 1)
-		err_exit(ERR_MEMORY, "edit_param gnl alloc error");
+		err_exit(ERR_MEMORY, "edit_param gnl error");
 	else if (!param[0]) // new input empty
 	{
 		free(param);
 		param = ft_strdup(block->param); // alloc check
 	}
-	else if (!ft_strcmp(param, "NULL")) // input is NULL
+	else if (!ft_strcmp(param, "NULL")) // input is "NULL"
 	{
 		free(param);
 		param = NULL;
 	}
 	if (!param || param_check(param))
 	{
-		if (block->param)
-			free(block->param);
-		block->param = param;
+		//if (block->param)
+		//	free(block->param);
+		//block->param = NULL;
+		block_edit(edit, block->block, block->pos, param);
 	}
 	else
 	{
@@ -261,11 +262,16 @@ int	key_press(int key, void *para)
 		good_exit(EXIT_SUCCESS, "esc quit");
 	}
 	else if (is_pressed(edi->key, KEY_DOWN, L_CTRL) && is_pressed(edi->key, KEY_DOWN, K_S))
+	{
 		map_save(edi);
+		key_controls(edi->key, KEY_DOWN, L_CTRL, '-');
+		key_controls(edi->key, KEY_DOWN, K_S, '-');
+	}
 	else if (is_pressed(edi->key, KEY_DOWN, L_CMND) && is_pressed(edi->key, KEY_DOWN, K_Z))
 	{
 		printf("cmnd + z\n");
 		block_undo(edi, NULL, 0, NULL);
+		key_controls(edi->key, KEY_DOWN, K_Z, '-');
 	}
 	else if (key == K_R)
 		mlx_clear_window(edi->mlx_ptr, edi->mlx_win);
@@ -318,12 +324,7 @@ int button_pressed(int button, int x, int y, void *para) // Limit listed buttons
 	if (button == MOU_L)
 		b_block_place(edi, x, y);
 	else if (button == MOU_R)
-	{
-		//block_to_image(edi);
-		/*edi->edit = */block_read(edi, x, y);
-		mlx_clear_window(edi->mlx_ptr, edi->mlx_win);
-		write_to_editor(edi, dot(x, y), 0xffffff, "this is to test the word-wrapping\tthat was a tabulator\nLINEBREAK!!!");
-	}
+		edi->edit = block_read(edi, x, y);
 	else if (button == MOU_S_D)
 	{
 		edi->zoom *= 1 - EDI_ZOOM_STEP;
