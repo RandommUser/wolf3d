@@ -40,7 +40,7 @@ static int	block_comp(t_mapb *block, t_mapb *history, int b, char *param)
 	return (0);
 }
 
-void		block_undo(t_editor *edit, t_mapb *block, int b, char *param)
+void		block_undo(t_map *map, t_mapb *block, int b, char *param)
 {
 	static t_mapb	*history[EDI_HISTORY + 1];
 	t_mapb			temp;
@@ -72,13 +72,13 @@ void		block_undo(t_editor *edit, t_mapb *block, int b, char *param)
 			//free(history[i]); // MAYBE NOT NEEDED?? logic needed
 			//history[i] = NULL;
 			undo = 1;
-			block_edit(edit, temp.block, temp.pos, temp.param);
+			block_edit(map, temp.block, temp.pos, temp.param);
 			undo = 0;
 			//block_free(history[i]);
 			free(history[i]);
 		}
 		while (i++ < EDI_HISTORY)
 			history[i - 1] = history[i];
-		block_to_image(edit); // move elsewhere?
+//		block_to_image(map); // move elsewhere?
 	}
 }

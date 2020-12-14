@@ -8,8 +8,10 @@ SRCS=editor.c\
 	exit.c\
 	helpers.c\
 	image.c\
+	map.c\
 	map_reader.c\
 	map_writer.c\
+	mlx_func.c\
 	struct.c\
 	key_active.c\
 	main.c\

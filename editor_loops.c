@@ -17,8 +17,8 @@ static void		*input_loop(t_editor *edit, char *smsg, char *cmsg, char *curr)
 	char	*str;
 
 	block_to_image(edit);
-	mlx_string_put(edit->mlx_ptr, edit->mlx_win, 20, 10, 0x00ff00, smsg);
-	mlx_do_sync(edit->mlx_ptr);
+	write_to_screen(edit->mlx, dot(20, 10), 0x00ff00, smsg);
+	mlx_do_sync(edit->mlx.mlx_ptr);
 	ft_putstr(cmsg);
 	if (curr) // has old value
 	{
@@ -45,13 +45,13 @@ static void		*input_loop(t_editor *edit, char *smsg, char *cmsg, char *curr)
 
 static void		map_save(t_editor *edit)
 {
-	edit->name = input_loop(edit, "Write name in console", "Write the name\n", edit->name);
-	printf("current name> '%s'\n", edit->name);
-	edit->desc = input_loop(edit, "Write description in console", "Write the description\n", edit->desc);
-	printf("current desc> '%s'\n", edit->desc);
+	edit->map.name = input_loop(edit, "Write name in console", "Write the name\n", edit->map.name);
+	printf("current name> '%s'\n", edit->map.name);
+	edit->map.desc = input_loop(edit, "Write description in console", "Write the description\n", edit->map.desc);
+	printf("current desc> '%s'\n", edit->map.desc);
 	//if (map_valid(edit, edit->start))	// NO VALID MAP CHECKING, MOVE TO PLAYING THE MAP
 	//{
-		if (map_write(edit))
+		if (map_write(&edit->map))
 			printf("map printed\n");
 		else
 			printf("Map printing failed\n");
@@ -90,8 +90,8 @@ static	void	edit_param(t_editor *edit, t_mapb *block)
 {
 	char	*param;
 
-	mlx_string_put(edit->mlx_ptr, edit->mlx_win, 20, 10, 0x00ff00, "Write selected block's param in console");
-	mlx_do_sync(edit->mlx_ptr);
+	write_to_screen(edit->mlx, dot(20, 10), 0x00ff00, "Write selected block's param in console");
+	mlx_do_sync(edit->mlx.mlx_ptr);
 	if (block->param) // has old value
 	{
 		ft_putstr("Press enter for current (");
@@ -115,7 +115,7 @@ static	void	edit_param(t_editor *edit, t_mapb *block)
 		//if (block->param)
 		//	free(block->param);
 		//block->param = NULL;
-		block_edit(edit, block->block, block->pos, param);
+		block_edit(&edit->map, block->block, block->pos, param);
 	}
 	else
 	{
@@ -141,7 +141,7 @@ static t_mapb	*block_read(t_editor *edi, int x, int y)
 	point.x += (int)(blocks.x) % 2;
 	point.y = (int)(blocks.y) / 2;
 	point.y += (int)(blocks.y) % 2;
-	block = find_spot(edi->start, point);
+	block = find_spot(edi->map.start, point);
 	if (edi->edit == block)
 	{
 		edit_param(edi, block);
@@ -178,7 +178,7 @@ static void		b_block_place(t_editor *edi, int x, int y)
 	point.y += (int)(blocks.y) % 2;
 //	printf("half-blocks %f %f | rounded %d %d\nfinal %d %d\n", blocks.x, blocks.y, (int)(blocks.x), (int)(blocks.y),
 //	point.x, point.y);
-	if (block_edit(edi, edi->select, point, NULL))
+	if (block_edit(&edi->map, edi->select, point, NULL))
 		printf("block placed at %d %d\n", point.x ,point.y);
 	block_to_image(edi);
 }
@@ -191,7 +191,7 @@ int				key(int key, void *param) // NOT IN USE
 	if (key == ESC_KEY)
 		good_exit(EXIT_SUCCESS, "esc quit");
 	else if (key == K_R)
-		mlx_clear_window(edi->mlx_ptr, edi->mlx_win);
+		mlx_clear_window(edi->mlx.mlx_ptr, edi->mlx.mlx_win);
 	else if (key == K_1)
 		edi->select = 0;
 	else if (key == K_2)
@@ -222,7 +222,7 @@ int				mouse(int button, int x, int y, void *param) // NOT IN USE
 
 		//x = x / BLOCKW * BLOCKW * edi->zoom - edi->offset.x;
 		//y = y / BLOCKW * BLOCKW * edi->zoom - edi->offset.y;
-		mlx_put_image_to_window(edi->mlx_ptr, edi->mlx_win, edi->mlx_img[edi->select], x, y);
+		mlx_image_place(edi->mlx, edi->mlx_img[edi->select], dot(x, y));
 	}
 	else if (button == MOU_R)
 	{
@@ -230,7 +230,7 @@ int				mouse(int button, int x, int y, void *param) // NOT IN USE
 		//y -= BLOCKW / 2;
 		x = x / BLOCKW * BLOCKW * edi->zoom - edi->offset.x;
 		y = y / BLOCKW * BLOCKW * edi->zoom - edi->offset.y;
-		mlx_put_image_to_window(edi->mlx_ptr, edi->mlx_win, edi->mlx_img[B_FLOOR], x, y);
+		mlx_image_place(edi->mlx, edi->mlx_img[B_FLOOR], dot(x, y));
 	}
 	else if (button == MOU_S_D)
 		edi->select = edi->select == 0 ? BLOCKS + BLOCKSE - 1 : edi->select - 1;
@@ -254,11 +254,9 @@ int	key_press(int key, void *para)
 	}
 	if (key == ESC_KEY)
 	{
-		block_tree_del(edi->start);
-		free(edi->name);
-		free(edi->desc);
-		mlx_destroy_image(edi->mlx_ptr, edi->map_img);
-		mlx_destroy_window(edi->mlx_ptr, edi->mlx_win);
+		map_delete(&edi->map);
+		mlx_destroy_image(edi->mlx.mlx_ptr, edi->map_img);
+		t_mlx_delete(&edi->mlx);
 		good_exit(EXIT_SUCCESS, "esc quit");
 	}
 	else if (is_pressed(edi->key, KEY_DOWN, L_CTRL) && is_pressed(edi->key, KEY_DOWN, K_S))
@@ -270,11 +268,12 @@ int	key_press(int key, void *para)
 	else if (is_pressed(edi->key, KEY_DOWN, L_CMND) && is_pressed(edi->key, KEY_DOWN, K_Z))
 	{
 		printf("cmnd + z\n");
-		block_undo(edi, NULL, 0, NULL);
+		block_undo(&edi->map, NULL, 0, NULL);
 		key_controls(edi->key, KEY_DOWN, K_Z, '-');
+		block_to_image(edi);
 	}
 	else if (key == K_R)
-		mlx_clear_window(edi->mlx_ptr, edi->mlx_win);
+		mlx_clear_window(edi->mlx.mlx_ptr, edi->mlx.mlx_win);
 	else if (key == K_1)
 		edi->select = BLOCK1;
 	else if (key == K_2)
@@ -297,7 +296,7 @@ int	key_press(int key, void *para)
 	return (0);
 }
 
-int key_release(int key, void *para)
+int key_release(int key, void *para) // not in use?
 {
 	t_editor	*edi;
 
@@ -370,15 +369,15 @@ int	motion_notify(int x, int y, void *para)
 		edi->offset.y += ((edi->mouse_pos.y - y) * edi->zoom);
 		//edi->offset.x += (x - edi->mouse_pos.x) * edi->zoom;
 		//edi->offset.y += (y - edi->mouse_pos.y) * edi->zoom;
-		edi->offset.x =  edi->offset.x < -BLOCKW * edi->map_size.x ? BLOCKW * -edi->map_size.x : edi->offset.x;
-		edi->offset.x =  edi->offset.x > BLOCKW * edi->map_size.x ? BLOCKW * edi->map_size.x : edi->offset.x;
-		edi->offset.y =  edi->offset.y < -BLOCKW * edi->map_size.y ? BLOCKW * -edi->map_size.y : edi->offset.y;
-		edi->offset.y =  edi->offset.y > BLOCKW * edi->map_size.y ? BLOCKW * edi->map_size.y : edi->offset.y;
+		edi->offset.x =  edi->offset.x < -BLOCKW * edi->mlx.size.x ? BLOCKW * -edi->mlx.size.x : edi->offset.x;
+		edi->offset.x =  edi->offset.x > BLOCKW * edi->mlx.size.x ? BLOCKW * edi->mlx.size.x : edi->offset.x;
+		edi->offset.y =  edi->offset.y < -BLOCKW * edi->mlx.size.y ? BLOCKW * -edi->mlx.size.y : edi->offset.y;
+		edi->offset.y =  edi->offset.y > BLOCKW * edi->mlx.size.y ? BLOCKW * edi->mlx.size.y : edi->offset.y;
 		edi->mouse_pos.x = x;
 		edi->mouse_pos.y = y;
 		//printf("offset %f %f\n", edi->offset.x, edi->offset.y);
 		block_to_image(edi);
-		mlx_pixel_put(edi->mlx_ptr, edi->mlx_win, edi->size.x / 2 - edi->offset.x, edi->size.y / 2 - edi->offset.y, 0xff0000);
+		mlx_pixel_put(edi->mlx.mlx_ptr, edi->mlx.mlx_win, edi->size.x / 2 - edi->offset.x, edi->size.y / 2 - edi->offset.y, 0xff0000);
 	}
 	else if (is_pressed(edi->button, MOUSE_DOWN, MOU_L))
 		b_block_place(edi, x, y);

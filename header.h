@@ -90,14 +90,14 @@
 ** Game defitions
 */
 
-# define VERSION "0.01"
+# define VERSION "0.02"
 
 /*
 ** Map definitions
 */
 
 # define MAP_ENDING ".map"
-# define MAP_VERSION "0.02"
+# define MAP_VERSION VERSION //"0.02"
 # define MAP_V "V: "MAP_VERSION
 # define MAP_NAME "Name: "
 # define MAP_DESC "Desc: "
@@ -121,8 +121,8 @@
 ** Editor definitions
 */
 
-# define EDI_WIDTH 1200
-# define EDI_HEIGHT 900
+# define EDI_WIDTH 800
+# define EDI_HEIGHT 600
 # define EDI_BLOCK 5 			// amount of blocks placeable
 # define EDI_BLOCKW 40			// block pixel size // NEEDS TO BE EVEN FOR PLACEMENT TO WORK PROPERLY
 # define EDI_MIN_ZOOM 0.25
@@ -186,7 +186,6 @@
 # define ERR_PARA 5
 # define X_EXIT 6//EXIT_SUCCESS
 
-
 typedef struct		s_dot // checks for too much offset
 {
 	int	x;
@@ -199,6 +198,13 @@ typedef struct		s_pdot // checks for too much offset
 	PRECISION	y;
 }					t_pdot;
 
+typedef struct		s_mlx
+{
+	void	*mlx_ptr;
+	void	*mlx_win;
+	t_dot	size;
+}					t_mlx;
+
 typedef struct		s_mapb
 {
 	t_dot	pos;
@@ -207,22 +213,35 @@ typedef struct		s_mapb
 	void	*next;
 }					t_mapb;
 
+typedef	struct		s_map
+{
+	char		*version;
+	char		*name;
+	char		*desc;
+	char		*next;
+	t_mapb		*start;		// start point pointer
+	t_dot		size;
+}					t_map;
+
+
 typedef struct		s_editor
 {
-	void		*mlx_ptr;
-	void		*mlx_win;
+	t_mlx		mlx;
+//	void		*mlx_ptr;
+//	void		*mlx_win;
 	void		**mlx_img;
 	void		*map_img;
 	int			*map_data;
-	char		*version;	// map file data // NEEDED?? just use MAP_V
-	char		*name; // map file data pointers
-	char		*desc;
-	char		*next;
-	t_mapb		*start;	// start point pointer
+	t_map		map;
+//	char		*version;	// map file data // NEEDED?? just use MAP_V
+//	char		*name; // map file data pointers
+//	char		*desc;
+//	char		*next;
+//	t_mapb		*start;	// start point pointer
 	t_mapb		*edit; // selected block for param edit
 	int			select;	// selected block
 	char		port;	// teleport number
-	t_dot		map_size;
+//	t_dot		map_size;
 	t_dot		size; // screen
 	t_pdot		offset;
 	PRECISION	zoom;
@@ -234,10 +253,11 @@ typedef struct		s_editor
 
 typedef struct		s_toolbar
 {
-	void		*mlx_ptr;
-	void		*mlx_win;
+	t_mlx		mlx;
+//	void		*mlx_ptr;
+//	void		*mlx_win;
 	int			hover; // default -1
-	t_dot		size;
+//	t_dot		size;
 	t_editor	*editor;
 }					t_toolbar;
 
@@ -270,10 +290,8 @@ typedef struct		s_box
 
 typedef struct		s_print
 {
-	void	*mlx_ptr;
-	void	*mlx_win;
+	t_mlx	mlx;
 	t_dot	pos;
-	t_dot	size;
 	int		color;
 	char	*str;
 }					t_print;
@@ -285,21 +303,21 @@ void				err_exit(int error, char *msg);
 void				editor(char *arg);
 void				text_init(void *mlx_ptr, void **text, int width, int height);
 
-t_mapb				*block_add(t_editor *edit, int block, t_dot spot, char *param);
-int					block_edit(t_editor *edit, int block, t_dot spot, char *param);
+t_mapb				*block_add(t_map *map, int block, t_dot spot, char *param);
+int					block_edit(t_map *map, int block, t_dot spot, char *param);
 void				block_list(t_mapb *start);
 int					block_cut(t_mapb *start, t_dot spot);
 void				block_free(t_mapb *block);
 int 				block_check(t_mapb *block, char *str);
 void				block_tree_del(t_mapb *start);
-void				block_undo(t_editor *edit, t_mapb *block, int b, char *param);
+void				block_undo(t_map *map, t_mapb *block, int b, char *param);
 void				block_to_image(t_editor *edit);
-int					map_valid(t_editor *edit, t_mapb *start);
+int					map_valid(t_map *map, t_mlx *mlx);
 t_mapb				*find_spot(t_mapb *start, t_dot spot);
 
 
-int					map_reader(char *name, t_editor *edit);
-int					map_write(t_editor *edit);
+int					map_reader(char *name, t_map *map);
+int					map_write(t_map *map);
 
 void				edi_block_image(t_box box);
 void				image_wipe(int *img_dat, int color, int width, int height);
@@ -334,7 +352,15 @@ t_dot				dot(int x, int y);
 t_pdot				pdot(PRECISION x, PRECISION y);
 t_nmap				nmap(PRECISION ran11, PRECISION ran12, PRECISION ran21, PRECISION ran22);
 
-void				write_to_editor(t_editor *edit, t_dot pos, int color, char *str);
+void				map_delete(t_map *map);
+t_map				map_empty(void);
+
+void				t_mlx_delete(t_mlx *mlx);
+t_mlx				mlx_start(void *mlx_ptr, int width, int height, char *title);
+
+void				write_to_screen(t_mlx mlx, t_dot pos, int color, char *str);
+int					mlx_image_place(t_mlx mlx, void *img_ptr, t_dot pos);
+int					mlx_pixel_place(t_mlx mlx, t_dot pos, int color);
 
 PRECISION			map(PRECISION p, t_nmap ran);
 int					iround(PRECISION in);

@@ -46,26 +46,26 @@ static char	*file_format(char *name)
 	return (name);
 }
 
-static void	map_header(FILE *fd, t_editor *edit)
+static void	map_header(FILE *fd, t_map *map)
 {
 	fprintf(fd, "%s\n", MAP_V);
-	fprintf(fd, "%s%s\n", MAP_NAME, edit->name);
-	fprintf(fd, "%s%s\n", MAP_DESC, edit->desc);
+	fprintf(fd, "%s%s\n", MAP_NAME, map->name);
+	fprintf(fd, "%s%s\n", MAP_DESC, map->desc);
 	fprintf(fd, "%s%s\n", MAP_NEXT, MAP_END); // ADD A FEATURE TO CONNECT MAPS LATER
 }
 
-static void	map_loop(FILE *fd, t_editor *edit)
+static void	map_loop(FILE *fd, t_map *map)
 {
-	t_dot	map;
+	t_dot	pos;
 	t_mapb	*block;
 
-	map.y = -edit->map_size.y - 1;
-	while (++map.y <= edit->map_size.y)
+	pos.y = -map->size.y - 1;
+	while (++pos.y <= map->size.y)
 	{
-		map.x = -edit->map_size.x - 1;
-		while (++map.x <= edit->map_size.x)
+		pos.x = -map->size.x - 1;
+		while (++pos.x <= map->size.x)
 		{
-			if (!(block = find_spot(edit->start, map)) || !block->block)
+			if (!(block = find_spot(map->start, pos)) || !block->block)
 				fprintf(fd, "%c", MAP_EMPTY);
 			else
 			{
@@ -79,12 +79,12 @@ static void	map_loop(FILE *fd, t_editor *edit)
 }
 
 
-int	map_write(t_editor *edit)
+int	map_write(t_map *map)
 {
 	FILE	*fd;
 	char	*temp;
 
-	if (!(temp = ft_strjoin(edit->name, MAP_ENDING)))
+	if (!(temp = ft_strjoin(map->name, MAP_ENDING)))
 		err_exit(ERR_MEMORY, "map_write file name alloc");
 	temp = file_format(temp);
 	if (!(fd = fopen(temp, "w")))
@@ -93,8 +93,8 @@ int	map_write(t_editor *edit)
 		return (0);
 	}
 	free(temp);
-	map_header(fd, edit);
-	map_loop(fd, edit);
+	map_header(fd, map);
+	map_loop(fd, map);
 	fclose(fd);
 	return (1);
 }

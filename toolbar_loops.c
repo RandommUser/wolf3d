@@ -60,7 +60,8 @@ int			bar_key_press(int key, t_toolbar *bar)
 {
 	if (key == ESC_KEY)
 	{
-		mlx_destroy_window(bar->mlx_ptr, bar->mlx_win);
+		t_mlx_delete(&bar->mlx);
+		//mlx_destroy_window(bar->mlx.mlx_ptr, bar->mlx.mlx_win);
 		key_press(ESC_KEY, bar->editor);
 	}
 	return (0);

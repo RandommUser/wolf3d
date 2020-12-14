@@ -12,20 +12,14 @@
 
 #include "header.h"
 
-static int	bad_map(int fd, t_editor *edit)
+static int	bad_map(int fd, t_map *map)
 {
 	close(fd);
-	free(edit->name);
-	free(edit->desc);
-	free(edit->next);
-	edit->name = NULL;
-	edit->desc = NULL;
-	edit->next = NULL;
-	block_tree_del(edit->start);
+	map_delete(map);
 	return (0);
 }
 
-static void	block_norm(t_editor *edit, t_mapb *start)
+static void	block_norm(t_map *map, t_mapb *start)
 {
 	int		found;
 	t_dot	limit;
@@ -51,16 +45,14 @@ static void	block_norm(t_editor *edit, t_mapb *start)
 		spawn = dot(iround(limit.x / 2), iround(limit.y / 2));
 		printf("no spawn found\n");
 	}
-	edit->map_size.x = iround(limit.x / 2) < MAP_SIZE ? MAP_SIZE : iround(limit.x / 2);
-	edit->map_size.y = iround(limit.y / 2) < MAP_SIZE ? MAP_SIZE : iround(limit.y / 2);
+	map->size.x = iround(limit.x / 2) < MAP_SIZE ? MAP_SIZE : iround(limit.x / 2);
+	map->size.y = iround(limit.y / 2) < MAP_SIZE ? MAP_SIZE : iround(limit.y / 2);
 	printf("spawn is at %d %d\nmap size %d %d\n", spawn.x, spawn.y, limit.x, limit.y);
 	curr = start;
 	while (curr)
 	{
-	//	printf("base %d %d", curr->pos.x, curr->pos.y);
 		curr->pos.x -= spawn.x;
 		curr->pos.y -= spawn.y;
-	//	printf(" normed %d %d\n", curr->pos.x, curr->pos.y);
 		curr = curr->next;
 	}
 }
@@ -81,7 +73,7 @@ static char	*block_param(char *line)
 	return (ret);
 }
 
-static int	block_read(int fd, t_editor *edit)
+static int	block_read(int fd, t_map *map)
 {
 	t_dot	spot;
 	int		pad;
@@ -109,11 +101,11 @@ static int	block_read(int fd, t_editor *edit)
 				block[0] = '0';
 			else
 				block[0] = line[spot.x + pad];
-			if (!edit->start)
-				edit->start = block_add(edit, ft_atoi(block), spot, block_param(&line[spot.x + pad]));
+			if (!map->start)
+				map->start = block_add(map, ft_atoi(block), spot, block_param(&line[spot.x + pad]));
 			else
 			{
-				block_edit(edit, ft_atoi(block), spot, block_param(&line[spot.x + pad]));
+				block_edit(map, ft_atoi(block), spot, block_param(&line[spot.x + pad]));
 				printf("block added %d %d\n", spot.x, spot.y);
 			}
 		}
@@ -151,7 +143,7 @@ static char *moved_str(char *str, char *cmp)
 	return (&str[i]);
 }
 
-static int	map_header(int fd, t_editor *edit)
+static int	map_header(int fd, t_map *map)
 {
 	char	*line;
 	char	*start;
@@ -167,41 +159,41 @@ static int	map_header(int fd, t_editor *edit)
 	ret = ret == 1 ? ret = get_next_line(fd, &line) : ret; // name
 	if (ret == 1  && line && !(start = moved_str(line, MAP_NAME)))
 		ret = 0;
-	if (ret == 1  && start && !(edit->name = ft_strdup(start)))
+	if (ret == 1  && start && !(map->name = ft_strdup(start)))
 		err_exit(ERR_MEMORY, "map_header name alloc");
 	ft_memdel((void*)&line);
 	ret = ret == 1 ? ret = get_next_line(fd, &line) : ret; // desc
 	if (ret == 1  && line && !(start = moved_str(line, MAP_DESC)))
 		ret = 0;
-	if (ret && start && !(edit->desc = ft_strdup(start)))
+	if (ret && start && !(map->desc = ft_strdup(start)))
 		err_exit(ERR_MEMORY, "map_header desc alloc");
 	ft_memdel((void*)&line);
 	ret = ret == 1 ? ret = get_next_line(fd, &line) : ret; // end
 	if (ret == 1  && line && !(start = moved_str(line, MAP_NEXT)))
 		ret = 0;
-	if (ret == 1  && start && !(edit->next = ft_strdup(start)))
+	if (ret == 1  && start && !(map->next = ft_strdup(start)))
 		err_exit(ERR_MEMORY, "map_header next alloc");
 	ft_memdel((void*)&line);
 	return (ret == 1 ? 1 : 0);
 }
 
-int		map_reader(char *name, t_editor *edit)
+int		map_reader(char *name, t_map *map)
 {
 	int	fd;
 
 	if (!file_ending(name, MAP_ENDING) || (fd = open(name, O_RDONLY)) < 1) // MAP NAME TESTING
 		return (0);
-	if (!map_header(fd, edit))
-		return (bad_map(fd, edit));
-	printf("Name: %s\nDesc: %s\nNext: %s\n", edit->name, edit->desc, edit->next);
-	block_tree_del(edit->start);
-	edit->start = NULL;
+	if (!map_header(fd, map))
+		return (bad_map(fd, map));
+	printf("Name: %s\nDesc: %s\nNext: %s\n", map->name, map->desc, map->next);
+	block_tree_del(map->start);
+	map->start = NULL;
 	printf("old blocks wiped\n");
-	edit->map_size = dot(0, 0);
-	if (!block_read(fd, edit))
-		return (bad_map(fd, edit));
+	map->size = dot(0, 0);
+	if (!block_read(fd, map))
+		return (bad_map(fd, map));
 	printf("blocks read\n");
-	block_norm(edit, edit->start);
+	block_norm(map, map->start);
 	//block_list(edit->start);
 	// NORM THE COORDINATES
 	close(fd);

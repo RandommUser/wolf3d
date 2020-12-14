@@ -67,35 +67,35 @@ void	block_free(t_mapb *block)
 	block = NULL;
 }
 
-int		map_valid(t_editor *edit, t_mapb *start)
+int		map_valid(t_map *map, t_mlx *mlx)
 {
 	t_dot	goals;
 	t_mapb	*curr;
 
 	goals = dot(0, 0);
-	curr = start;
+	curr = map->start;
 	while (curr)
 	{
 		if(block_check(curr, MAP_SPAWN_FLAG))
 			if (goals.x++)
 			{
-				mlx_string_put(edit->mlx_ptr, edit->mlx_win, 20, 10, 0xff0000, "TOO MANY SPAWNS");
+				write_to_screen(*mlx, dot(20, 10), 0xff0000, "TOO MANY SPAWNS");
 				return (0);
 			}
 		if (block_check(curr, MAP_END_FLAG))
 			goals.y++;
-		if ((edit->map_size.x > 0 && (curr->pos.x < -edit->map_size.x || curr->pos.x > edit->map_size.x )) ||
-		(edit->map_size.y > 0 && (curr->pos.y < -edit->map_size.y || curr->pos.y > edit->map_size.y)))
+		if ((map->size.x > 0 && (curr->pos.x < -map->size.x || curr->pos.x > map->size.x )) ||
+		(map->size.y > 0 && (curr->pos.y < -map->size.y || curr->pos.y > map->size.y)))
 		{
-			mlx_string_put(edit->mlx_ptr, edit->mlx_win, 20, 10, 0xff0000, "BLOCK OUT OF MAP");
+			write_to_screen(*mlx, dot(20, 10), 0xff0000, "BLOCK OUT OF MAP");
 			return (0);
 		}
 		curr = curr->next;
 	}
 	if (!goals.x)
-		mlx_string_put(edit->mlx_ptr, edit->mlx_win, 20, 10, 0xff0000, "NO START");
+		write_to_screen(*mlx, dot(20, 10), 0xff0000, "NO START");
 	else if (!goals.y)
-		mlx_string_put(edit->mlx_ptr, edit->mlx_win, 20, 10, 0xff0000, "NO END");
+		write_to_screen(*mlx, dot(20, 10), 0xff0000, "NO END");
 	return (goals.x && goals.y);
 }
 
@@ -144,13 +144,13 @@ int		block_cut(t_mapb *start, t_dot spot)
 	return (0);
 }
 
-t_mapb	*block_add(t_editor *edit, int block, t_dot spot, char *param)
+t_mapb	*block_add(t_map *map, int block, t_dot spot, char *param)
 {
 	t_mapb	*curr;
 	t_mapb	*this;
 
-	if ((edit->map_size.x > 0 && (spot.x < -edit->map_size.x || spot.x > edit->map_size.x )) ||
-		(edit->map_size.y > 0 && (spot.y < -edit->map_size.y || spot.y > edit->map_size.y)))
+	if ((map->size.x > 0 && (spot.x < -map->size.x || spot.x > map->size.x )) ||
+		(map->size.y > 0 && (spot.y < -map->size.y || spot.y > map->size.y)))
 			return (NULL);
 	if (!(this = malloc(sizeof(t_mapb))))
 		err_exit(ERR_MEMORY, "block add alloc fail");
@@ -160,37 +160,37 @@ t_mapb	*block_add(t_editor *edit, int block, t_dot spot, char *param)
 	this->pos.y = spot.y;
 	this->block = block;
 	this->next = NULL;
-	if (!edit->start)
-		return ((edit->start = this));
-	curr = edit->start;
+	if (!map->start)
+		return ((map->start = this));
+	curr = map->start;
 	while (curr->next)
 		curr = curr->next;
 	curr->next = &this;
 	return (this);
 }
 
-int		block_edit(t_editor *edit, int block, t_dot spot, char *param)
+int		block_edit(t_map *map, int block, t_dot spot, char *param)
 {
 	t_mapb	*curr;
 
-	if (!edit->start)
+	if (!map || !map->start)
 		return (0);
 	/*
 	if ((edit->map_size.x > 0 && (spot.x < -edit->map_size.x || spot.x > edit->map_size.x )) ||
 		(edit->map_size.y > 0 && (spot.y < -edit->map_size.y || spot.y > edit->map_size.y)))
 			return (0);*/
-	curr = find_spot(edit->start, spot);
+	curr = find_spot(map->start, spot);
 	if (curr && !(curr->block == 6 && block_check(curr, MAP_SPAWN_FLAG)))
 	{
-		block_undo(edit, curr, block, param);
+		block_undo(map, curr, block, param);
 		curr->block = block;
 		block_param(curr, param);
 		return (1);
 	}
 	else if (!curr)
 	{
-		curr = find_last(edit->start);
-		if ((curr->next = block_add(edit, block, spot, param)))
+		curr = find_last(map->start);
+		if ((curr->next = block_add(map, block, spot, param)))
 			return (1);
 	}
 	return (0);
@@ -221,7 +221,7 @@ void	block_to_image(t_editor *edit)
 	t_pdot		spot;
 //	t_dot		text;
 
-	if (!(box.curr = edit->start))
+	if (!(box.curr = edit->map.start))
 		return ;
 	image_wipe(edit->map_data, MAP_BASE, edit->size.x, edit->size.y);
 	box.blockw = BLOCKW * edit->zoom;
@@ -242,7 +242,8 @@ void	block_to_image(t_editor *edit)
 			{
 				box.edit = edit;
 				box.spot = spot; // blockw, w, h, spot, edit, curr
-				mlx_pixel_put(edit->mlx_ptr, edit->mlx_win, spot.x + edit->size.x / 2 - edit->offset.x, spot.y + edit->size.y / 2 - edit->offset.y, 0xffffff);
+				mlx_pixel_place(edit->mlx, dot(spot.x + edit->size.x / 2 - edit->offset.x,
+					spot.y + edit->size.y / 2 - edit->offset.y), 0xffffff);
 				//printf("block #%d in view, X %f Y %f | base %d %d\n", box.i, spot.x, spot.y, box.curr->base_s.x, box.curr->base_s.y);
 				edi_block_image(box);
 			}
@@ -250,6 +251,6 @@ void	block_to_image(t_editor *edit)
 		box.curr = box.curr->next;
 		box.i++;
 	}
-	mlx_clear_window(edit->mlx_ptr, edit->mlx_win);
-	mlx_put_image_to_window(edit->mlx_ptr, edit->mlx_win, edit->map_img, 0, 0);
+	mlx_clear_window(edit->mlx.mlx_ptr, edit->mlx.mlx_win);
+	mlx_image_place(edit->mlx, edit->map_img, dot(0, 0));
 }
