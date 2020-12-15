@@ -64,7 +64,7 @@
 ** MLX defitions
 */
 
-# define WINDOWS 2
+# define WINDOWS 2	//?
 # define MIN_WIDTH 100
 # define MIN_HEIGHT 50
 # define MAX_WIDTH 2560
@@ -91,6 +91,9 @@
 */
 
 # define VERSION "0.02"
+# define GWIDTH 900
+# define GHEIGHT 600
+# define FRAMECAP 60
 
 /*
 ** Map definitions
@@ -223,6 +226,23 @@ typedef	struct		s_map
 	t_dot		size;
 }					t_map;
 
+typedef struct		s_player
+{
+	PRECISION	x;
+	PRECISION	y;
+	PRECISION	z;	// check if used
+	PRECISION	rot;
+}					t_player;
+
+typedef struct		s_game
+{
+	t_mlx		mlx;
+	t_map		map;
+	int			key[KEY_DOWN];
+	int			button[MOUSE_DOWN];
+	t_player	player;
+	PRECISION	frame;
+}					t_game;
 
 typedef struct		s_editor
 {
@@ -300,6 +320,9 @@ typedef struct		s_print
 void				good_exit(int code, char *msg);
 void				err_exit(int error, char *msg);
 
+void				game(char *name);
+t_player			player_reset(void);
+
 void				editor(char *arg);
 void				text_init(void *mlx_ptr, void **text, int width, int height);
 
@@ -339,6 +362,7 @@ int 				enter_notify(void *para);
 int 				leave_notify(void *para);
 int					editor_exit(t_editor *edit);
 
+void				log_reset(int *tab, int n, int key);
 int					is_pressed(int *tab, int n, int key);
 int					key_controls(int *tab, int n, int key, char ac);
 
@@ -355,7 +379,7 @@ t_nmap				nmap(PRECISION ran11, PRECISION ran12, PRECISION ran21, PRECISION ran2
 void				map_delete(t_map *map);
 t_map				map_empty(void);
 
-void				t_mlx_delete(t_mlx *mlx);
+int					t_mlx_delete(t_mlx *mlx);
 t_mlx				mlx_start(void *mlx_ptr, int width, int height, char *title);
 
 void				write_to_screen(t_mlx mlx, t_dot pos, int color, char *str);

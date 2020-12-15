@@ -12,6 +12,15 @@
 
 #include "header.h"
 
+void		log_reset(int *tab, int n, int key)
+{
+	int	i;
+
+	i = -1;
+	while (++i < n)
+		tab[i] = key;
+}
+
 int			is_pressed(int *tab, int n, int key)
 {
 	int	i;

@@ -1,24 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   game_loops.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: phakakos <phakakos@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: phakakos <phakakos@hive.student.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/11/09 13:16:30 by phakakos          #+#    #+#             */
-/*   Updated: 2020/11/09 13:16:53 by phakakos         ###   ########.fr       */
+/*   Created: 2020/12/15 16:05:17 by phakakos          #+#    #+#             */
+/*   Updated: 2020/12/15 16:05:18 by phakakos         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "header.h"
 
-int	main(int argc, char **argv)
+int	game_key(int key, t_game *game)
 {
-	if (argc > 1 && !ft_strcmp(argv[1], "editor"))
-		argc > 2 ? editor(argv[2]) : editor(NULL);
-	else if (argc == 2)
-		game(argv[1]);
-	else
-		good_exit(USAGE, "Bad start parameters");
+
+	return (0);
+}
+
+int	game_button(int x, int y, int button, t_game *game) // not used?
+{
+
 	return (0);
 }

@@ -28,12 +28,13 @@ int		mlx_image_place(t_mlx mlx, void *img_ptr, t_dot pos)
 	return (1);
 }
 
-void	t_mlx_delete(t_mlx *mlx)
+int		t_mlx_delete(t_mlx *mlx)
 {
 	mlx_destroy_window(mlx->mlx_ptr, mlx->mlx_win);
 	mlx->mlx_ptr = NULL;
 	mlx->mlx_win = NULL;
 	mlx->size = dot(0, 0);
+	return (1);
 }
 
 t_mlx	mlx_start(void *mlx_ptr, int width, int height, char *title)

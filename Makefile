@@ -6,6 +6,9 @@ SRCS=editor.c\
 	editor_textures.c\
 	editor_loops.c\
 	exit.c\
+	game.c\
+	game_actions.c\
+	game_loops.c\
 	helpers.c\
 	image.c\
 	map.c\
@@ -15,6 +18,7 @@ SRCS=editor.c\
 	struct.c\
 	key_active.c\
 	main.c\
+	player.c\
 	text_writer.c\
 	toolbar.c\
 	toolbar_loops.c

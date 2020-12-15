@@ -1,24 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   player.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: phakakos <phakakos@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: phakakos <phakakos@hive.student.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/11/09 13:16:30 by phakakos          #+#    #+#             */
-/*   Updated: 2020/11/09 13:16:53 by phakakos         ###   ########.fr       */
+/*   Created: 2020/12/15 15:25:04 by phakakos          #+#    #+#             */
+/*   Updated: 2020/12/15 15:25:05 by phakakos         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "header.h"
 
-int	main(int argc, char **argv)
+t_player	player_reset(void)
 {
-	if (argc > 1 && !ft_strcmp(argv[1], "editor"))
-		argc > 2 ? editor(argv[2]) : editor(NULL);
-	else if (argc == 2)
-		game(argv[1]);
-	else
-		good_exit(USAGE, "Bad start parameters");
-	return (0);
+	t_player	player;
+
+	player.rot = 0;
+	player.x = 0;
+	player.y = 0;
+	player.z = 0;
+	return (player);
 }
