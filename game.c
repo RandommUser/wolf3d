@@ -27,7 +27,8 @@ t_game	game_start(void)
 	log_reset(&game.button[0], MOUSE_DOWN, NO_KEY);
 	game.player = player_reset();
 	game.map = map_empty();
-	game.frame = 1 / FRAMECAP;
+	game.frame = (float)1 / FRAMECAP;
+	printf("%f'\n", game.frame);
 	return (game);
 }
 
@@ -42,6 +43,9 @@ void	game(char *name)
 		err_exit(ERR_MLX, "MLX failed to init game()");
 	game.mlx = mlx_start(game.mlx.mlx_ptr, GWIDTH, GHEIGHT, "Wolf3D");
 
+	mlx_loop_hook(game.mlx.mlx_ptr, &game_loop, &game);
+	mlx_hook(game.mlx.mlx_win, KEY_PRESS, 0, &game_key_down, &game);
+	mlx_hook(game.mlx.mlx_win, KEY_RELEASE, 0, &game_key_up, &game);
 	mlx_hook(game.mlx.mlx_win, WINDOW_CLOSE, 0, &game_exit, &game);
 	mlx_loop(game.mlx.mlx_ptr);
 }

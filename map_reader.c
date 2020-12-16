@@ -43,11 +43,11 @@ static void	block_norm(t_map *map, t_mapb *start)
 	if (!found)
 	{
 		spawn = dot(iround(limit.x / 2), iround(limit.y / 2));
-		printf("no spawn found\n");
+		//printf("no spawn found\n");
 	}
 	map->size.x = iround(limit.x / 2) < MAP_SIZE ? MAP_SIZE : iround(limit.x / 2);
 	map->size.y = iround(limit.y / 2) < MAP_SIZE ? MAP_SIZE : iround(limit.y / 2);
-	printf("spawn is at %d %d\nmap size %d %d\n", spawn.x, spawn.y, limit.x, limit.y);
+	//printf("spawn is at %d %d\nmap size %d %d\n", spawn.x, spawn.y, limit.x, limit.y);
 	curr = start;
 	while (curr)
 	{
@@ -106,10 +106,10 @@ static int	block_read(int fd, t_map *map)
 			else
 			{
 				block_edit(map, ft_atoi(block), spot, block_param(&line[spot.x + pad]));
-				printf("block added %d %d\n", spot.x, spot.y);
+				//printf("block added %d %d\n", spot.x, spot.y);
 			}
 		}
-		printf("line %d:'%s'\n", spot.y, line);
+		//printf("line %d:'%s'\n", spot.y, line);
 		ft_memdel((void*)&line);
 	}
 	return (1);

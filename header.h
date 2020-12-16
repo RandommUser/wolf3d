@@ -18,6 +18,7 @@
 # include "mlx.h"
 # include <math.h>
 # include <stdlib.h>
+# include <time.h>
 # include <fcntl.h> // open
 # include <unistd.h> // close
 # include <pthread.h>
@@ -34,13 +35,21 @@
 ** Key definitions
 */
 
-# define KEY_DOWN 5
+# define KEY_DOWN 10
 # define NO_KEY -1
 # define ESC_KEY 53
 # define L_CTRL 256
+# define L_SHFT 257
 # define L_CMND 259
-# define K_R 15
+# define K_W 13
+# define K_A 0
 # define K_S 1
+# define K_D 2
+# define K_AU 126
+# define K_AR 124
+# define K_AD 125
+# define K_AL 123
+# define K_R 15
 # define K_G 5
 # define K_E 14
 # define K_Z 6
@@ -94,6 +103,8 @@
 # define GWIDTH 900
 # define GHEIGHT 600
 # define FRAMECAP 60
+# define TURN_RATE 6
+# define MOVE_SPEED 1
 
 /*
 ** Map definitions
@@ -228,8 +239,7 @@ typedef	struct		s_map
 
 typedef struct		s_player
 {
-	PRECISION	x;
-	PRECISION	y;
+	t_pdot		pos;
 	PRECISION	z;	// check if used
 	PRECISION	rot;
 }					t_player;
@@ -322,6 +332,13 @@ void				err_exit(int error, char *msg);
 
 void				game(char *name);
 t_player			player_reset(void);
+
+int					game_loop(t_game *game);
+int					game_key_down(int key, t_game *game);
+int					game_key_up(int key, t_game *game);
+
+int					player_move(t_game *game);
+
 
 void				editor(char *arg);
 void				text_init(void *mlx_ptr, void **text, int width, int height);

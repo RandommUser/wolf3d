@@ -17,8 +17,7 @@ t_player	player_reset(void)
 	t_player	player;
 
 	player.rot = 0;
-	player.x = 0;
-	player.y = 0;
+	player.pos = pdot(GWIDTH / 2, GHEIGHT / 2);
 	player.z = 0;
 	return (player);
 }
