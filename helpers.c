@@ -12,7 +12,7 @@
 
 #include "header.h"
 
-PRECISION	map(PRECISION p, t_nmap ran)
+PRECISION	pmap(PRECISION p, t_nmap ran)
 {
 	ran.p = p;
 	ran.p = (ran.p - ran.ran11) / (ran.ran12 - ran.ran11);

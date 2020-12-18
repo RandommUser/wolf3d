@@ -34,9 +34,9 @@ void	edi_block_image(t_box box)
 	int		*text_data;
 
 	box.step = 1 * box.edit->zoom;
-	image.x = iround(map(box.spot.x,
+	image.x = iround(pmap(box.spot.x,
 		nmap(box.edit->offset.x - box.w, box.edit->offset.x + box.w, 0, box.edit->size.x - 1)));
-	image.y = iround(map(box.spot.y,
+	image.y = iround(pmap(box.spot.y,
 		nmap(box.edit->offset.y - box.h, box.edit->offset.y + box.h, 0, box.edit->size.y - 1)));
 	prog = dot(0, 0);
 	pcorr = dot(0, 0);

@@ -38,8 +38,8 @@ int	game_loop(t_game *game)
 			raycast(*game);
 			//mlx_line_to_image(game->image, dot(0, 0), dot(GWIDTH, GHEIGHT), 0xffffff);
 			mlx_image_place(game->mlx, game->image.img_ptr, dot(0, 0));
-			printf("player is at %f %f \nplane %f %f | dir %f %f\n", game->player.pos.x, game->player.pos.y,
-			game->player.plane.x, game->player.plane.y, game->player.dir.x, game->player.dir.y);
+			printf("player is at %f %f \nplane %f %f | dir %f %f | rot %f\n", game->player.pos.x, game->player.pos.y,
+			game->player.plane.x, game->player.plane.y, game->player.dir.x, game->player.dir.y, game->player.rot);
 		}
 		//printf("took %lf > %f\n", d, game->frame);
 		start = curr;

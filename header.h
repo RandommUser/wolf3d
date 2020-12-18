@@ -103,7 +103,7 @@
 # define GWIDTH 900
 # define GHEIGHT 600
 # define FRAMECAP 60
-# define TURN_RATE 0.01
+# define TURN_RATE 0.05
 # define MOVE_SPEED 0.1
 # define FOV 0.66
 # define RDIST 15
@@ -423,6 +423,6 @@ t_image				mlx_image(t_mlx mlx, t_dot size, int def);
 int					mlx_line_to_image(t_image image, t_dot spos, t_dot epos, int color);
 void				image_set(t_image image, int color);
 
-PRECISION			map(PRECISION p, t_nmap ran);
+PRECISION			pmap(PRECISION p, t_nmap ran);
 int					iround(PRECISION in);
 #endif

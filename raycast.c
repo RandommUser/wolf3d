@@ -35,14 +35,17 @@ void	raycast(t_game game)
 	while (++x < game.mlx.size.x)
 	{
 		//printf("raycast %d\n", x);
-		camera = 2 * x / game.mlx.size.x - 1;
+		camera = pmap(x, nmap(0, game.mlx.size.x, -1, 1)); //2 * x / game.mlx.size.x - 1;
 		raydir.x = game.player.dir.x + game.player.plane.x * camera;
 		raydir.y = game.player.dir.y + game.player.plane.y * camera;
 		hit = 0;
-		dist.x = ft_fabs(1 / raydir.x); // DOES NOT LIKE 0
-		dist.y = ft_fabs(1 / raydir.y);
+		dist.x = !raydir.x ? 1 : ft_fabs(1 / raydir.x); // DOES NOT LIKE 0
+		dist.x = !raydir.y ? 0 : dist.x;
+		dist.y = !raydir.y ? 1 : ft_fabs(1 / raydir.y);
+		dist.y = !raydir.x ? 0 : dist.y;
 		map.x = game.player.pos.x;
 		map.y = game.player.pos.y;
+		//printf("camera %f | ray %f %f | dist %f %f\n", camera, raydir.x, raydir.y, dist.x, dist.y);
 		if (raydir.x < 0)
 		{
 			step.x = -1;
@@ -80,25 +83,34 @@ void	raycast(t_game game)
 				side = 1;
 			}
 			block = find_spot(game.map.start, map);
-			if (block && (block->block == 1 || block->block == 2 || block->block == 4)) // ADD MORE WALL CHECKS
+			if (block && (block->block == 1 || block->block == 2 || block->block == 4 || block->block == 3)) // ADD MORE WALL CHECKS
 				hit = 1;
+			block = hit ? block : NULL;
 		}
 		//printf("wall found %d\n", len);
-		wdist = !side ? (map.x - game.player.pos.x + (1 - step.x) / 2) / raydir.x : 0;
-		wdist = side ? (map.y - game.player.pos.y + (1 - step.y) / 2) / raydir.y : wdist;
+		wdist = !side ? (map.x - game.player.pos.x + (1 - step.x) / 2) / raydir.x :
+		(map.y - game.player.pos.y + (1 - step.y) / 2) / raydir.y;
+
 		lheight = game.mlx.size.y / wdist;
-		draw.x = -lheight / 2 + game.mlx.size.y / 2;
-		draw.x = draw.x < 0 ? 0 : draw.x;
+
+		draw.x = -(lheight) / 2 + game.mlx.size.y / 2;
+		draw.x = draw.x < 0 ? 0 : draw.x; // not needed
 		draw.y = lheight / 2 + game.mlx.size.y / 2;
-		draw.y = draw.y >= game.mlx.size.y ? game.mlx.size.y - 1 : draw.y;
+		draw.y = draw.y >= game.mlx.size.y ? game.mlx.size.y - 1 : draw.y; // not needed
 		// ADD COLOR CHANGES HERE
-		// drawline(draw.x, draw.y, 0xff0000);
-		color = 0xff0000;
+		//
+		color = side ? 0xff800 : 0xd412e1;
+		color = !block ? 0x333333 : color;
+		//printf("sdist %f %f | map %d %d | wdist %f | lhei %d | draw %d %d\n",
+		//	sdist.x, sdist.y, map.x, map.y, wdist, lheight, draw.x, draw.y);
+		/*
 		if (block)
 		{
-			color = block->block == 2 ? 0x00ff00 : color;
-			color = block->block == 4 ? 0x0000ff : color;
+			color = block->block == 2 ? 0x333333 : color;
+			color = block->block == 3 ? 0xff0000 : color;
+			color = block->block == 4 ? 0x00ff00 : color;
 		}
+		*/
 		//printf("drawing line from %d %d to %d %d\n", x , draw.x, x, draw.y);
 		mlx_line_to_image(game.image, dot(x, draw.x), dot(x, draw.y), color);
 	}
