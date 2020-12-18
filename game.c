@@ -41,7 +41,9 @@ void	game(char *name)
 		err_exit(ERR_PARA, "Bad map game()");
 	if (!(game.mlx.mlx_ptr = mlx_init()))
 		err_exit(ERR_MLX, "MLX failed to init game()");
+	//game.player.pos = start square
 	game.mlx = mlx_start(game.mlx.mlx_ptr, GWIDTH, GHEIGHT, "Wolf3D");
+	game.image = mlx_image(game.mlx, game.mlx.size, 0x000000);
 
 	mlx_loop_hook(game.mlx.mlx_ptr, &game_loop, &game);
 	mlx_hook(game.mlx.mlx_win, KEY_PRESS, 0, &game_key_down, &game);

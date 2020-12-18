@@ -103,8 +103,10 @@
 # define GWIDTH 900
 # define GHEIGHT 600
 # define FRAMECAP 60
-# define TURN_RATE 6
-# define MOVE_SPEED 1
+# define TURN_RATE 0.01
+# define MOVE_SPEED 0.1
+# define FOV 0.66
+# define RDIST 15
 
 /*
 ** Map definitions
@@ -219,6 +221,17 @@ typedef struct		s_mlx
 	t_dot	size;
 }					t_mlx;
 
+typedef struct		s_image
+{
+	void	*mlx_ptr;
+	void	*img_ptr;
+	int		*img_data;
+	int		endian;
+	int		bpp;
+	int		line;
+	t_dot	size;
+}					t_image;
+
 typedef struct		s_mapb
 {
 	t_dot	pos;
@@ -240,6 +253,8 @@ typedef	struct		s_map
 typedef struct		s_player
 {
 	t_pdot		pos;
+	t_pdot		dir;
+	t_pdot		plane;
 	PRECISION	z;	// check if used
 	PRECISION	rot;
 }					t_player;
@@ -247,6 +262,7 @@ typedef struct		s_player
 typedef struct		s_game
 {
 	t_mlx		mlx;
+	t_image		image;
 	t_map		map;
 	int			key[KEY_DOWN];
 	int			button[MOUSE_DOWN];
@@ -338,7 +354,7 @@ int					game_key_down(int key, t_game *game);
 int					game_key_up(int key, t_game *game);
 
 int					player_move(t_game *game);
-
+void				raycast(t_game game);
 
 void				editor(char *arg);
 void				text_init(void *mlx_ptr, void **text, int width, int height);
@@ -402,6 +418,10 @@ t_mlx				mlx_start(void *mlx_ptr, int width, int height, char *title);
 void				write_to_screen(t_mlx mlx, t_dot pos, int color, char *str);
 int					mlx_image_place(t_mlx mlx, void *img_ptr, t_dot pos);
 int					mlx_pixel_place(t_mlx mlx, t_dot pos, int color);
+void				t_image_del(t_image *image);
+t_image				mlx_image(t_mlx mlx, t_dot size, int def);
+int					mlx_line_to_image(t_image image, t_dot spos, t_dot epos, int color);
+void				image_set(t_image image, int color);
 
 PRECISION			map(PRECISION p, t_nmap ran);
 int					iround(PRECISION in);

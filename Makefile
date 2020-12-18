@@ -19,6 +19,7 @@ SRCS=editor.c\
 	key_active.c\
 	main.c\
 	player.c\
+	raycast.c\
 	text_writer.c\
 	toolbar.c\
 	toolbar_loops.c
