@@ -24,7 +24,6 @@ static void	player_rota(t_player *player, PRECISION dir)
 	t_pdot	oplane;
 	t_pdot	odir;
 	t_pdot	angle;
-	// add pre-calculated sin and cos?
 
 	angle.x = sin(dir);// * 0.01745329251);
 	angle.y = cos(dir);// * 0.01745329251);
@@ -42,9 +41,11 @@ static void	player_rota(t_player *player, PRECISION dir)
 int	player_move(t_game *game)
 {
 	t_pdot		move;
-	//t_pdot		temp;
-	//t_pdot		rot;
+	t_pdot		movement;
+	t_pdot		tplane;
+	t_pdot		tdir;
 	PRECISION	turn;
+	static PRECISION	turning;
 
 	move = pdot(0, 0);
 	turn = 0;
@@ -53,9 +54,9 @@ int	player_move(t_game *game)
 	if (is_pressed(game->key, KEY_DOWN, K_S))
 		move.y -= MOVE_SPEED;
 	if (is_pressed(game->key, KEY_DOWN, K_A))
-		move.x -= MOVE_SPEED;
-	if (is_pressed(game->key, KEY_DOWN, K_D))
 		move.x += MOVE_SPEED;
+	if (is_pressed(game->key, KEY_DOWN, K_D))
+		move.x -= MOVE_SPEED;
 	if (is_pressed(game->key, KEY_DOWN, K_AR))
 		turn -= TURN_RATE;
 	if (is_pressed(game->key, KEY_DOWN, K_AL))
@@ -68,11 +69,31 @@ int	player_move(t_game *game)
 	if (!move.y && !move.x && !turn)
 		return (0);
 	turn *= is_pressed(game->key, KEY_DOWN, L_SHFT) ? 2 : 1;
+	turning += turn;
+	printf("turnig %f\n", turning);
 	player_rota(&game->player, turn);
+	
 	move.x *= is_pressed(game->key, KEY_DOWN, L_SHFT) ? 2 : 1;
 	move.y *= is_pressed(game->key, KEY_DOWN, L_SHFT) ? 2 : 1;
-	game->player.pos.x += game->player.dir.x * move.y; // ADD COLLION TEST
-	game->player.pos.y += game->player.dir.y * move.y;
+	//game->player.pos.x += game->player.dir.x * move.y; // ADD COLLION TEST
+	//game->player.pos.y += game->player.dir.y * move.y;
+	movement.x = game->player.dir.x * move.y;
+	movement.y = game->player.dir.y * move.y;
+	if (move.x)
+	{
+		tplane = game->player.plane;
+		tdir = game->player.dir;
+		turn = move.x < 0 ? -1.575 : 1.575;
+		move.x = ft_fabs(move.x);
+		printf("turn %f\n", turn);
+		player_rota(&game->player, turn);
+		movement.x += game->player.dir.x * move.x;
+		movement.y += game->player.dir.y * move.x;
+		game->player.dir = tdir;
+		game->player.plane = tplane;
+	}
+	game->player.pos.x += movement.x;
+	game->player.pos.y += movement.y;
 	//game->player.pos.x += game->player.dir.x * move.x + game->player.dir.y * move.x; // not quite
 	//game->player.pos.y += game->player.dir.x * move.x + game->player.dir.y * move.x;
 	/*game->player.rot += turn * 60;
