@@ -22,9 +22,16 @@ PRECISION	pmap(PRECISION p, t_nmap ran)
 
 int			iround(PRECISION in)
 {
-	if (in < 0 && !(ft_fabs(in) - ft_abs((int)in) ROUNDING))
+	if (in < 0 && (ft_fabs(in) - ft_abs((int)in) ROUNDING))
 		return ((int)(in) + 1);
 	else if (in - (int)in ROUNDING)
 		return ((int)(in) + 1);
+	return ((int)in);
+}
+
+int			dround(PRECISION in)
+{
+	if (in < 0 && in != (int)in)
+		return (in - 1);
 	return ((int)in);
 }

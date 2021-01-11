@@ -12,7 +12,7 @@
 
 #ifndef HEADER_H
 # define HEADER_H
-# define PRECISION float
+# define PRECISION double
 
 # include "libft.h"
 # include "mlx.h"
@@ -425,4 +425,5 @@ void				image_set(t_image image, int color);
 
 PRECISION			pmap(PRECISION p, t_nmap ran);
 int					iround(PRECISION in);
+int					dround(PRECISION in);
 #endif
