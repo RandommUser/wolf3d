@@ -31,7 +31,8 @@ void	raycast(t_game game)
 	t_dot		draw;
 
 	x = -1;
-	printf("raycast start\n");
+	if (game.verbose)
+		printf("raycast start\n");
 	while (++x < game.mlx.size.x)
 	{
 		//printf("raycast %d\n", x);
@@ -39,7 +40,7 @@ void	raycast(t_game game)
 		raydir.x = game.player.dir.x + game.player.plane.x * camera;
 		raydir.y = game.player.dir.y + game.player.plane.y * camera;
 		hit = 0;
-		dist.x = !raydir.x ? 1 : ft_fabs(1 / raydir.x); // DOES NOT LIKE 0
+		dist.x = !raydir.x ? 1 : ft_fabs(1 / raydir.x); // DOES NOT LIKE 0?
 		dist.x = !raydir.y ? 0 : dist.x;
 		dist.y = !raydir.y ? 1 : ft_fabs(1 / raydir.y);
 		dist.y = !raydir.x ? 0 : dist.y;

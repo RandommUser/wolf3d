@@ -38,8 +38,10 @@ int	game_loop(t_game *game)
 			raycast(*game);
 			//mlx_line_to_image(game->image, dot(0, 0), dot(GWIDTH, GHEIGHT), 0xffffff);
 			mlx_image_place(game->mlx, game->image.img_ptr, dot(0, 0));
-			printf("player is at %f %f \nplane %f %f | dir %f %f | rot %f\n", game->player.pos.x, game->player.pos.y,
-			game->player.plane.x, game->player.plane.y, game->player.dir.x, game->player.dir.y, game->player.rot);
+			if (game->verbose)
+				printf("player is at %f %f\n", game->player.pos.x, game->player.pos.y);
+			//	printf("player is at %f %f \nplane %f %f | dir %f %f | rot %f\n", game->player.pos.x, game->player.pos.y,
+			//	game->player.plane.x, game->player.plane.y, game->player.dir.x, game->player.dir.y, game->player.rot);
 		}
 		//printf("took %lf > %f\n", d, game->frame);
 		start = curr;
@@ -64,7 +66,7 @@ int	game_loop(t_game *game)
 
 int	game_key_down(int key, t_game *game)
 {
-	if (key_controls(game->key, KEY_DOWN, key, '+') == 1)
+	if (key_controls(game->key, KEY_DOWN, key, '+') == 1 && game->verbose)
 	{
 		printf("down:");
 		for (int i = 0; i < KEY_DOWN; i++)
@@ -73,6 +75,10 @@ int	game_key_down(int key, t_game *game)
 		}
 		printf("\n");
 	}
+	if (key == K_V)
+		game->verbose = game->verbose ? 0 : 1;
+	if (key == K_C)
+		game->player.collision = game->player.collision ? 0 : 1;
 	if (key == ESC_KEY)
 	{
 		t_mlx_delete(&game->mlx);
@@ -83,7 +89,7 @@ int	game_key_down(int key, t_game *game)
 
 int	game_key_up(int key, t_game *game)
 {
-	if(key_controls(game->key, KEY_DOWN, key, '-'))
+	if(key_controls(game->key, KEY_DOWN, key, '-') && game->verbose)
 		printf("up: %d\n", key);
 	return (0);
 }

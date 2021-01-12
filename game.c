@@ -28,6 +28,7 @@ t_game	game_start(void)
 	game.player = player_reset();
 	game.map = map_empty();
 	game.frame = (float)1 / FRAMECAP;
+	game.verbose = 0;
 	printf("%f'\n", game.frame);
 	return (game);
 }

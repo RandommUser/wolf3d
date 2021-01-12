@@ -53,6 +53,8 @@
 # define K_G 5
 # define K_E 14
 # define K_Z 6
+# define K_V 9
+# define K_C 8
 # define K_1 18
 # define K_2 19
 # define K_3 20
@@ -107,6 +109,7 @@
 # define MOVE_SPEED 0.1
 # define FOV 0.66
 # define RDIST 15
+# define PSIZE 0.3
 
 /*
 ** Map definitions
@@ -257,6 +260,7 @@ typedef struct		s_player
 	t_pdot		plane;
 	PRECISION	z;	// check if used
 	PRECISION	rot;
+	char		collision;
 }					t_player;
 
 typedef struct		s_game
@@ -268,6 +272,7 @@ typedef struct		s_game
 	int			button[MOUSE_DOWN];
 	t_player	player;
 	PRECISION	frame;
+	char		verbose;
 }					t_game;
 
 typedef struct		s_editor
@@ -370,6 +375,7 @@ void				block_undo(t_map *map, t_mapb *block, int b, char *param);
 void				block_to_image(t_editor *edit);
 int					map_valid(t_map *map, t_mlx *mlx);
 t_mapb				*find_spot(t_mapb *start, t_dot spot);
+int					is_wall(t_mapb *start, t_dot spot);
 
 
 int					map_reader(char *name, t_map *map);

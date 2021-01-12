@@ -12,6 +12,19 @@
 
 #include "header.h"
 
+int			is_wall(t_mapb *start, t_dot spot)
+{
+	t_mapb	*block;
+
+	block = find_spot(start, spot);
+	if (!block)
+		return (0);
+	if (block->block == 1 || block->block == 2 ||
+		block->block == 4 || block->block == 3)
+		return (1);
+	return (0);
+}
+
 t_mapb		*find_spot(t_mapb *start, t_dot spot)
 {
 	t_mapb	*curr;
