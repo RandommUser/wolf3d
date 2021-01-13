@@ -107,6 +107,7 @@
 # define FRAMECAP 60
 # define TURN_RATE 0.03
 # define MOVE_SPEED 0.1
+# define HEAD_TILT 10
 # define FOV 0.66
 # define RDIST 15
 # define PSIZE 0.3
@@ -273,6 +274,7 @@ typedef struct		s_game
 	t_player	player;
 	PRECISION	frame;
 	char		verbose;
+	int			mid;
 }					t_game;
 
 typedef struct		s_editor
@@ -360,6 +362,7 @@ int					game_key_up(int key, t_game *game);
 
 int					player_move(t_game *game);
 void				raycast(t_game game);
+void				traycast(t_game game);
 
 void				editor(char *arg);
 void				text_init(void *mlx_ptr, void **text, int width, int height);
@@ -376,6 +379,7 @@ void				block_to_image(t_editor *edit);
 int					map_valid(t_map *map, t_mlx *mlx);
 t_mapb				*find_spot(t_mapb *start, t_dot spot);
 int					is_wall(t_mapb *start, t_dot spot);
+int					is_transparent(t_mapb *start, t_dot spot);
 
 
 int					map_reader(char *name, t_map *map);

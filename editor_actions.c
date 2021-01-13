@@ -12,6 +12,18 @@
 
 #include "header.h"
 
+int			is_transparent(t_mapb *start, t_dot spot)
+{
+	t_mapb	*block;
+
+	block = find_spot(start, spot);
+	if (!block)
+		return (0);
+	if (block->block == 7)
+		return (1);
+	return (0);
+}
+
 int			is_wall(t_mapb *start, t_dot spot)
 {
 	t_mapb	*block;

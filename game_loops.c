@@ -36,6 +36,7 @@ int	game_loop(t_game *game)
 			mlx_pixel_place(game->mlx, dot(game->player.pos.x, game->player.pos.y), 0xffffff);
 			image_set(game->image, 0x000000);
 			raycast(*game);
+			traycast(*game);
 			//mlx_line_to_image(game->image, dot(0, 0), dot(GWIDTH, GHEIGHT), 0xffffff);
 			mlx_image_place(game->mlx, game->image.img_ptr, dot(0, 0));
 			if (game->verbose)

@@ -29,6 +29,7 @@ t_game	game_start(void)
 	game.map = map_empty();
 	game.frame = (float)1 / FRAMECAP;
 	game.verbose = 0;
+	game.mid = GHEIGHT / 2;
 	printf("%f'\n", game.frame);
 	return (game);
 }

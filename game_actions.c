@@ -71,9 +71,24 @@ int	player_move(t_game *game)
 	t_pdot		tdir;
 	PRECISION	turn;
 	static PRECISION	turning;
+	int			view;
 
 	move = pdot(0, 0);
 	turn = 0;
+	view = 0;
+	if (is_pressed(game->key, KEY_DOWN, K_AU))
+		view += HEAD_TILT;
+	if (is_pressed(game->key, KEY_DOWN, K_AD))
+		view -= HEAD_TILT;
+	if (view || game->mid != game->mlx.size.y / 2)
+	{
+		game->mid += view <= 0 && game->mid > game->mlx.size.y / 2 ? -HEAD_TILT : 0;
+		game->mid += view >= 0 && game->mid < game->mlx.size.y / 2 ? HEAD_TILT : 0;
+		game->mid += view;
+		view = !view ? 1 : view;
+		game->mid = game->mid < 0 ? 0 : game->mid;
+		game->mid = game->mid > game->mlx.size.y - 1 ? game->mlx.size.y - 1 : game->mid;
+	}
 	if (is_pressed(game->key, KEY_DOWN, K_W))
 		move.y += MOVE_SPEED;
 	if (is_pressed(game->key, KEY_DOWN, K_S))
@@ -91,7 +106,7 @@ int	player_move(t_game *game)
 		game->player = player_reset();
 		return (1);
 	}
-	if (!move.y && !move.x && !turn)
+	if (!view && !move.y && !move.x && !turn)
 		return (0);
 	opos = game->player.pos;
 	turn *= is_pressed(game->key, KEY_DOWN, L_SHFT) ? 2 : 1;
