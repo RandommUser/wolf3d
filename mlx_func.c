@@ -12,6 +12,20 @@
 
 #include "header.h"
 
+void		image_combine(t_image img1, t_image img2, int empty)
+{
+	t_dot	i;
+
+	i.y = -1;
+	while(++i.y < img1.size.y && i.y < img2.size.y)
+	{
+		i.x = -1;
+		while (++i.x < img1.size.x && i.x < img2.size.x)
+			if (img2.img_data[i.x + i.y * img2.line] != empty)
+				img1.img_data[i.x + i.y * img1.line] = img2.img_data[i.x + i.y * img2.line];
+	}
+}
+
 void		image_set(t_image image, int color)
 {
 	t_dot	pos;

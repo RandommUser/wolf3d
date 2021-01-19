@@ -12,11 +12,12 @@
 
 #include "header.h"
 
-int			is_transparent(t_mapb *start, t_dot spot)
+int			is_transparent(t_mapb *start, t_mapb *block, t_dot spot)
 {
-	t_mapb	*block;
-
-	block = find_spot(start, spot);
+	if (!start && !block)
+		return (0);
+	if (!block)
+		block = find_spot(start, spot);
 	if (!block)
 		return (0);
 	if (block->block == 7)
@@ -24,11 +25,12 @@ int			is_transparent(t_mapb *start, t_dot spot)
 	return (0);
 }
 
-int			is_wall(t_mapb *start, t_dot spot)
+int			is_wall(t_mapb *start, t_mapb *block, t_dot spot)
 {
-	t_mapb	*block;
-
-	block = find_spot(start, spot);
+	if (!start && !block)
+		return (0);
+	if (!block)
+		block = find_spot(start, spot);
 	if (!block)
 		return (0);
 	if (block->block == 1 || block->block == 2 ||

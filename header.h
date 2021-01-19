@@ -59,6 +59,7 @@
 # define K_2 19
 # define K_3 20
 # define K_4 21
+# define K_ENT 36
 
 /*
 ** Mouse definitions
@@ -111,6 +112,11 @@
 # define FOV 0.66
 # define RDIST 15
 # define PSIZE 0.3
+# define RUNNING 1
+# define PAUSED 0
+# define START_SCREEN 2
+# define MENU_PAUSE 1
+
 
 /*
 ** Map definitions
@@ -267,7 +273,7 @@ typedef struct		s_player
 typedef struct		s_game
 {
 	t_mlx		mlx;
-	t_image		image;
+	t_image		image[2];
 	t_map		map;
 	int			key[KEY_DOWN];
 	int			button[MOUSE_DOWN];
@@ -275,7 +281,31 @@ typedef struct		s_game
 	PRECISION	frame;
 	char		verbose;
 	int			mid;
+	char		state;
+	int			mselect;
+	int			menu;
 }					t_game;
+
+typedef struct		s_ray
+{
+	t_game		game;
+	int			x;
+	int			len;
+	int			side;
+	int			hit;
+	int			lheight;
+	int			color;
+	PRECISION	camera;
+	PRECISION	wdist;
+	t_mapb		*block;
+	t_pdot		raydir;
+	t_pdot		dist;
+	t_pdot		sdist;
+	t_dot		map;
+	t_dot		step;
+	t_dot		draw;
+}					t_ray;
+
 
 typedef struct		s_editor
 {
@@ -362,7 +392,7 @@ int					game_key_up(int key, t_game *game);
 
 int					player_move(t_game *game);
 void				raycast(t_game game);
-void				traycast(t_game game);
+//void				traycast(t_game game);
 
 void				editor(char *arg);
 void				text_init(void *mlx_ptr, void **text, int width, int height);
@@ -378,8 +408,8 @@ void				block_undo(t_map *map, t_mapb *block, int b, char *param);
 void				block_to_image(t_editor *edit);
 int					map_valid(t_map *map, t_mlx *mlx);
 t_mapb				*find_spot(t_mapb *start, t_dot spot);
-int					is_wall(t_mapb *start, t_dot spot);
-int					is_transparent(t_mapb *start, t_dot spot);
+int					is_wall(t_mapb *start, t_mapb *block, t_dot spot);
+int					is_transparent(t_mapb *start, t_mapb *block, t_dot spot);
 
 
 int					map_reader(char *name, t_map *map);
@@ -432,6 +462,7 @@ void				t_image_del(t_image *image);
 t_image				mlx_image(t_mlx mlx, t_dot size, int def);
 int					mlx_line_to_image(t_image image, t_dot spos, t_dot epos, int color);
 void				image_set(t_image image, int color);
+void				image_combine(t_image img1, t_image img2, int empty);
 
 PRECISION			pmap(PRECISION p, t_nmap ran);
 int					iround(PRECISION in);

@@ -25,17 +25,17 @@ static t_pdot	collision(t_mapb *start, t_pdot new, t_pdot old)
 	//printf("in old %f %f | new %f %f\n", old.x, old.y, new.x, new.y);
 	if (new.x != old.x)
 	{
-		if (new.x > old.x && is_wall(start, spot = dot(dround(new.x + PSIZE), dround(new.y))))
+		if (new.x > old.x && is_wall(start, NULL, spot = dot(dround(new.x + PSIZE), dround(new.y))))
 			new.x = spot.x - PSIZE;
-		else if (is_wall(start, spot = dot(dround(new.x - PSIZE), dround(new.y))))
+		else if (is_wall(start, NULL, spot = dot(dround(new.x - PSIZE), dround(new.y))))
 			new.x = dround(new.x) + PSIZE; //spot.x < 0 ? spot.x + PSIZE + 1 : spot.x + PSIZE;
 		printf("x collision square %f %d %d\n", new.x - old.x, spot.x, spot.y);
 	}
 	if (new.y != old.y)
 	{
-		if (new.y > old.y && is_wall(start, spot = dot(dround(new.x), dround(new.y + PSIZE))))
+		if (new.y > old.y && is_wall(start, NULL, spot = dot(dround(new.x), dround(new.y + PSIZE))))
 			new.y = spot.y - PSIZE;
-		else if (is_wall(start, spot = dot(dround(new.x), dround(new.y - PSIZE))))
+		else if (is_wall(start, NULL, spot = dot(dround(new.x), dround(new.y - PSIZE))))
 			new.y = dround(new.y) + PSIZE; //spot.y < 0 ? spot.y + PSIZE + 1 : spot.y + PSIZE;
 		printf("y collision square %f %d %d\n", new.y - old.y, spot.x, spot.y);
 	}

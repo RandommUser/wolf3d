@@ -30,6 +30,9 @@ t_game	game_start(void)
 	game.frame = (float)1 / FRAMECAP;
 	game.verbose = 0;
 	game.mid = GHEIGHT / 2;
+	game.state = START_SCREEN;
+	game.mselect = 0;
+	game.menu = MENU_PAUSE;
 	printf("%f'\n", game.frame);
 	return (game);
 }
@@ -45,7 +48,15 @@ void	game(char *name)
 		err_exit(ERR_MLX, "MLX failed to init game()");
 	//game.player.pos = start square
 	game.mlx = mlx_start(game.mlx.mlx_ptr, GWIDTH, GHEIGHT, "Wolf3D");
-	game.image = mlx_image(game.mlx, game.mlx.size, 0x000000);
+	game.image[0] = mlx_image(game.mlx, game.mlx.size, 0x000000);
+	game.image[1] = mlx_image(game.mlx, game.mlx.size, 0x000000);
+
+	raycast(game);
+	image_combine(game.image[0], game.image[1], 0x000000);
+	mlx_image_place(game.mlx, game.image[0].img_ptr, dot(0, 0));
+	write_to_screen(game.mlx, dot(game.mlx.size.x / 2 - (int)(ft_strlen(game.map.name) / 2) * TEXT_WIDTH, 50), 0xffffff, game.map.name);
+	write_to_screen(game.mlx, dot(100, 200), 0xffffff, game.map.desc);
+	write_to_screen(game.mlx, dot(game.mlx.size.x / 2 - (int)(ft_strlen("Press Enter to start") / 2) * TEXT_WIDTH, game.mlx.size.y - 50), 0xffffff, "Press Enter to start");
 
 	mlx_loop_hook(game.mlx.mlx_ptr, &game_loop, &game);
 	mlx_hook(game.mlx.mlx_win, KEY_PRESS, 0, &game_key_down, &game);
