@@ -11,13 +11,6 @@
 /* ************************************************************************** */
 
 #include "header.h"
-/*
-int	player_turn(t_game *game)
-{
-
-	return (0);
-}
-*/
 
 static t_pdot	collision(t_mapb *start, t_pdot new, t_pdot old)
 {
@@ -29,7 +22,7 @@ static t_pdot	collision(t_mapb *start, t_pdot new, t_pdot old)
 			new.x = spot.x - PSIZE;
 		else if (is_wall(start, NULL, spot = dot(dround(new.x - PSIZE), dround(new.y))))
 			new.x = dround(new.x) + PSIZE; //spot.x < 0 ? spot.x + PSIZE + 1 : spot.x + PSIZE;
-		printf("x collision square %f %d %d\n", new.x - old.x, spot.x, spot.y);
+		//printf("x collision square %f %d %d\n", new.x - old.x, spot.x, spot.y);
 	}
 	if (new.y != old.y)
 	{
@@ -37,7 +30,7 @@ static t_pdot	collision(t_mapb *start, t_pdot new, t_pdot old)
 			new.y = spot.y - PSIZE;
 		else if (is_wall(start, NULL, spot = dot(dround(new.x), dround(new.y - PSIZE))))
 			new.y = dround(new.y) + PSIZE; //spot.y < 0 ? spot.y + PSIZE + 1 : spot.y + PSIZE;
-		printf("y collision square %f %d %d\n", new.y - old.y, spot.x, spot.y);
+		//printf("y collision square %f %d %d\n", new.y - old.y, spot.x, spot.y);
 	}
 	//new.x = old.x;
 	return (new);
@@ -80,14 +73,14 @@ int	player_move(t_game *game)
 		view += HEAD_TILT;
 	if (is_pressed(game->key, KEY_DOWN, K_AD))
 		view -= HEAD_TILT;
-	if (view || game->mid != game->mlx.size.y / 2)
+	if (view || game->player.look != game->mlx.size.y / 2)
 	{
-		game->mid += view <= 0 && game->mid > game->mlx.size.y / 2 ? -HEAD_TILT : 0;
-		game->mid += view >= 0 && game->mid < game->mlx.size.y / 2 ? HEAD_TILT : 0;
-		game->mid += view;
+		game->player.look += view <= 0 && game->player.look > game->mlx.size.y / 2 ? -HEAD_TILT : 0;
+		game->player.look += view >= 0 && game->player.look < game->mlx.size.y / 2 ? HEAD_TILT : 0;
+		game->player.look += view;
 		view = !view ? 1 : view;
-		game->mid = game->mid < 0 ? 0 : game->mid;
-		game->mid = game->mid > game->mlx.size.y - 1 ? game->mlx.size.y - 1 : game->mid;
+		game->player.look = game->player.look < 0 ? 0 : game->player.look;
+		game->player.look = game->player.look > game->mlx.size.y - 1 ? game->mlx.size.y - 1 : game->player.look;
 	}
 	if (is_pressed(game->key, KEY_DOWN, K_W))
 		move.y += MOVE_SPEED;
@@ -103,7 +96,7 @@ int	player_move(t_game *game)
 		turn += TURN_RATE;
 	if (is_pressed(game->key, KEY_DOWN, K_R))
 	{
-		game->player = player_reset();
+		game->player = player_reset(game);
 		return (1);
 	}
 	if (!view && !move.y && !move.x && !turn)

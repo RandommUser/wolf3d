@@ -55,6 +55,7 @@ static void	block_norm(t_map *map, t_mapb *start)
 		curr->pos.y -= spawn.y;
 		curr = curr->next;
 	}
+	map->spawn = dot(0, 0); // = spawn if u remove the above while loop
 }
 
 static char	*block_param(char *line)
@@ -143,7 +144,7 @@ static char *moved_str(char *str, char *cmp)
 	return (&str[i]);
 }
 
-static int	map_header(int fd, t_map *map)
+static int	map_header(char *name, int fd, t_map *map)
 {
 	char	*line;
 	char	*start;
@@ -174,6 +175,10 @@ static int	map_header(int fd, t_map *map)
 	if (ret == 1  && start && !(map->next = ft_strdup(start)))
 		err_exit(ERR_MEMORY, "map_header next alloc");
 	ft_memdel((void*)&line);
+	if (ft_strlen(name) != ft_strclen(name, '/'))
+	{
+		map->path = ft_strsub(name, 0, ft_strclen(name, '/') + 1);
+	}
 	return (ret == 1 ? 1 : 0);
 }
 
@@ -183,7 +188,7 @@ int		map_reader(char *name, t_map *map)
 
 	if (!file_ending(name, MAP_ENDING) || (fd = open(name, O_RDONLY)) < 1) // MAP NAME TESTING
 		return (0);
-	if (!map_header(fd, map))
+	if (!map_header(name, fd, map))
 		return (bad_map(fd, map));
 	printf("Name: %s\nDesc: %s\nNext: %s\n", map->name, map->desc, map->next);
 	block_tree_del(map->start);

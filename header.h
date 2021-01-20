@@ -55,6 +55,7 @@
 # define K_Z 6
 # define K_V 9
 # define K_C 8
+# define K_P 35
 # define K_1 18
 # define K_2 19
 # define K_3 20
@@ -116,6 +117,9 @@
 # define PAUSED 0
 # define START_SCREEN 2
 # define MENU_PAUSE 1
+# define END_SCREEN 3
+# define MSELECTED 0xfff600
+# define MNORMAL 0xffffff
 
 
 /*
@@ -253,9 +257,11 @@ typedef struct		s_mapb
 typedef	struct		s_map
 {
 	char		*version;
+	char		*path;
 	char		*name;
 	char		*desc;
 	char		*next;
+	t_dot		spawn;
 	t_mapb		*start;		// start point pointer
 	t_dot		size;
 }					t_map;
@@ -268,6 +274,7 @@ typedef struct		s_player
 	PRECISION	z;	// check if used
 	PRECISION	rot;
 	char		collision;
+	int			look;
 }					t_player;
 
 typedef struct		s_game
@@ -280,7 +287,6 @@ typedef struct		s_game
 	t_player	player;
 	PRECISION	frame;
 	char		verbose;
-	int			mid;
 	char		state;
 	int			mselect;
 	int			menu;
@@ -384,7 +390,7 @@ void				good_exit(int code, char *msg);
 void				err_exit(int error, char *msg);
 
 void				game(char *name);
-t_player			player_reset(void);
+t_player			player_reset(t_game *game);
 
 int					game_loop(t_game *game);
 int					game_key_down(int key, t_game *game);
@@ -392,7 +398,8 @@ int					game_key_up(int key, t_game *game);
 
 int					player_move(t_game *game);
 void				raycast(t_game game);
-//void				traycast(t_game game);
+void				pause_menu(t_game *game, char action);
+void				end_menu(t_game *game, char action);
 
 void				editor(char *arg);
 void				text_init(void *mlx_ptr, void **text, int width, int height);
@@ -410,6 +417,7 @@ int					map_valid(t_map *map, t_mlx *mlx);
 t_mapb				*find_spot(t_mapb *start, t_dot spot);
 int					is_wall(t_mapb *start, t_mapb *block, t_dot spot);
 int					is_transparent(t_mapb *start, t_mapb *block, t_dot spot);
+int					is_goal(t_mapb *start, t_dot spot);
 
 
 int					map_reader(char *name, t_map *map);

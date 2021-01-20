@@ -14,6 +14,7 @@ SRCS=editor.c\
 	map.c\
 	map_reader.c\
 	map_writer.c\
+	menu.c\
 	mlx_func.c\
 	struct.c\
 	key_active.c\

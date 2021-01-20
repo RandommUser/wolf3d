@@ -12,6 +12,18 @@
 
 #include "header.h"
 
+int			is_goal(t_mapb *start, t_dot spot)
+{
+	t_mapb	*block;
+
+	if (!start)
+		return (0);
+	block = find_spot(start, spot);
+	if (block->param && ft_strstr(block->param, MAP_END_FLAG))
+		return (1);
+	return (0);
+}
+
 int			is_transparent(t_mapb *start, t_mapb *block, t_dot spot)
 {
 	if (!start && !block)

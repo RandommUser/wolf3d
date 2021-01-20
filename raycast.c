@@ -96,9 +96,9 @@ void	traycast(t_ray ray)
 
 		ray.lheight = ray.game.mlx.size.y / ray.wdist;
 
-		ray.draw.x = -(ray.lheight) / 2 + ray.game.mid;
+		ray.draw.x = -(ray.lheight) / 2 + ray.game.player.look;
 		//ray.draw.x = ray.draw.x < 0 ? 0 : ray.draw.x; // not needed
-		ray.draw.y = ray.lheight / 2 + ray.game.mid;
+		ray.draw.y = ray.lheight / 2 + ray.game.player.look;
 		//ray.draw.y = ray.draw.y >= ray.game.mlx.size.y ? ray.game.mlx.size.y - 1 : ray.draw.y; // not needed
 
 		if (ray.block->block == 7)
@@ -201,9 +201,9 @@ void	raycast(t_game game)
 
 		ray.lheight = game.mlx.size.y / ray.wdist;
 
-		ray.draw.x = -(ray.lheight) / 2 + game.mid;
+		ray.draw.x = -(ray.lheight) / 2 + game.player.look;
 		ray.draw.x = ray.draw.x < 0 ? 0 : ray.draw.x; // not needed
-		ray.draw.y = ray.lheight / 2 + game.mid;
+		ray.draw.y = ray.lheight / 2 + game.player.look;
 		ray.draw.y = ray.draw.y >= game.mlx.size.y ? game.mlx.size.y - 1 : ray.draw.y; // not needed
 		// ADD COLOR CHANGES HERE
 		//

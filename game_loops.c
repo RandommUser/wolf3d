@@ -17,12 +17,13 @@ int	game_loop(t_game *game)
 	static clock_t	start;
 	static clock_t	fps;
 	static t_dot	ps;
+	static int		playing;
 	static int		frames;
 	clock_t			curr;
 	double			d;
 
 	if (game->state != RUNNING)
-		return (0);
+		return ((playing == PAUSED));
 	if (!start)
 	{
 		start = clock();
@@ -34,7 +35,7 @@ int	game_loop(t_game *game)
 	if (d >= game->frame)
 	{
 		// ACTIONS HERE
-		if (player_move(game))
+		if (player_move(game) || !playing)
 		{
 			//mlx_pixel_place(game->mlx, dot(game->player.pos.x, game->player.pos.y), 0xffffff);
 			image_set(game->image[0], 0x000000);
@@ -65,8 +66,14 @@ int	game_loop(t_game *game)
 		}
 		else
 			frames++;
+		if (is_goal(game->map.start, dot(dround(game->player.pos.x), dround(game->player.pos.y))))
+		{
+			game->state = END_SCREEN;
+			end_menu(game, 0);
+			printf("found goal\n");
+		}
 	}
-	return (0);
+	return ((playing == RUNNING));
 }
 
 int	game_key_down(int key, t_game *game)
@@ -95,14 +102,48 @@ int	game_key_down(int key, t_game *game)
 			mlx_image_place(game->mlx, game->image[1].img_ptr, dot(0, 0));	
 		if (key == K_C)
 			game->player.collision = game->player.collision ? 0 : 1;
+		if (key == K_P)
+		{
+			game->state = PAUSED;
+			pause_menu(game, 0);
+		}
 	}
 	else if (game->state == START_SCREEN)
 	{
 		if (key == K_ENT)
 		{
 			game->state = RUNNING;
-
 		}
+	}
+	else if (game->state == PAUSED)
+	{
+		if (key == K_AU)
+		{
+			game->mselect--; // limit this?
+			pause_menu(game, 0);
+		}
+		else if (key == K_AD)
+		{
+			game->mselect++;
+			pause_menu(game, 0);
+		}
+		else if (key == K_ENT)
+			pause_menu(game, '+');
+	}
+	else if (game->state == END_SCREEN)
+	{
+		if (key == K_AU)
+		{
+			game->mselect--; // limit this?
+			end_menu(game, 0);
+		}
+		else if (key == K_AD)
+		{
+			game->mselect++;
+			end_menu(game, 0);
+		}
+		else if (key == K_ENT)
+			end_menu(game, '+');
 	}
 	return (0);
 }
