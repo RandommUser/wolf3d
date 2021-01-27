@@ -65,26 +65,60 @@ t_image		mlx_image(t_mlx mlx, t_dot size, int def)
 	return (image);
 }
 
+static int	pos_check(t_image image, t_dot spos, t_dot epos)
+{
+	if (spos.x < 0 && epos.x < 0)
+		return (0);
+	if (spos.y < 0 && epos.y < 0)
+		return (0);
+	if (spos.x >= image.size.x && epos.x >= image.size.x)
+		return (0);
+	if (spos.y >= image.size.y && epos.y >= image.size.y)
+		return (0);
+	return (1);
+}
+
 int		mlx_line_to_image(t_image image, t_dot spos, t_dot epos, int color)
 {
 	int		step;
 	t_pdot	d;
 	t_pdot	inc;
+	int		diff;
 
 	d.x = epos.x - spos.x;
 	d.y = epos.y - spos.y;
 	step = ft_fabs(d.x) > ft_fabs(d.y) ? ft_fabs(d.x) : ft_fabs(d.y);
-	if (!step)
+	if (!step || !pos_check(image, spos, epos))
 		return (0);
 	inc.x = d.x / step;
 	inc.y = d.y / step;
 	d.x = spos.x;
 	d.y = spos.y;
-	while (--step > 0 && (int)d.x < image.size.x && d.x >= 0 && (int)d.y < image.size.y && d.y >= 0)
+	if (d.x < 0)
 	{
-		image.img_data[(int)d.x + (int)(d.y) * image.line] = color;//(int)d.x % 2 == 0 ? color : 0xff0000;
+		diff = -d.x / inc.x;
+		d.x += diff * inc.x;
+		d.y += diff * inc.y;
+		step -= diff;
+	}
+	if (d.y < 0)
+	{
+		diff = -d.y / inc.y;
+		d.y += diff * inc.y;
+		d.x += diff * inc.x;
+		step -= diff;
+	}
+	while (--step > 0)
+	{
+		if ((int)d.x < image.size.x && d.x >= 0 && (int)d.y < image.size.y && d.y >= 0)
+			image.img_data[(int)d.x + (int)(d.y) * image.line] = color;//(int)d.x % 2 == 0 ? color : 0xff0000;
 		d.x += inc.x;
 		d.y += inc.y;
+		if (((int)d.x >= image.size.x && inc.x > 0)
+		|| ((int)d.x < 0 && inc.x < 0)
+		|| ((int)d.y >= image.size.y && inc.y > 0)
+		|| ((int)d.y < 0 && inc.y < 0))
+			break ;
 		//if (epos.x == 0 && spos.x == 0)
 		//	printf("writing to %d %d = %d\n", (int)d.x, (int)d.y, (int)d.x + (int)(d.y) * image.line);
 	}

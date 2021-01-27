@@ -19,7 +19,7 @@ int			is_goal(t_mapb *start, t_dot spot)
 	if (!start)
 		return (0);
 	block = find_spot(start, spot);
-	if (block->param && ft_strstr(block->param, MAP_END_FLAG))
+	if (block && block->param && ft_strstr(block->param, MAP_END_FLAG))
 		return (1);
 	return (0);
 }
