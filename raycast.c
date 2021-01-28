@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "header.h"
+
 t_ray	ray_colors(t_ray ray)
 {
 	if (ray.side)
@@ -23,7 +24,7 @@ t_ray	ray_colors(t_ray ray)
 			ray.draw.x = ray.draw.y - (ray.draw.y - ray.draw.x) / 10;
 		}
 		ray.color = !ray.hit ? 0x333333 : ray.color;
-	if (ray.block->block == 7)
+	if (ray.block && ray.block->block == 7)
 	{
 		ray.color = 0xffffff;
 		ray.draw.x = ray.draw.y - (ray.draw.y - ray.draw.x) / 10;
