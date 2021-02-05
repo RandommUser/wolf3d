@@ -29,12 +29,8 @@ static int	block_select(int x, int y)
 	return (-1);
 }
 
-int			bar_mouse_hover(int x, int y, void *param)
+int			bar_mouse_hover(int x, int y, t_toolbar *bar)
 {
-	t_toolbar	*bar;
-
-	bar = param;
-	//printf("motion at %d %d\n", x, y);
 	if (y < 0 || y > BAR_HEIGHT || x < 0 || x > BAR_WIDTH)
 		return ((bar->hover = -1));
 	bar->hover = block_select(x, y);
@@ -42,11 +38,8 @@ int			bar_mouse_hover(int x, int y, void *param)
 	return (0);
 }
 
-int			bar_mouse_click(int button, int x, int y, void *param)
+int			bar_mouse_click(int button, int x, int y, t_toolbar *bar)
 {
-	t_toolbar	*bar;
-
-	bar = param;
 	if (y < 0 || y > BAR_HEIGHT || x < 0 || x > BAR_WIDTH)
 		return (0);
 	if (button == MOU_R || button == MOU_L)
@@ -61,7 +54,6 @@ int			bar_key_press(int key, t_toolbar *bar)
 	if (key == ESC_KEY)
 	{
 		t_mlx_delete(&bar->mlx);
-		//mlx_destroy_window(bar->mlx.mlx_ptr, bar->mlx.mlx_win);
 		key_press(ESC_KEY, bar->editor);
 	}
 	return (0);

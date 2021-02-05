@@ -12,27 +12,26 @@
 
 #include "header.h"
 
-static t_pdot	collision(t_mapb *start, t_pdot new, t_pdot old)
+static t_pdot	collision(t_game *game, t_mapb *start, t_pdot new, t_pdot old)
 {
 	t_dot	spot;
-	//printf("in old %f %f | new %f %f\n", old.x, old.y, new.x, new.y);
+
+	if (!game->player.collision)
+		return (new);
 	if (new.x != old.x)
 	{
-		if (new.x > old.x && is_wall(start, NULL, spot = dot(dround(new.x + PSIZE), dround(new.y))))
-			new.x = spot.x - PSIZE;
-		else if (is_wall(start, NULL, spot = dot(dround(new.x - PSIZE), dround(new.y))))
-			new.x = dround(new.x) + PSIZE; //spot.x < 0 ? spot.x + PSIZE + 1 : spot.x + PSIZE;
-		//printf("x collision square %f %d %d\n", new.x - old.x, spot.x, spot.y);
+		if (new.x > old.x && is_wall(start, NULL, spot = dot(dround(new.x +
+			PSIZE), dround(new.y)))) new.x = spot.x - PSIZE;
+		else if (is_wall(start, NULL, spot = dot(dround(new.x - PSIZE),
+			dround(new.y)))) new.x = dround(new.x) + PSIZE;
 	}
 	if (new.y != old.y)
 	{
-		if (new.y > old.y && is_wall(start, NULL, spot = dot(dround(new.x), dround(new.y + PSIZE))))
-			new.y = spot.y - PSIZE;
-		else if (is_wall(start, NULL, spot = dot(dround(new.x), dround(new.y - PSIZE))))
-			new.y = dround(new.y) + PSIZE; //spot.y < 0 ? spot.y + PSIZE + 1 : spot.y + PSIZE;
-		//printf("y collision square %f %d %d\n", new.y - old.y, spot.x, spot.y);
+		if (new.y > old.y && is_wall(start, NULL, spot = dot(dround(new.x),
+			dround(new.y + PSIZE)))) new.y = spot.y - PSIZE;
+		else if (is_wall(start, NULL, spot = dot(dround(new.x), dround(new.y -
+			PSIZE)))) new.y = dround(new.y) + PSIZE;
 	}
-	//new.x = old.x;
 	return (new);
 }
 
@@ -42,15 +41,12 @@ static void	player_rota(t_player *player, PRECISION dir)
 	t_pdot	odir;
 	t_pdot	angle;
 
-	angle.x = sin(dir);// * 0.01745329251);
-	angle.y = cos(dir);// * 0.01745329251);
+	angle.x = sin(dir);
+	angle.y = cos(dir);
 	oplane = player->plane;
 	odir = player->dir;
 	player->dir.x = player->dir.x * angle.y - player->dir.y * angle.x;
 	player->dir.y = odir.x * angle.x + player->dir.y * angle.y;
-
-	//planeX = planeX * cos(rotSpeed) - planeY * sin(rotSpeed);
-    //planeY = oldPlaneX * sin(rotSpeed) + planeY * cos(rotSpeed);
 	player->plane.x = player->plane.x * angle.y - player->plane.y * angle.x;
 	player->plane.y = oplane.x * angle.x + player->plane.y * angle.y;
 }
@@ -63,7 +59,7 @@ int	player_move(t_game *game)
 	t_pdot		tplane;
 	t_pdot		tdir;
 	PRECISION	turn;
-	static PRECISION	turning;
+	static PRECISION	turning;//remove?
 	int			view;
 
 	move = pdot(0, 0);
@@ -107,11 +103,8 @@ int	player_move(t_game *game)
 	if (game->verbose)
 		printf("turnig %f\n", turning);
 	player_rota(&game->player, turn);
-	
 	move.x *= is_pressed(game->key, KEY_DOWN, L_SHFT) ? 2 : 1;
 	move.y *= is_pressed(game->key, KEY_DOWN, L_SHFT) ? 2 : 1;
-	//game->player.pos.x += game->player.dir.x * move.y; // ADD COLLION TEST
-	//game->player.pos.y += game->player.dir.y * move.y;
 	movement.x = game->player.dir.x * move.y;
 	movement.y = game->player.dir.y * move.y;
 	if (move.x)
@@ -130,22 +123,6 @@ int	player_move(t_game *game)
 	}
 	game->player.pos.x += movement.x;
 	game->player.pos.y += movement.y;
-	if (!game->player.collision)
-		return (1);
-	game->player.pos = collision(game->map.start, game->player.pos, opos);
-	//game->player.pos.x += game->player.dir.x * move.x + game->player.dir.y * move.x; // not quite
-	//game->player.pos.y += game->player.dir.x * move.x + game->player.dir.y * move.x;
-	/*game->player.rot += turn * 60;
-	game->player.rot += game->player.rot < 0 ? 360 : 0;
-	game->player.rot -= game->player.rot > 359 ? 360 : 0;
-	rot.x = cos(game->player.rot * 0.01745329251);	// (pi / 180)
-	rot.y = sin(game->player.rot * 0.01745329251);
-	//printf("rot %f %f\n", rot.x, rot.y);
-	temp.x = move.x * rot.x - move.y * rot.y;
-	temp.y = move.x * rot.y + move.y * rot.x;
-	//printf("%d | %f %f\n", turn, temp.x, temp.y);
-	game->player.pos.x += temp.x;
-	game->player.pos.y += temp.y; // not moving??*/
-	
+	game->player.pos = collision(game, game->map.start, game->player.pos, opos);
 	return (1);
 }

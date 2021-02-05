@@ -34,10 +34,10 @@ void	edi_block_image(t_box box)
 	int		*text_data;
 
 	box.step = 1 * box.edit->zoom;
-	image.x = iround(pmap(box.spot.x,
-		nmap(box.edit->offset.x - box.w, box.edit->offset.x + box.w, 0, box.edit->size.x - 1)));
-	image.y = iround(pmap(box.spot.y,
-		nmap(box.edit->offset.y - box.h, box.edit->offset.y + box.h, 0, box.edit->size.y - 1)));
+	image.x = iround(pmap(box.spot.x, nmap(box.edit->offset.x - box.w,
+		box.edit->offset.x + box.w, 0, box.edit->size.x - 1)));
+	image.y = iround(pmap(box.spot.y, nmap(box.edit->offset.y - box.h,
+		box.edit->offset.y + box.h, 0, box.edit->size.y - 1)));
 	prog = dot(0, 0);
 	pcorr = dot(0, 0);
 	tcorr = pdot(0, 0);
@@ -52,14 +52,13 @@ void	edi_block_image(t_box box)
 		prog.y = ft_abs(image.y);
 		texture.y = prog.y * box.step;
 	}
-	text_data = (int*)mlx_get_data_addr(box.edit->mlx_img[box.curr->block], &box.bpp, &box.line_size, &box.endian);
+	text_data = mlx_int_map(box.edit->mlx_img[box.curr->block], box);
 	while (iround(texture.y) < BLOCKW && image.y + prog.y < box.edit->size.y)
 	{
 		texture.x = tcorr.x;
 		prog.x = pcorr.x;
 		while (iround(texture.x) < BLOCKW && image.x + prog.x < box.edit->size.x)
 		{
-			//printf("text %f %f corr %f %f\nimage %d %d corr %d %d\n", texture.x, texture.y, tcorr.x, tcorr.y, prog.x + image.x, prog.y + image.y, pcorr.x, pcorr.y);
 			box.edit->map_data[prog.x + image.x + (prog.y + image.y) * box.edit->size.x] = 
 				text_data[iround(texture.x) + iround(texture.y) * BLOCKW];
 			prog.x++;

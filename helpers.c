@@ -35,3 +35,13 @@ int			dround(PRECISION in)
 		return (in - 1);
 	return ((int)in);
 }
+
+int			*mlx_int_map(void *img_ptr, t_box box)
+{
+	int	*ret;
+
+	ret = (int*)mlx_get_data_addr(img_ptr, &box.bpp, &box.line_size, &box.endian);
+	if (!ret)
+		err_exit(ERR_MLX, "failed to get img_map");
+	return (ret);
+}

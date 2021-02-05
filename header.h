@@ -402,7 +402,7 @@ void				pause_menu(t_game *game, char action);
 void				end_menu(t_game *game, char action);
 
 void				editor(char *arg);
-void				text_init(void *mlx_ptr, void **text, int width, int height);
+void				tex_init(void *mlx_ptr, void **text, int width, int height);
 
 t_mapb				*block_add(t_map *map, int block, t_dot spot, char *param);
 int					block_edit(t_map *map, int block, t_dot spot, char *param);
@@ -427,20 +427,16 @@ void				edi_block_image(t_box box);
 void				image_wipe(int *img_dat, int color, int width, int height);
 
 void				tool_render(t_toolbar *bar);
-int					bar_mouse_hover(int x, int y, void *param);
-int					bar_mouse_click(int button, int x, int y, void *para);
+int					bar_mouse_hover(int x, int y, t_toolbar *bar);
+int					bar_mouse_click(int button, int x, int y, t_toolbar *bar);
 int					tool_exit(t_toolbar *param);
 int					bar_key_press(int key, t_toolbar *bar);
 
-int					key(int key, void *param);
-int					mouse(int button, int x, int y, void *param);
-int					key_press(int key, void *para);
-int 				key_release(int key, void *para);
-int 				button_pressed(int button, int x, int y, void *para);
-int 				button_released(int button, int x, int y, void *para);
-int					motion_notify(int x, int y, void *para);
-int 				enter_notify(void *para);
-int 				leave_notify(void *para);
+int					key_press(int key, t_editor *edi);
+int 				key_release(int key, t_editor *edi);
+int 				button_pressed(int button, int x, int y, t_editor *edi);
+int 				button_released(int button, int x, int y, t_editor *edi);
+int					motion_notify(int x, int y, t_editor *edi);
 int					editor_exit(t_editor *edit);
 
 void				log_reset(int *tab, int n, int key);
@@ -471,6 +467,7 @@ t_image				mlx_image(t_mlx mlx, t_dot size, int def);
 int					mlx_line_to_image(t_image image, t_dot spos, t_dot epos, int color);
 void				image_set(t_image image, int color);
 void				image_combine(t_image img1, t_image img2, int empty);
+int					*mlx_int_map(void *img_ptr, t_box box);
 
 PRECISION			pmap(PRECISION p, t_nmap ran);
 int					iround(PRECISION in);

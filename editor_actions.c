@@ -12,6 +12,30 @@
 
 #include "header.h"
 
+static int	wall(int b)
+{
+	static int	wall[5] = {1, 2, 3, 4, -1};
+	int			i;
+
+	i = -1;
+	while (wall[++i] != -1)
+		if (wall[i] == b)
+			return (1);
+	return (0);
+}
+
+static int	transparent(int b)
+{
+	static int	wall[2] = {7, -1};
+	int			i;
+
+	i = -1;
+	while (wall[++i] != -1)
+		if (wall[i] == b)
+			return (1);
+	return (0);
+}
+
 int			is_goal(t_mapb *start, t_dot spot)
 {
 	t_mapb	*block;
@@ -32,7 +56,7 @@ int			is_transparent(t_mapb *start, t_mapb *block, t_dot spot)
 		block = find_spot(start, spot);
 	if (!block)
 		return (0);
-	if (block->block == 7)
+	if (transparent(block->block))
 		return (1);
 	return (0);
 }
@@ -45,8 +69,7 @@ int			is_wall(t_mapb *start, t_mapb *block, t_dot spot)
 		block = find_spot(start, spot);
 	if (!block)
 		return (0);
-	if (block->block == 1 || block->block == 2 ||
-		block->block == 4 || block->block == 3)
+	if (wall(block->block))
 		return (1);
 	return (0);
 }
@@ -72,7 +95,7 @@ static t_mapb	*find_last(t_mapb *start)
 	t_mapb *curr;
 
 	curr = start;
-	while (curr->next)
+	while (curr && curr->next)
 		curr = curr->next;
 	return (curr);
 }
@@ -84,6 +107,8 @@ int 		block_check(t_mapb *block, char *str)
 
 static void block_param(t_mapb *block, char *param)
 {
+	if (!block)
+		return ;
 	if (block->param)
 		free(block->param);
 	block->param = param;
@@ -151,7 +176,7 @@ void	block_tree_del(t_mapb *start)
 		curr = next;
 	}
 }
-
+// where used?
 int		block_cut(t_mapb *start, t_dot spot)
 {
 	t_mapb	*curr;
@@ -161,8 +186,7 @@ int		block_cut(t_mapb *start, t_dot spot)
 	previous = NULL;
 	while (curr)
 	{
-		if (curr->pos.x == spot.x &&
-			curr->pos.y == spot.y)
+		if (curr->pos.x == spot.x && curr->pos.y == spot.y)
 		{
 			if (previous)
 			{
@@ -229,12 +253,12 @@ int		block_edit(t_map *map, int block, t_dot spot, char *param)
 	else if (!curr)
 	{
 		curr = find_last(map->start);
-		if ((curr->next = block_add(map, block, spot, param)))
+		if (curr && (curr->next = block_add(map, block, spot, param)))
 			return (1);
 	}
 	return (0);
 }
-
+// remove...
 void	block_list(t_mapb *start)
 {
 	t_mapb	*curr;
@@ -253,12 +277,28 @@ void	block_list(t_mapb *start)
 	}
 }
 
+/*
+** block_to_image helper
+*/
+
+static int		on_screen(t_pdot pos, t_pdot off, t_box box)
+{
+	if (pos.x < off.x - box.w && pos.x + BLOCKW < off.x - box.w)
+		return (0);
+	if (pos.x > off.x + box.w && pos.x + BLOCKW > off.x + box.w)
+		return (0);
+	if (pos.y < off.y - box.h && pos.y + BLOCKW < off.y - box.h)
+		return (0);
+	if (pos.y > off.y + box.h && pos.y + BLOCKW > off.y + box.h)
+		return (0);
+	return (1);
+}
+
 void	block_to_image(t_editor *edit)
 {
 
 	t_box		box;
 	t_pdot		spot;
-//	t_dot		text;
 
 	if (!(box.curr = edit->map.start))
 		return ;
@@ -266,29 +306,18 @@ void	block_to_image(t_editor *edit)
 	box.blockw = BLOCKW * edit->zoom;
 	box.w = edit->size.x / 2 * edit->zoom;
 	box.h = edit->size.y / 2 * edit->zoom;
-	box.i = 0;
-	while (box.curr)
+	box.i = -1;
+	while (box.curr && ++box.i < 21749647)
 	{
-		//spot.x = box.curr->pos.x * box.blockw - box.blockw / 2;
-		//spot.y = box.curr->pos.y * box.blockw - box.blockw / 2;
 		spot.x = box.curr->pos.x * BLOCKW - BLOCKW / 2;
 		spot.y = box.curr->pos.y * BLOCKW - BLOCKW / 2;
-		if ((spot.x >= edit->offset.x - box.w && spot.x <= edit->offset.x + box.w) ||
-		(spot.x + BLOCKW >= edit->offset.x - box.w && spot.x + BLOCKW <= edit->offset.x + box.w))
+		if (on_screen(spot, edit->offset, box))
 		{
-			if ((spot.y >= edit->offset.y - box.h && spot.y <= edit->offset.y + box.h) ||
-			(spot.y + BLOCKW >= edit->offset.y - box.h && spot.y + BLOCKW <= edit->offset.y + box.h))
-			{
-				box.edit = edit;
-				box.spot = spot; // blockw, w, h, spot, edit, curr
-				mlx_pixel_place(edit->mlx, dot(spot.x + edit->size.x / 2 - edit->offset.x,
-					spot.y + edit->size.y / 2 - edit->offset.y), 0xffffff);
-				//printf("block #%d in view, X %f Y %f | base %d %d\n", box.i, spot.x, spot.y, box.curr->base_s.x, box.curr->base_s.y);
-				edi_block_image(box);
-			}
+			box.edit = edit;
+			box.spot = spot;
+			edi_block_image(box);
 		}
 		box.curr = box.curr->next;
-		box.i++;
 	}
 	mlx_clear_window(edit->mlx.mlx_ptr, edit->mlx.mlx_win);
 	mlx_image_place(edit->mlx, edit->map_img, dot(0, 0));
