@@ -30,7 +30,7 @@ t_pdot	pdot(PRECISION x, PRECISION y)
 	return (this);
 }
 
-t_nmap	nmap(PRECISION ran11, PRECISION ran12, PRECISION ran21, PRECISION ran22)
+t_nmap	nmap(PRECISION ran11, PRECISION ran12, PRECISION ran21, PRECISION ra22)
 {
 	t_nmap	ret;
 
@@ -38,6 +38,6 @@ t_nmap	nmap(PRECISION ran11, PRECISION ran12, PRECISION ran21, PRECISION ran22)
 	ret.ran11 = ran11;
 	ret.ran12 = ran12;
 	ret.ran21 = ran21;
-	ret.ran22 = ran22;
+	ret.ran22 = ra22;
 	return (ret);
 }

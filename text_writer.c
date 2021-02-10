@@ -37,8 +37,8 @@ static t_print	print_split(t_print print, int *prog, int *i)
 		err_exit(ERR_MEMORY, "write_to_screen temp alloc"); // error exit
 	if (print.str[*i - 1] == '-')
 		*i = *i - 1;
-	mlx_string_put(print.mlx.mlx_ptr, print.mlx.mlx_win, *prog - *i * TEXT_WIDTH,
-		print.pos.y, print.color, temp);
+	mlx_string_put(print.mlx.mlx_ptr, print.mlx.mlx_win, *prog - *i *
+		TEXT_WIDTH, print.pos.y, print.color, temp);
 	print.str = &print.str[++*i];
 	if (print.str[-1] == '\n')
 		print.pos.y += TEXT_HEIGHT;

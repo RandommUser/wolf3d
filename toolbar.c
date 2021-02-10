@@ -17,6 +17,7 @@ static char	*block_name(int block)
 	static char	block_name[BLOCKS + 1][100] = {
 		"EMPTY" ,  "START", "EXIT", "WALL", "FLOOR", "\0"
 	};
+
 	return (block_name[block]);
 }
 
@@ -67,7 +68,8 @@ void		tool_render(t_toolbar *bar)
 	int		i;
 
 	mlx_clear_window(bar->mlx.mlx_ptr, bar->mlx.mlx_win);
-	write_to_screen(bar->mlx, dot(5, 0), BAR_C_GOOD, block_name(bar->editor->select));
+	write_to_screen(bar->mlx, dot(5, 0), BAR_C_GOOD,
+		block_name(bar->editor->select));
 	spot = dot(0, BAR_HEIGHT - BAR_BLOCKW);
 	i = 0;
 	while (++i < BLOCKS)
@@ -78,7 +80,7 @@ void		tool_render(t_toolbar *bar)
 	}
 	i = 0;
 	mlx_put_image_to_window(bar->mlx.mlx_ptr, bar->mlx.mlx_win,
-			bar->editor->mlx_img[i], spot.x, spot.y);
+		bar->editor->mlx_img[i], spot.x, spot.y);
 	tool_hover(bar);
 }
 

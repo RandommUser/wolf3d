@@ -16,7 +16,8 @@ static int	block_select(int x, int y)
 {
 	int i;
 
-	if (y < BAR_HEIGHT - BAR_BLOCKW || y > BAR_HEIGHT || x < 0 || x > BAR_WIDTH)
+	if (y < BAR_HEIGHT - BAR_BLOCKW || y > BAR_HEIGHT || x < 0 ||
+		x > BAR_WIDTH)
 		return (-1);
 	i = 0;
 	while (++i < BLOCKS)

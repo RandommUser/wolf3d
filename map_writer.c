@@ -24,37 +24,22 @@ static char	*file_format(char *name)
 		name[i] = ft_iswspace(name[i]) ? '_' : name[i];
 		name[i] = name[i] != '_' && !ft_isalnum(name[i]) ? '-' : name[i];
 		name[i] = ft_isupper(name[i]) ? ft_tolower(name[i]) : name[i];
-		/*
-		name[i] = name[i] == '/' ? '-' : name[i];
-		name[i] = name[i] == '\\' ? '-' : name[i];
-		name[i] = name[i] == '"' ? '-' : name[i];
-		name[i] = name[i] == '\'' ? '-' : name[i];
-		name[i] = name[i] == '`' ? '-' : name[i];
-		name[i] = name[i] == '!' ? '-' : name[i];
-		name[i] = name[i] == '@' ? '-' : name[i];
-		name[i] = name[i] == '#' ? '-' : name[i];
-		name[i] = name[i] == '$' ? '-' : name[i];
-		name[i] = name[i] == '%' ? '-' : name[i];
-		name[i] = name[i] == '^' ? '-' : name[i];
-		name[i] = name[i] == '&' ? '-' : name[i];
-		name[i] = name[i] == '*' ? '-' : name[i];
-		name[i] = name[i] == ',' ? '-' : name[i];
-		name[i] = name[i] == ':' ? '-' : name[i];
-		name[i] = name[i] == ';' ? '-' : name[i];
-		*/
 	}
 	return (name);
 }
 
-static void	map_header(FILE *fd, t_map *map)
+static void	map_header(int fd, t_map *map)
 {
-	fprintf(fd, "%s\n", MAP_V);
-	fprintf(fd, "%s%s\n", MAP_NAME, map->name);
-	fprintf(fd, "%s%s\n", MAP_DESC, map->desc);
-	fprintf(fd, "%s%s\n", MAP_NEXT, MAP_END); // ADD A FEATURE TO CONNECT MAPS LATER
+	ft_putendl_fd(MAP_V, fd);
+	ft_putstr_fd(MAP_NAME, fd);
+	ft_putendl_fd(map->name, fd);
+	ft_putstr_fd(MAP_DESC, fd);
+	ft_putendl_fd(map->desc, fd);
+	ft_putstr_fd(MAP_NEXT, fd);
+	ft_putendl_fd(MAP_END, fd);// ADD A FEATURE TO CONNECT MAPS LATER
 }
 
-static void	map_loop(FILE *fd, t_map *map)
+static void	map_loop(int fd, t_map *map)
 {
 	t_dot	pos;
 	t_mapb	*block;
@@ -66,28 +51,32 @@ static void	map_loop(FILE *fd, t_map *map)
 		while (++pos.x <= map->size.x)
 		{
 			if (!(block = find_spot(map->start, pos)) || !block->block)
-				fprintf(fd, "%c", MAP_EMPTY);
+				ft_putchar_fd(MAP_EMPTY, fd);
 			else
 			{
-				fprintf(fd, "%d", block->block);
+				ft_putnbr_fd(block->block, fd);
 				if (block->param)
-					fprintf(fd, "%c%s%c", MAP_SPLIT, block->param, MAP_SPLIT_END);
+				{
+					ft_putchar_fd(MAP_SPLIT, fd);
+					ft_putstr_fd(block->param, fd);
+					ft_putchar_fd(MAP_SPLIT_END, fd);
+				}
 			}
 		}
-		fprintf(fd, "\n");
+		ft_putchar_fd('\n', fd);
 	}
 }
 
 
 int	map_write(t_map *map)
 {
-	FILE	*fd;
+	int		fd;
 	char	*temp;
 
 	if (!(temp = ft_strjoin(map->name, MAP_ENDING)))
 		err_exit(ERR_MEMORY, "map_write file name alloc");
 	temp = file_format(temp);
-	if (!(fd = fopen(temp, "w")))
+	if ((fd = open(temp, O_CREAT | O_WRONLY | O_TRUNC, 0644)) < 0)
 	{
 		free(temp);
 		return (0);
@@ -95,6 +84,6 @@ int	map_write(t_map *map)
 	free(temp);
 	map_header(fd, map);
 	map_loop(fd, map);
-	fclose(fd);
+	close(fd);
 	return (1);
 }
