@@ -15,6 +15,7 @@
 # define BUFF_SIZE 64
 # define FD_LIMIT 4864
 # define DECIMAL_SPLIT "."
+# include <string.h>
 
 /*
 ** You can change the variable type for Matrix and Vector functions.
@@ -22,9 +23,10 @@
 */
 
 # ifndef PRECISION
-#  define PRECISION long double
+#  define PRECISION
+
+typedef long double	t_precision;
 # endif
-# include <string.h>
 
 typedef struct	s_list
 {
@@ -47,7 +49,7 @@ typedef	struct	s_vec2
 
 typedef	struct	s_vec4
 {
-	PRECISION	vec[4];
+	t_precision	vec[4];
 }				t_vec4;
 
 typedef	struct	s_mat2
@@ -57,7 +59,7 @@ typedef	struct	s_mat2
 
 typedef	struct	s_mat4
 {
-	PRECISION	mat[4][4];
+	t_precision	mat[4][4];
 }				t_mat4;
 
 typedef	struct	s_matn
@@ -82,23 +84,23 @@ t_mat2			*mat2_rota(double theta);
 t_mat2			*mat2_flip(void);
 t_vec2			*mat2_vec(t_mat2 *mat2, t_vec2 *vec2);
 
-t_vec4			vec4_ini(PRECISION in[4]);
+t_vec4			vec4_ini(t_precision in[4]);
 t_vec4			vec4m_vec4(t_vec4 vec1, t_vec4 vec2);
-PRECISION		vec4_ccw(t_vec4 vec1, t_vec4 vec2, t_vec4 vec3);
+t_precision		vec4_ccw(t_vec4 vec1, t_vec4 vec2, t_vec4 vec3);
 t_vecn			*vecn_ini(size_t n);
 t_vecn			*vecn_cpy(float *vecn, size_t n);
 
 t_mat4			mat4_rotz(double theta);
 t_mat4			mat4_roty(double theta);
 t_mat4			mat4_rotx(double theta);
-t_mat4			mat4_trans(PRECISION s[3]);
-t_mat4			mat4_scales(PRECISION s[4]);
+t_mat4			mat4_trans(t_precision s[3]);
+t_mat4			mat4_scales(t_precision s[4]);
 t_mat4			mat4_ini(void);
 t_mat4			mat4_iden(void);
 t_mat4			mat4_pro(void);
 t_mat4			mat4_perps(t_vec4 vec);
-t_mat4			mat4_perps2(t_vec4 vec, PRECISION ar);
-t_mat4			mat4_pinhole(t_vec4 vec, PRECISION ar);
+t_mat4			mat4_perps2(t_vec4 vec, t_precision ar);
+t_mat4			mat4_pinhole(t_vec4 vec, t_precision ar);
 t_mat4			mat4_mat4(t_mat4 mat1, t_mat4 mat2);
 t_vec4			mat4_vec4(t_mat4 mat4, t_vec4 vec4);
 t_mat4			mat4_rot_inverse(t_mat4 mat);
@@ -151,6 +153,7 @@ size_t			ft_strlen(const char *s);
 size_t			ft_nbrlen(long n);
 size_t			ft_strlcat(char *dst, const char *src, size_t dstsize);
 size_t			ft_strclen(const char *s, char c);
+size_t			ft_strrclen(const char *s, char c);
 size_t			ft_strrclen(const char *s, char c);
 size_t			ft_baselen(long value, int base);
 

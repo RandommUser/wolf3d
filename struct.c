@@ -21,7 +21,7 @@ t_dot	dot(int x, int y)
 	return (this);
 }
 
-t_pdot	pdot(PRECISION x, PRECISION y)
+t_pdot	pdot(t_precision x, t_precision y)
 {
 	t_pdot	this;
 
@@ -30,7 +30,7 @@ t_pdot	pdot(PRECISION x, PRECISION y)
 	return (this);
 }
 
-t_nmap	nmap(PRECISION ran11, PRECISION ran12, PRECISION ran21, PRECISION ra22)
+t_nmap	nmap(t_precision ran11, t_precision ran12, t_precision ran21, t_precision ra22)
 {
 	t_nmap	ret;
 

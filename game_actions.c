@@ -35,7 +35,7 @@ static t_pdot	collision(t_game *game, t_mapb *start, t_pdot new, t_pdot old)
 	return (new);
 }
 
-static void	player_rota(t_player *player, PRECISION dir)
+static void	player_rota(t_player *player, t_precision dir)
 {
 	t_pdot	oplane;
 	t_pdot	odir;
@@ -58,8 +58,8 @@ int	player_move(t_game *game)
 	t_pdot		movement;
 	t_pdot		tplane;
 	t_pdot		tdir;
-	PRECISION	turn;
-	static PRECISION	turning;//remove?
+	t_precision	turn;
+	static t_precision	turning;//remove?
 	int			view;
 
 	move = pdot(0, 0);

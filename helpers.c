@@ -12,7 +12,7 @@
 
 #include "header.h"
 
-PRECISION	pmap(PRECISION p, t_nmap ran)
+t_precision	pmap(t_precision p, t_nmap ran)
 {
 	ran.p = p;
 	ran.p = (ran.p - ran.ran11) / (ran.ran12 - ran.ran11);
@@ -20,7 +20,7 @@ PRECISION	pmap(PRECISION p, t_nmap ran)
 	return (ran.p);
 }
 
-int			iround(PRECISION in)
+int			iround(t_precision in)
 {
 	if (in < 0 && (ft_fabs(in) - ft_abs((int)in) ROUNDING))
 		return ((int)(in) + 1);
@@ -29,7 +29,7 @@ int			iround(PRECISION in)
 	return ((int)in);
 }
 
-int			dround(PRECISION in)
+int			dround(t_precision in)
 {
 	if (in < 0 && in != (int)in)
 		return (in - 1);

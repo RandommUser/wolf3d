@@ -175,10 +175,8 @@ static int	map_header(char *name, int fd, t_map *map)
 	if (ret == 1  && start && !(map->next = ft_strdup(start)))
 		err_exit(ERR_MEMORY, "map_header next alloc");
 	ft_memdel((void*)&line);
-	if (ft_strlen(name) != ft_strclen(name, '/'))
-	{
-		map->path = ft_strsub(name, 0, ft_strclen(name, '/') + 1);
-	}
+	if (ft_strrclen(name, '/'))
+		map->path = ft_strsub(name, 0, ft_strrclen(name, '/') + 1);
 	return (ret == 1 ? 1 : 0);
 }
 

@@ -12,7 +12,9 @@
 
 #ifndef HEADER_H
 # define HEADER_H
-# define PRECISION double
+# define PRECISION
+
+typedef double t_precision;
 
 # include "libft.h"
 # include "mlx.h"
@@ -271,8 +273,8 @@ typedef struct		s_player
 	t_pdot		pos;
 	t_pdot		dir;
 	t_pdot		plane;
-	PRECISION	z;	// check if used
-	PRECISION	rot;
+	t_precision	z;	// check if used
+	t_precision	rot;
 	char		collision;
 	int			look;
 }					t_player;
@@ -285,7 +287,7 @@ typedef struct		s_game
 	int			key[KEY_DOWN];
 	int			button[MOUSE_DOWN];
 	t_player	player;
-	PRECISION	frame;
+	t_precision	frame;
 	char		verbose;
 	char		state;
 	int			mselect;
@@ -301,8 +303,8 @@ typedef struct		s_ray
 	int			hit;
 	int			lheight;
 	int			color;
-	PRECISION	camera;
-	PRECISION	wdist;
+	t_precision	camera;
+	t_precision	wdist;
 	t_mapb		*block;
 	t_pdot		raydir;
 	t_pdot		dist;
@@ -352,11 +354,11 @@ typedef struct		s_toolbar
 
 typedef struct		s_nmap
 {
-	PRECISION	ran11;
-	PRECISION	ran12;
-	PRECISION	ran21;
-	PRECISION	ran22;
-	PRECISION	p;
+	t_precision	ran11;
+	t_precision	ran12;
+	t_precision	ran21;
+	t_precision	ran22;
+	t_precision	p;
 }					t_nmap;
 
 
@@ -371,10 +373,10 @@ typedef struct		s_box
 	t_pdot		spot;
 	t_mapb		*curr;
 	t_editor	*edit;
-	PRECISION	blockw;
-	PRECISION	w;
-	PRECISION	h;
-	PRECISION	step;
+	t_precision	blockw;
+	t_precision	w;
+	t_precision	h;
+	t_precision	step;
 }					t_box;
 
 typedef struct		s_print
@@ -450,8 +452,8 @@ void				solid_color(int *text, t_dot size, int color);
 
 
 t_dot				dot(int x, int y);
-t_pdot				pdot(PRECISION x, PRECISION y);
-t_nmap				nmap(PRECISION ran11, PRECISION ran12, PRECISION ran21, PRECISION ran22);
+t_pdot				pdot(t_precision x, t_precision y);
+t_nmap				nmap(t_precision ran11, t_precision ran12, t_precision ran21, t_precision ran22);
 
 void				map_delete(t_map *map);
 t_map				map_empty(void);
@@ -469,7 +471,7 @@ void				image_set(t_image image, int color);
 void				image_combine(t_image img1, t_image img2, int empty);
 int					*mlx_int_map(void *img_ptr, t_box box);
 
-PRECISION			pmap(PRECISION p, t_nmap ran);
-int					iround(PRECISION in);
-int					dround(PRECISION in);
+t_precision			pmap(t_precision p, t_nmap ran);
+int					iround(t_precision in);
+int					dround(t_precision in);
 #endif

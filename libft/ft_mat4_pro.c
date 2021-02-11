@@ -17,7 +17,7 @@ t_mat4	mat4_perps(t_vec4 vec)
 {
 	t_mat4	proj;
 
-	proj = mat4_scales((PRECISION[4]){1, 1, 0, 1});
+	proj = mat4_scales((t_precision[4]){1, 1, 0, 1});
 	proj.mat[0][2] = vec.vec[0] / vec.vec[1];
 	proj.mat[1][2] = vec.vec[1] / vec.vec[2];
 	proj.mat[2][2] = 1 / vec.vec[2];
@@ -28,7 +28,7 @@ t_mat4	mat4_pro(void)
 {
 	t_mat4	proj;
 
-	proj = mat4_scales((PRECISION[4]){1, 1, 1, 0});
+	proj = mat4_scales((t_precision[4]){1, 1, 1, 0});
 	proj.mat[3][2] = 1;
 	return (proj);
 }
@@ -37,11 +37,11 @@ t_mat4	mat4_pro(void)
 ** near, far, fov, ? || width / height
 */
 
-t_mat4	mat4_perps2(t_vec4 vec, PRECISION ar)
+t_mat4	mat4_perps2(t_vec4 vec, t_precision ar)
 {
 	t_mat4		proj;
-	PRECISION	tant;
-	PRECISION	range;
+	t_precision	tant;
+	t_precision	range;
 
 	tant = tan((double)vec.vec[2] * (3.14159265 / 180) / 2);
 	range = vec.vec[0] - vec.vec[1];
@@ -58,7 +58,7 @@ t_mat4	mat4_perps2(t_vec4 vec, PRECISION ar)
 ** focal, skew, cam x, cam y
 */
 
-t_mat4	mat4_pinhole(t_vec4 vec, PRECISION ar)
+t_mat4	mat4_pinhole(t_vec4 vec, t_precision ar)
 {
 	t_mat4	proj;
 
