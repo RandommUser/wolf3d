@@ -226,8 +226,8 @@ typedef struct		s_dot // checks for too much offset
 
 typedef struct		s_pdot // checks for too much offset
 {
-	PRECISION	x;
-	PRECISION	y;
+	t_precision	x;
+	t_precision	y;
 }					t_pdot;
 
 typedef struct		s_mlx
@@ -266,6 +266,8 @@ typedef	struct		s_map
 	t_dot		spawn;
 	t_mapb		*start;		// start point pointer
 	t_dot		size;
+	t_dot		top;
+	t_dot		bottom;
 }					t_map;
 
 typedef struct		s_player
@@ -335,7 +337,7 @@ typedef struct		s_editor
 //	t_dot		map_size;
 	t_dot		size; // screen
 	t_pdot		offset;
-	PRECISION	zoom;
+	t_precision	zoom;
 	int			key[KEY_DOWN];
 	int			button[MOUSE_DOWN];
 	t_dot		mouse_pos;
@@ -408,14 +410,12 @@ void				tex_init(void *mlx_ptr, void **text, int width, int height);
 
 t_mapb				*block_add(t_map *map, int block, t_dot spot, char *param);
 int					block_edit(t_map *map, int block, t_dot spot, char *param);
-void				block_list(t_mapb *start);
-int					block_cut(t_mapb *start, t_dot spot);
 void				block_free(t_mapb *block);
 int 				block_check(t_mapb *block, char *str);
 void				block_tree_del(t_mapb *start);
 void				block_undo(t_map *map, t_mapb *block, int b, char *param);
 void				block_to_image(t_editor *edit);
-int					map_valid(t_map *map, t_mlx *mlx);
+int					map_valid(t_map *map);
 t_mapb				*find_spot(t_mapb *start, t_dot spot);
 int					is_wall(t_mapb *start, t_mapb *block, t_dot spot);
 int					is_transparent(t_mapb *start, t_mapb *block, t_dot spot);

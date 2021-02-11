@@ -41,13 +41,11 @@ static void	block_norm(t_map *map, t_mapb *start)
 		curr = curr->next;
 	}
 	if (!found)
-	{
 		spawn = dot(iround(limit.x / 2), iround(limit.y / 2));
-		//printf("no spawn found\n");
-	}
 	map->size.x = iround(limit.x / 2) < MAP_SIZE ? MAP_SIZE : iround(limit.x / 2);
 	map->size.y = iround(limit.y / 2) < MAP_SIZE ? MAP_SIZE : iround(limit.y / 2);
-	//printf("spawn is at %d %d\nmap size %d %d\n", spawn.x, spawn.y, limit.x, limit.y);
+	map->top = dot(-spawn.x, -spawn.y);
+	map->bottom = dot(limit.x - spawn.x, limit.y - spawn.y);
 	curr = start;
 	while (curr)
 	{
@@ -105,12 +103,8 @@ static int	block_read(int fd, t_map *map)
 			if (!map->start)
 				map->start = block_add(map, ft_atoi(block), spot, block_param(&line[spot.x + pad]));
 			else
-			{
 				block_edit(map, ft_atoi(block), spot, block_param(&line[spot.x + pad]));
-				//printf("block added %d %d\n", spot.x, spot.y);
-			}
 		}
-		//printf("line %d:'%s'\n", spot.y, line);
 		ft_memdel((void*)&line);
 	}
 	return (1);
@@ -188,17 +182,18 @@ int		map_reader(char *name, t_map *map)
 		return (0);
 	if (!map_header(name, fd, map))
 		return (bad_map(fd, map));
-	printf("Name: %s\nDesc: %s\nNext: %s\n", map->name, map->desc, map->next);
+	printf("Name: %s\nDesc: %s\nNext: %s\n", map->name, map->desc, map->next);//
 	block_tree_del(map->start);
 	map->start = NULL;
-	printf("old blocks wiped\n");
+	printf("old blocks wiped\n");//
 	map->size = dot(0, 0);
 	if (!block_read(fd, map))
 		return (bad_map(fd, map));
-	printf("blocks read\n");
+	printf("blocks read\n");//
 	block_norm(map, map->start);
 	//block_list(edit->start);
-	// NORM THE COORDINATES
+	if (!map_valid(map))
+		return (bad_map(fd, map));
 	close(fd);
 	return (1);
 }

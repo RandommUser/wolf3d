@@ -18,11 +18,11 @@ static	t_mapb	*map_init(t_map *map)
 
 	map->start = block_add(map, B_START + BLOCKH, dot(0, 0),
 		ft_strdup(MAP_SPAWN_FLAG)); // no alloc checking
-	spot.y = -(map->size.y) - 1;
-	while (++spot.y <= map->size.y)
+	spot.y = map->top.y - 1;//-(map->size.y) - 1;
+	while (++spot.y <= map->bottom.y)//map->size.y)
 	{
-		spot.x = -(map->size.x) - 1;
-		while (++spot.x <= map->size.x)
+		spot.x = map->top.x - 1;//-(map->size.x) - 1;
+		while (++spot.x <= map->bottom.x)//map->size.x)
 		{
 			if (block_edit(map, B_EMPTY, spot, NULL))
 				printf("block added %d %d\n", spot.x, spot.y);
@@ -42,6 +42,8 @@ static t_editor	editor_init(int width, int height, void **img)
 	ret.mlx_img = img;
 	ret.map = map_empty();
 	ret.map.size = dot(MAP_SIZE, MAP_SIZE);
+	ret.map.top = dot(-MAP_SIZE, -MAP_SIZE);
+	ret.map.bottom = dot(MAP_SIZE, MAP_SIZE);
 	ret.offset.x = 0;
 	ret.offset.y = 0;
 	ret.zoom = 1;

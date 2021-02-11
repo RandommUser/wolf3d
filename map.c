@@ -36,6 +36,8 @@ t_map	map_empty(void)
 	ret.desc = NULL;
 	ret.next = NULL;
 	ret.size = dot(0, 0);
+	ret.top = dot(0, 0);
+	ret.bottom = dot(0, 0);
 	ret.start = NULL;
 	ret.version = NULL;
 	return (ret);
