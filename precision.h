@@ -1,26 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   player.c                                           :+:      :+:    :+:   */
+/*   precision.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: phakakos <phakakos@hive.student.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/12/15 15:25:04 by phakakos          #+#    #+#             */
-/*   Updated: 2020/12/15 15:25:05 by phakakos         ###   ########.fr       */
+/*   Created: 2021/02/12 17:56:28 by phakakos          #+#    #+#             */
+/*   Updated: 2021/02/12 17:56:32 by phakakos         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "header.h"
+#ifndef PRECISION_H
+# define PRECISION_H
+# define PRECISION
 
-t_player	player_reset(t_game *game)
-{
-	t_player	player;
+/*
+** don't ask...
+*/
 
-	player.rot = 0;
-	player.pos = pdot(game->map.spawn.x + 0.5, game->map.spawn.y + 0.5);
-	player.plane = pdot(0, FOV);
-	player.dir = pdot(-1, 0);
-	player.collision = 1;
-	player.look = game->mlx.size.y / 2 + 1;
-	return (player);
-}
+typedef double	t_precision;
+#endif

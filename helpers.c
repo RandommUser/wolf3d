@@ -22,9 +22,9 @@ t_precision	pmap(t_precision p, t_nmap ran)
 
 int			iround(t_precision in)
 {
-	if (in < 0 && (ft_fabs(in) - ft_abs((int)in) ROUNDING))
+	if (in < 0 && (ft_fabs(in) - ft_abs((int)in) >= 0.5))
 		return ((int)(in) + 1);
-	else if (in - (int)in ROUNDING)
+	else if (in - (int)in >= 0.5)
 		return ((int)(in) + 1);
 	return ((int)in);
 }
@@ -40,7 +40,8 @@ int			*mlx_int_map(void *img_ptr, t_box box)
 {
 	int	*ret;
 
-	ret = (int*)mlx_get_data_addr(img_ptr, &box.bpp, &box.line_size, &box.endian);
+	ret = (int*)mlx_get_data_addr(img_ptr, &box.bpp, &box.line_size,
+		&box.endian);
 	if (!ret)
 		err_exit(ERR_MLX, "failed to get img_map");
 	return (ret);

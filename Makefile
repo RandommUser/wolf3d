@@ -5,6 +5,7 @@ SRCS=editor.c\
 	editor_history.c\
 	editor_textures.c\
 	editor_loops.c\
+	end_menu.c\
 	exit.c\
 	game.c\
 	game_actions.c\

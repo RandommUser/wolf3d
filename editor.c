@@ -48,7 +48,6 @@ static t_editor	editor_init(int width, int height, void **img)
 	ret.offset.y = 0;
 	ret.zoom = 1;
 	ret.select = B_FLOOR;
-	ret.port = 1;
 	ft_memset(ret.key, NO_KEY,sizeof(int[KEY_DOWN]));
 	ft_memset(ret.button, NO_KEY, sizeof(int[MOUSE_DOWN]));
 	ret.map.start = map_init(&ret.map);

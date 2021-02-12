@@ -140,13 +140,6 @@ int		map_valid(t_map *map)
 			}
 		if (block_check(curr, MAP_END_FLAG))
 			goals.y++;
-		if ((map->size.x > 0 && (curr->pos.x < map->top.x || curr->pos.x >
-			map->bottom.x )) || (map->size.y > 0 && (curr->pos.y < map->top.y
-			|| curr->pos.y > map->bottom.y)))
-		{
-			ft_putstr("BLOCK OUT OF MAP\n");
-			return (0);
-		}
 		curr = curr->next;
 	}
 	if (!goals.x)

@@ -24,8 +24,6 @@ t_game	game_start(void)
 	t_game	game;
 
 	log_reset(&game.key[0], KEY_DOWN, NO_KEY);
-	log_reset(&game.button[0], MOUSE_DOWN, NO_KEY);
-	//game.player = player_reset(&game);
 	game.map = map_empty();
 	game.frame = (t_precision)(1.0 / (FRAMECAP)) * CLOCKS_PER_SEC;
 	game.verbose = 0;

@@ -12,10 +12,8 @@
 
 #ifndef HEADER_H
 # define HEADER_H
-# define PRECISION
 
-typedef double t_precision;
-
+# include "precision.h"
 # include "libft.h"
 # include "mlx.h"
 # include <math.h>
@@ -25,13 +23,6 @@ typedef double t_precision;
 # include <unistd.h> // close
 # include <pthread.h>
 #	include <stdio.h>// <printf>, fprintf
-
-/*
-** General definitions
-*/
-
-# define THREADS 4
-# define ROUNDING >= 0.5
 
 /*
 ** Key definitions
@@ -79,7 +70,6 @@ typedef double t_precision;
 ** MLX defitions
 */
 
-# define WINDOWS 2	//?
 # define MIN_WIDTH 100
 # define MIN_HEIGHT 50
 # define MAX_WIDTH 2560
@@ -129,8 +119,8 @@ typedef double t_precision;
 */
 
 # define MAP_ENDING ".map"
-# define MAP_VERSION VERSION //"0.02"
-# define MAP_V "V: "MAP_VERSION
+# define MAP_VERSION VERSION
+# define MAP_V "V: "MAP_VERSION // write it out
 # define MAP_NAME "Name: "
 # define MAP_DESC "Desc: "
 # define MAP_NEXT "Next: "
@@ -143,7 +133,7 @@ typedef double t_precision;
 # define MAP_SPAWN_FLAG "START"
 # define MAP_END_FLAG "END"
 # define MAP_MAX_PORT 64
-# define MAP_SIZE 15 // to both directions
+# define MAP_SIZE 15
 # define MAP_MIN_X -50
 # define MAP_MAX_X 50
 # define MAP_MIN_Y -50
@@ -155,8 +145,8 @@ typedef double t_precision;
 
 # define EDI_WIDTH 800
 # define EDI_HEIGHT 600
-# define EDI_BLOCK 5 			// amount of blocks placeable
-# define EDI_BLOCKW 40			// block pixel size // NEEDS TO BE EVEN FOR PLACEMENT TO WORK PROPERLY
+# define EDI_BLOCK 5
+# define EDI_BLOCKW 40
 # define EDI_MIN_ZOOM 0.25
 # define EDI_MAX_ZOOM 4
 # define EDI_ZOOM_STEP 0.1
@@ -167,8 +157,8 @@ typedef double t_precision;
 */
 
 # define BAR_BLOCKW EDI_BLOCKW
-# define BAR_WIDTH BLOCKS * BAR_BLOCKW
-# define BAR_HEIGHT BAR_BLOCKW + 30
+# define BAR_WIDTH BLOCKS * BAR_BLOCKW // write it out
+# define BAR_HEIGHT BAR_BLOCKW + 30 // write it out
 # define BAR_HOVERC 0xfff700
 # define BAR_SELECTC 0xff0000
 # define BAR_C_GOOD 0x00ff00
@@ -182,7 +172,7 @@ typedef double t_precision;
 # define BLOCKW EDI_BLOCKW
 # define BLOCKS EDI_BLOCK
 # define BLOCKH EDI_BLOCK
-# define BLOCKSE EDI_BLOCK * 2
+# define BLOCKSE EDI_BLOCK * 2 // write it out
 # define BLOCK0 0
 # define BLOCK1 1
 # define BLOCK2 2
@@ -216,15 +206,15 @@ typedef double t_precision;
 # define ERR_MLX 3
 # define ERR_MEMORY 4
 # define ERR_PARA 5
-# define X_EXIT 6//EXIT_SUCCESS
+# define X_EXIT 6
 
-typedef struct		s_dot // checks for too much offset
+typedef struct		s_dot
 {
 	int	x;
 	int	y;
 }					t_dot;
 
-typedef struct		s_pdot // checks for too much offset
+typedef struct		s_pdot
 {
 	t_precision	x;
 	t_precision	y;
@@ -264,7 +254,7 @@ typedef	struct		s_map
 	char		*desc;
 	char		*next;
 	t_dot		spawn;
-	t_mapb		*start;		// start point pointer
+	t_mapb		*start;
 	t_dot		size;
 	t_dot		top;
 	t_dot		bottom;
@@ -275,7 +265,6 @@ typedef struct		s_player
 	t_pdot		pos;
 	t_pdot		dir;
 	t_pdot		plane;
-	t_precision	z;	// check if used
 	t_precision	rot;
 	char		collision;
 	int			look;
@@ -287,7 +276,6 @@ typedef struct		s_game
 	t_image		image[2];
 	t_map		map;
 	int			key[KEY_DOWN];
-	int			button[MOUSE_DOWN];
 	t_player	player;
 	t_precision	frame;
 	char		verbose;
@@ -316,26 +304,16 @@ typedef struct		s_ray
 	t_dot		draw;
 }					t_ray;
 
-
 typedef struct		s_editor
 {
 	t_mlx		mlx;
-//	void		*mlx_ptr;
-//	void		*mlx_win;
 	void		**mlx_img;
 	void		*map_img;
 	int			*map_data;
 	t_map		map;
-//	char		*version;	// map file data // NEEDED?? just use MAP_V
-//	char		*name; // map file data pointers
-//	char		*desc;
-//	char		*next;
-//	t_mapb		*start;	// start point pointer
-	t_mapb		*edit; // selected block for param edit
-	int			select;	// selected block
-	char		port;	// teleport number
-//	t_dot		map_size;
-	t_dot		size; // screen
+	t_mapb		*edit;
+	int			select;
+	t_dot		size;
 	t_pdot		offset;
 	t_precision	zoom;
 	int			key[KEY_DOWN];
@@ -347,10 +325,7 @@ typedef struct		s_editor
 typedef struct		s_toolbar
 {
 	t_mlx		mlx;
-//	void		*mlx_ptr;
-//	void		*mlx_win;
-	int			hover; // default -1
-//	t_dot		size;
+	int			hover;
 	t_editor	*editor;
 }					t_toolbar;
 
@@ -421,7 +396,6 @@ int					is_wall(t_mapb *start, t_mapb *block, t_dot spot);
 int					is_transparent(t_mapb *start, t_mapb *block, t_dot spot);
 int					is_goal(t_mapb *start, t_dot spot);
 
-
 int					map_reader(char *name, t_map *map);
 int					map_write(t_map *map);
 
@@ -449,7 +423,6 @@ void				spawn_color(int *text, t_dot size, int color1, int color2);
 void				wall_color(int *text, t_dot size, int color1, int color2);
 void				outline_color(int *text, t_dot size, int color1, int color2);
 void				solid_color(int *text, t_dot size, int color);
-
 
 t_dot				dot(int x, int y);
 t_pdot				pdot(t_precision x, t_precision y);
