@@ -116,11 +116,12 @@ void	traycast(t_ray ray)
 }
 
 
-void	raycast(t_game game)	// 38 - 6 - 11
+void	raycast(t_game game)
 {
 	t_ray	ray;
 
 	ray.game = game;
+	ray.game.player.look += game.mlx.size.y / 2;
 	ray.x = -1;
 	if (game.verbose)		//
 		printf("raycast start\n");		//
@@ -135,23 +136,9 @@ void	raycast(t_game game)	// 38 - 6 - 11
 			else
 				ray.hit = is_wall(NULL, ray.block, ray.map);
 			ray = !ray.hit || !ray.len ? ray_move(ray) : ray;
-			/*
-			if (!ray.hit && ray.sdist.x < ray.sdist.y)
-			{
-				ray.sdist.x += ray.dist.x;
-				ray.map.x += ray.step.x;
-				ray.side = 0;
-			}
-			else if (!ray.hit)
-			{
-				ray.sdist.y += ray.dist.y;
-				ray.map.y += ray.step.y;
-				ray.side = 1;
-			}*/
 		}
 		if (ray.game.verbose)		//
 			printf("x: %d wall found %d\n", ray.x, ray.len);		//
-		//ray = !ray.len ? ray_move(ray) : ray;
 		ray = ray_bsize(ray);
 		ray.draw.x = ray.draw.x < 0 ? 0 : ray.draw.x;
 		ray = ray_colors(ray);

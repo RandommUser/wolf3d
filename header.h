@@ -304,6 +304,18 @@ typedef struct		s_ray
 	t_dot		draw;
 }					t_ray;
 
+typedef struct		s_move
+{
+	t_pdot		opos;
+	t_pdot		move;
+	t_pdot		movement;
+	t_pdot		tplane;
+	t_pdot		tdir;
+	t_precision	turn;
+	int			view;
+}					t_move;
+
+
 typedef struct		s_editor
 {
 	t_mlx		mlx;

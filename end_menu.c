@@ -17,9 +17,10 @@ static int	men_init(t_game *game, int menu, int opt)
 	int	ret;
 
 	log_reset(game->key, KEY_DOWN, NO_KEY);
+	game->state = END_SCREEN;
 	game->mselect = game->menu != menu ? 0 : game->mselect;
 	game->menu = game->menu != menu ? menu : game->menu;
-	ret = game->mselect % opt;// int overflow?
+	ret = game->mselect % opt;
 	ret += ret < 0 ? opt : 0;
 	return (ret);
 }
