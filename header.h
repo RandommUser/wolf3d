@@ -10,10 +10,20 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#ifndef PRECISION
+# define PRECISION
+
+/*
+** don't ask...
+*/
+
+typedef double	t_precision;
+#endif
+
 #ifndef HEADER_H
 # define HEADER_H
 
-# include "precision.h"
+
 # include "libft.h"
 # include "mlx.h"
 # include <math.h>
@@ -366,6 +376,11 @@ typedef struct		s_box
 	t_precision	w;
 	t_precision	h;
 	t_precision	step;
+	t_dot		image;
+	t_dot		prog;
+	t_dot		pcorr;
+	t_pdot		texture;
+	t_pdot		tcorr;
 }					t_box;
 
 typedef struct		s_print

@@ -19,14 +19,36 @@ static int	bad_map(int fd, t_map *map)
 	return (0);
 }
 
-static void	block_norm(t_map *map, t_mapb *start)
+static void	block_norm2(t_map *map, t_dot limit, t_dot spawn, int found)
+{
+	t_mapb	*curr;
+
+	if (!found)
+		spawn = dot(iround(limit.x / 2), iround(limit.y / 2));
+	map->size.x = iround(limit.x / 2) < MAP_SIZE ? MAP_SIZE :
+		iround(limit.x / 2);
+	map->size.y = iround(limit.y / 2) < MAP_SIZE ? MAP_SIZE :
+		iround(limit.y / 2);
+	map->top = dot(-spawn.x, -spawn.y);
+	map->bottom = dot(limit.x - spawn.x, limit.y - spawn.y);
+	curr = map->start;
+	while (curr)
+	{
+		curr->pos.x -= spawn.x;
+		curr->pos.y -= spawn.y;
+		curr = curr->next;
+	}
+	map->spawn = dot(0, 0); // needed?
+}
+
+static void	block_norm(t_map *map)
 {
 	int		found;
 	t_dot	limit;
 	t_dot	spawn;
 	t_mapb	*curr;
 
-	curr = start;
+	curr = map->start;
 	limit = dot(0,0);
 	found = 0;
 	while (curr)
@@ -36,24 +58,11 @@ static void	block_norm(t_map *map, t_mapb *start)
 			found = 1;
 			spawn = curr->pos;
 		}
-		limit.x = limit.x < curr->pos.x ? curr->pos.x : limit.x; // EMPTY NOT ADDED TO THE LIST
+		limit.x = limit.x < curr->pos.x ? curr->pos.x : limit.x;
 		limit.y = limit.y < curr->pos.y ? curr->pos.y : limit.y;
 		curr = curr->next;
 	}
-	if (!found)
-		spawn = dot(iround(limit.x / 2), iround(limit.y / 2));
-	map->size.x = iround(limit.x / 2) < MAP_SIZE ? MAP_SIZE : iround(limit.x / 2);
-	map->size.y = iround(limit.y / 2) < MAP_SIZE ? MAP_SIZE : iround(limit.y / 2);
-	map->top = dot(-spawn.x, -spawn.y);
-	map->bottom = dot(limit.x - spawn.x, limit.y - spawn.y);
-	curr = start;
-	while (curr)
-	{
-		curr->pos.x -= spawn.x;
-		curr->pos.y -= spawn.y;
-		curr = curr->next;
-	}
-	map->spawn = dot(0, 0); // = spawn if u remove the above while loop
+	block_norm2(map, limit, spawn, found);
 }
 
 static char	*block_param(char *line)
@@ -72,19 +81,33 @@ static char	*block_param(char *line)
 	return (ret);
 }
 
+static void	block_to_map(t_map *map, char *line, t_dot spot, int pad)
+{
+	char	block[2];
+
+	block[1] = '\0';
+	if (line[spot.x + pad] == MAP_EMPTY)
+		block[0] = '0';
+	else
+		block[0] = line[spot.x + pad];
+	if (!map->start)
+		map->start = block_add(map, ft_atoi(block), spot,
+			block_param(&line[spot.x + pad]));
+	else
+		block_edit(map, ft_atoi(block), spot,
+			block_param(&line[spot.x + pad]));
+}
+
 static int	block_read(int fd, t_map *map)
 {
 	t_dot	spot;
 	int		pad;
 	char	*line;
-	char	block[2];
 
 	spot.y = -1;
-	block[1] = '\0';
 	while (get_next_line(fd, &line) > 0)
 	{
-		spot.y++;
-		spot.x = -1;
+		spot = dot(-1, spot.y + 1);
 		pad = 0;
 		while (line[++spot.x + pad])
 		{
@@ -96,14 +119,7 @@ static int	block_read(int fd, t_map *map)
 				if (!line[spot.x + pad])
 					return (0);
 			}
-			if (line[spot.x + pad] == MAP_EMPTY)
-				block[0] = '0';
-			else
-				block[0] = line[spot.x + pad];
-			if (!map->start)
-				map->start = block_add(map, ft_atoi(block), spot, block_param(&line[spot.x + pad]));
-			else
-				block_edit(map, ft_atoi(block), spot, block_param(&line[spot.x + pad]));
+			block_to_map(map, line, spot, pad);
 		}
 		ft_memdel((void*)&line);
 	}
@@ -138,6 +154,23 @@ static char *moved_str(char *str, char *cmp)
 	return (&str[i]);
 }
 
+static int	map_header2(int ret, char *name, int fd, t_map *map)
+{
+	char	*line;
+	char	*start;
+
+	ret = ret == 1 ? ret = get_next_line(fd, &line) : ret; // end
+	if (ret == 1  && line && !(start = moved_str(line, MAP_NEXT)))
+		ret = 0;
+	if (ret == 1  && start && !(map->next = ft_strdup(start)))
+		err_exit(ERR_MEMORY, "map_header next alloc");
+	ft_memdel((void*)&line);
+	if (ft_strrclen(name, '/') && !(map->path = ft_strsub(name, 0,
+		ft_strrclen(name, '/') + 1)))
+		err_exit(ERR_MEMORY, "map_header path alloc");
+	return (ret);
+}
+
 static int	map_header(char *name, int fd, t_map *map)
 {
 	char	*line;
@@ -146,10 +179,10 @@ static int	map_header(char *name, int fd, t_map *map)
 
 	ret = get_next_line(fd, &line); // version
 	if (ret == 1 && ft_strcmp(line, MAP_V))
-	{
-		printf("'%s' vs '%s'\n", line, MAP_V);
+	{//
+		printf("'%s' vs '%s'\n", line, MAP_V);//
 		ret = 0;
-	}
+	}//
 	ft_memdel((void*)&line);
 	ret = ret == 1 ? ret = get_next_line(fd, &line) : ret; // name
 	if (ret == 1  && line && !(start = moved_str(line, MAP_NAME)))
@@ -163,14 +196,7 @@ static int	map_header(char *name, int fd, t_map *map)
 	if (ret && start && !(map->desc = ft_strdup(start)))
 		err_exit(ERR_MEMORY, "map_header desc alloc");
 	ft_memdel((void*)&line);
-	ret = ret == 1 ? ret = get_next_line(fd, &line) : ret; // end
-	if (ret == 1  && line && !(start = moved_str(line, MAP_NEXT)))
-		ret = 0;
-	if (ret == 1  && start && !(map->next = ft_strdup(start)))
-		err_exit(ERR_MEMORY, "map_header next alloc");
-	ft_memdel((void*)&line);
-	if (ft_strrclen(name, '/'))
-		map->path = ft_strsub(name, 0, ft_strrclen(name, '/') + 1);
+	ret = map_header2(ret, name, fd, map);
 	return (ret == 1 ? 1 : 0);
 }
 
@@ -178,7 +204,7 @@ int		map_reader(char *name, t_map *map)
 {
 	int	fd;
 
-	if (!file_ending(name, MAP_ENDING) || (fd = open(name, O_RDONLY)) < 1) // MAP NAME TESTING
+	if (!file_ending(name, MAP_ENDING) || (fd = open(name, O_RDONLY)) < 1)
 		return (0);
 	if (!map_header(name, fd, map))
 		return (bad_map(fd, map));
@@ -190,7 +216,7 @@ int		map_reader(char *name, t_map *map)
 	if (!block_read(fd, map))
 		return (bad_map(fd, map));
 	printf("blocks read\n");//
-	block_norm(map, map->start);
+	block_norm(map);
 	//block_list(edit->start);
 	if (!map_valid(map))
 		return (bad_map(fd, map));

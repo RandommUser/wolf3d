@@ -36,20 +36,18 @@ int			is_pressed(int *tab, int n, int key)
 
 static void	order_tab(int *tab, int n)
 {
-	int	i;
 	int	y;
 
-	i = n;
 	y = -1;
-	while (--i >= 0)
+	while (--n >= 0)
 	{
-		if (tab[i] == NO_KEY && y > 0)
+		if (tab[n] == NO_KEY && y > 0)
 		{
-			tab[i] = tab[y];
+			tab[n] = tab[y];
 			tab[y] = NO_KEY;
 		}
-		if (tab[i] != NO_KEY)
-			y = i;
+		if (tab[n] != NO_KEY)
+			y = n;
 	}
 }
 
@@ -60,25 +58,20 @@ int			key_controls(int *tab, int n, int key, char ac)
 
 	i = -1;
 	ret = 0;
-	if (ac == '-')
+	while (++i < n && !ret)
 	{
-		while (++i < n && !ret)
-			if (tab[i] == key)
-			{
-				tab[i] = NO_KEY;
-				ret = 1;
-			}
-	}
-	else if (ac == '+')
-	{
-		while (++i < n && !ret)
-			if (tab[i] == NO_KEY)
-			{
-				tab[i] = key;
-				ret = 1;
-			}
-			else if (tab[i] == key)
-				ret = -1;
+		if (ac == '-' && tab[i] == key)
+		{
+			tab[i] = NO_KEY;
+			ret = 1;
+		}
+		else if (ac == '+' && tab[i] == NO_KEY)
+		{
+			tab[i] = key;
+			ret = 1;
+		}
+		else if (ac == '+' && tab[i] == key)
+			ret = -1;
 	}
 	order_tab(tab, n);
 	return (ret);

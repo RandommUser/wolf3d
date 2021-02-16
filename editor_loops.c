@@ -160,12 +160,12 @@ static void		b_block_place(t_editor *edi, int x, int y)
 	point.x += (int)(blocks.x) % 2;
 	point.y = (int)(blocks.y) / 2;
 	point.y += (int)(blocks.y) % 2;
-	if (block_edit(&edi->map, edi->select, point, NULL))
+	if (block_edit(&edi->map, edi->select, point, NULL))//
 		printf("block placed at %d %d\n", point.x ,point.y);//
 	block_to_image(edi);
 }
 
-int	key_press(int key, t_editor *edi)
+int	key_press(int key, t_editor *edi) // THIS IS THE LAST ONE ?
 {
 	if (key_controls(edi->key, KEY_DOWN, key, '+'))//
 	{//
@@ -275,11 +275,6 @@ int	motion_notify(int x, int y, t_editor *edi)
 			BLOCKW * edi->map.top.y : edi->offset.y;
 		edi->offset.y =  edi->offset.y > BLOCKW * edi->map.bottom.y ?
 			BLOCKW * edi->map.bottom.y : edi->offset.y;
-		/*
-		edi->offset.x =  edi->offset.x < -BLOCKW * edi->mlx.size.x ? BLOCKW * -edi->mlx.size.x : edi->offset.x;
-		edi->offset.x =  edi->offset.x > BLOCKW * edi->mlx.size.x ? BLOCKW * edi->mlx.size.x : edi->offset.x;
-		edi->offset.y =  edi->offset.y < -BLOCKW * edi->mlx.size.y ? BLOCKW * -edi->mlx.size.y : edi->offset.y;
-		edi->offset.y =  edi->offset.y > BLOCKW * edi->mlx.size.y ? BLOCKW * edi->mlx.size.y : edi->offset.y;*/
 		edi->mouse_pos.x = x;
 		edi->mouse_pos.y = y;
 		block_to_image(edi);

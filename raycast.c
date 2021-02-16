@@ -15,15 +15,15 @@
 t_ray	ray_colors(t_ray ray)
 {
 	if (ray.side)
-			ray.color = ray.map.y > ray.game.player.pos.y ? 0xff0000 : 0x0000ff;
-		else
-			ray.color = ray.map.x > ray.game.player.pos.x ? 0xff8000 : 0x00ff00;
-		if (ray.hit && ray.block->block == 7)
-		{
-			ray.color = 0xffffff;
-			ray.draw.x = ray.draw.y - (ray.draw.y - ray.draw.x) / 10;
-		}
-		ray.color = !ray.hit ? 0x333333 : ray.color;
+		ray.color = ray.map.y > ray.game.player.pos.y ? 0xff0000 : 0x0000ff;
+	else
+		ray.color = ray.map.x > ray.game.player.pos.x ? 0xff8000 : 0x00ff00;
+	if (ray.hit && ray.block->block == 7)
+	{
+		ray.color = 0xffffff;
+		ray.draw.x = ray.draw.y - (ray.draw.y - ray.draw.x) / 10;
+	}
+	ray.color = !ray.hit ? 0x333333 : ray.color;
 	if (ray.block && ray.block->block == 7)
 	{
 		ray.color = 0xffffff;
@@ -104,15 +104,16 @@ t_ray	ray_move(t_ray ray)
 
 void	traycast(t_ray ray)
 {
-	//ray.block = find_spot(ray.game.map.start, ray.map);
 	ray = ray_bsize(ray);
 	ray = ray_colors(ray);
-	mlx_line_to_image(ray.game.image[1], dot(ray.x, ray.draw.x), dot(ray.x, ray.draw.y), ray.color);
+	mlx_line_to_image(ray.game.image[1], dot(ray.x, ray.draw.x),
+		dot(ray.x, ray.draw.y), ray.color);
 	// secondary border calc to show the other side
 	ray = ray_move(ray);
 	ray = ray_bsize(ray);
 	ray = ray_colors(ray);
-	mlx_line_to_image(ray.game.image[1], dot(ray.x, ray.draw.x), dot(ray.x, ray.draw.y), ray.color);
+	mlx_line_to_image(ray.game.image[1], dot(ray.x, ray.draw.x),
+		dot(ray.x, ray.draw.y), ray.color);
 }
 
 
@@ -144,6 +145,7 @@ void	raycast(t_game game)
 		ray = ray_colors(ray);
 		if (ray.game.verbose)		//
 			printf("drawing line from y %d to %d\n", ray.draw.x, ray.draw.y);		//
-		mlx_line_to_image(game.image[0], dot(ray.x, ray.draw.x), dot(ray.x, ray.draw.y), ray.color);
+		mlx_line_to_image(game.image[0], dot(ray.x, ray.draw.x),
+			dot(ray.x, ray.draw.y), ray.color);
 	}
 }

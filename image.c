@@ -23,48 +23,48 @@ void	image_wipe(int *img_dat, int color, int width, int height)
 		img_dat[i] = color;
 }
 
+static void	write_tex(t_box box)
+{
+	box.img_dat = mlx_int_map(box.edit->mlx_img[box.curr->block], box);
+	while (iround(box.texture.y) < BLOCKW && box.image.y + box.prog.y <
+		box.edit->size.y)
+	{
+		box.texture.x = box.tcorr.x;
+		box.prog.x = box.pcorr.x;
+		while (iround(box.texture.x) < BLOCKW && box.image.x + box.prog.x
+			< box.edit->size.x)
+		{
+			box.edit->map_data[box.prog.x + box.image.x + (box.prog.y +
+				box.image.y) * box.edit->size.x] = box.img_dat[
+				iround(box.texture.x) + iround(box.texture.y) * BLOCKW];
+			box.prog.x++;
+			box.texture.x += box.step;
+		}
+		box.prog.y++;
+		box.texture.y += box.step;
+	}
+}
 
 void	edi_block_image(t_box box)
 {
-	t_dot	image;
-	t_dot	prog;
-	t_dot	pcorr;
-	t_pdot	texture;
-	t_pdot	tcorr;
-	int		*text_data;
-
 	box.step = 1 * box.edit->zoom;
-	image.x = iround(pmap(box.spot.x, nmap(box.edit->offset.x - box.w,
+	box.image.x = iround(pmap(box.spot.x, nmap(box.edit->offset.x - box.w,
 		box.edit->offset.x + box.w, 0, box.edit->size.x - 1)));
-	image.y = iround(pmap(box.spot.y, nmap(box.edit->offset.y - box.h,
+	box.image.y = iround(pmap(box.spot.y, nmap(box.edit->offset.y - box.h,
 		box.edit->offset.y + box.h, 0, box.edit->size.y - 1)));
-	prog = dot(0, 0);
-	pcorr = dot(0, 0);
-	tcorr = pdot(0, 0);
-	texture = pdot(0, 0);
-	if (image.x < 0)
+	box.prog = dot(0, 0);
+	box.pcorr = dot(0, 0);
+	box.tcorr = pdot(0, 0);
+	box.texture = pdot(0, 0);
+	if (box.image.x < 0)
 	{
-		pcorr.x = ft_abs(image.x);
-		tcorr.x = pcorr.x * box.step;
+		box.pcorr.x = ft_abs(box.image.x);
+		box.tcorr.x = box.pcorr.x * box.step;
 	}
-	if (image.y < 0)
+	if (box.image.y < 0)
 	{
-		prog.y = ft_abs(image.y);
-		texture.y = prog.y * box.step;
+		box.prog.y = ft_abs(box.image.y);
+		box.texture.y = box.prog.y * box.step;
 	}
-	text_data = mlx_int_map(box.edit->mlx_img[box.curr->block], box);
-	while (iround(texture.y) < BLOCKW && image.y + prog.y < box.edit->size.y)
-	{
-		texture.x = tcorr.x;
-		prog.x = pcorr.x;
-		while (iround(texture.x) < BLOCKW && image.x + prog.x < box.edit->size.x)
-		{
-			box.edit->map_data[prog.x + image.x + (prog.y + image.y) * box.edit->size.x] = 
-				text_data[iround(texture.x) + iround(texture.y) * BLOCKW];
-			prog.x++;
-			texture.x += box.step;
-		}
-		prog.y++;
-		texture.y += box.step;
-	}
+	write_tex(box);
 }
