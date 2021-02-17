@@ -12,28 +12,36 @@
 
 #include "header.h"
 
-static void		*input_loop(t_editor *edit, char *smsg, char *cmsg, char *curr)
+static void		input_print(t_editor *edit, char *smsg, char *cmsg)
 {
-	char	*str;
-
 	block_to_image(edit);
 	write_to_screen(edit->mlx, dot(20, 10), 0x00ff00, smsg);
 	mlx_do_sync(edit->mlx.mlx_ptr);
 	ft_putstr(cmsg);
+}
+
+static void		*input_loop(t_editor *edit, char *smsg, char *cmsg, char *curr)
+{
+	char	*str;
+
+	input_print(edit, smsg, cmsg);
 	if (curr) // has old value
 	{
-		ft_putstr("or press Enter for current (");
+		ft_putstr("or press Enter for current '");
 		ft_putstr(curr);
-		ft_putstr(")\n");
+		ft_putstr("'\n");
 	}
 	if (get_next_line(0, &str) != 1)
 		err_exit(ERR_MEMORY, "input_loop gnl alloc error");
 	if (str[0]) // good new value
+	{
+		free(curr);
 		return (str);
+	}
 	free(str);
-	if (curr) // has already a value, new input empty
+	if (curr)// has already a value, new input empty
 		return (curr);
-	else // (!curr && !str[0]) // no value, no input
+	else// no value, no input
 	{
 		ft_putstr("Please give an input!!\n");
 		return (input_loop(edit, smsg, cmsg, curr));
@@ -44,20 +52,23 @@ static void		map_save(t_editor *edit)
 {
 	edit->map.name = input_loop(edit, "Write name in console",
 		"Write the name\n", edit->map.name);
-	printf("current name> '%s'\n", edit->map.name);//
+	ft_putstr("Name is now: ");
+	ft_putendl(edit->map.name);
 	edit->map.desc = input_loop(edit, "Write description in console",
 		"Write the description\n", edit->map.desc);
-	printf("current desc> '%s'\n", edit->map.desc);//
+	ft_putstr("Description is now: ");
+	ft_putendl(edit->map.desc);
 	if (map_write(&edit->map))
-		printf("map printed\n");// ?
+		ft_putstr("Map saved succesfully\n");
 	else
-		printf("Map printing failed\n");// ?
+		ft_putstr("Failed to open/create the file. "
+		"Please check your permissions\n");
 	block_to_image(edit);
 }
 
 static int	param_check(char *str)
 {
-	static char	*params[MAP_PARAMS + 1] = {
+	static char	*valid[MAP_PARAMS + 1] = {
 		MAP_SPAWN_FLAG, MAP_END_FLAG, "\0"
 	};
 	int	i;
@@ -65,12 +76,12 @@ static int	param_check(char *str)
 
 	i = -1;
 	s = 0;
-	while (!s && params[++i][0])
-		if (str == ft_strstr(str, params[i]))
+	while (!s && valid[++i][0])
+		if (str == ft_strstr(str, valid[i]))
 			s = 1;
 	if (s)
 	{
-		i = ft_strlen(params[i]);
+		i = ft_strlen(valid[i]);
 		if (str[i] == MAP_PARAM_SPLIT)
 			return (param_check(&str[++i]));
 		else if (str[i] == '\0')
@@ -79,7 +90,31 @@ static int	param_check(char *str)
 	return (0);
 }
 
-static	void	edit_param(t_editor *edit, t_mapb *block)
+static void	insert_param(t_editor *edit, t_mapb *block, char *param)
+{
+	if (!param)
+	{
+		if (block->block > EDI_BLOCK)
+			block->block = block->block % EDI_BLOCK;
+		block_edit(&edit->map, block->block, block->pos, param);
+	}
+	else if (param_check(param))
+	{
+		if (ft_strstr(param, MAP_SPAWN_FLAG))
+			block->block = BLOCKH + B_START;
+		else if (ft_strstr(param, MAP_END_FLAG))
+			block->block = BLOCKSE + B_END;
+		block_edit(&edit->map, block->block, block->pos, param);
+	}
+	else
+	{
+		ft_putstr("invalid param!!\n");
+		free(param);
+	}
+	block_to_image(edit);
+}
+
+static void	edit_param(t_editor *edit, t_mapb *block)
 {
 	char	*param;
 
@@ -104,11 +139,7 @@ static	void	edit_param(t_editor *edit, t_mapb *block)
 		free(param);
 		param = NULL;
 	}
-	if (!param || param_check(param))
-		block_edit(&edit->map, block->block, block->pos, param);
-	else
-		ft_putstr("invalid param!!\n");
-	block_to_image(edit);
+	insert_param(edit, block, param);
 }
 
 static t_mapb	*block_read(t_editor *edi, int x, int y)//
@@ -165,6 +196,8 @@ static void		b_block_place(t_editor *edi, int x, int y)
 	block_to_image(edi);
 }
 
+
+
 int	key_press(int key, t_editor *edi) // THIS IS THE LAST ONE ?
 {
 	if (key_controls(edi->key, KEY_DOWN, key, '+'))//
@@ -180,34 +213,20 @@ int	key_press(int key, t_editor *edi) // THIS IS THE LAST ONE ?
 		t_mlx_delete(&edi->mlx);
 		good_exit(EXIT_SUCCESS, "esc quit");
 	}
-	else if (is_pressed(edi->key, KEY_DOWN, L_CTRL) && is_pressed(edi->key, KEY_DOWN, K_S))
+	else if (is_pressed(edi->key, KEY_DOWN, L_CTRL) &&
+		is_pressed(edi->key, KEY_DOWN, K_S))
 	{
 		map_save(edi);
 		key_controls(edi->key, KEY_DOWN, L_CTRL, '-');
 		key_controls(edi->key, KEY_DOWN, K_S, '-');
 	}
-	else if (is_pressed(edi->key, KEY_DOWN, L_CMND) && is_pressed(edi->key, KEY_DOWN, K_Z))
+	else if (is_pressed(edi->key, KEY_DOWN, L_CTRL) &&
+		is_pressed(edi->key, KEY_DOWN, K_Z))
 	{
-		printf("cmnd + z\n");//
+		printf("ctrl + z\n");//
 		block_undo(&edi->map, NULL, 0, NULL);
 		key_controls(edi->key, KEY_DOWN, K_Z, '-');
 		block_to_image(edi);
-	}
-	else if (key == K_R)
-		mlx_clear_window(edi->mlx.mlx_ptr, edi->mlx.mlx_win);
-	else if (key == K_1)
-		edi->select = BLOCK1;
-	else if (key == K_2)
-		edi->select = BLOCK2;
-	else if (key == K_3)
-		edi->select = BLOCK3;
-	else if (key == K_4)
-		edi->select = BLOCK4;
-	else if (key == K_E)
-		edi->select = B_EMPTY;
-	else if (key == K_G)
-	{
-		map_save(edi);
 	}
 	tool_render(edi->toolbar);
 	return (0);

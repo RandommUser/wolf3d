@@ -53,7 +53,8 @@ static void	block_norm(t_map *map)
 	found = 0;
 	while (curr)
 	{
-		if(!found && block_check(curr, MAP_SPAWN_FLAG))
+		if(!found && block_check(curr, MAP_SPAWN_FLAG) &&
+			!is_wall(NULL, curr, dot(0, 0)))
 		{
 			found = 1;
 			spawn = curr->pos;

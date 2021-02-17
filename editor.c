@@ -16,20 +16,19 @@ static	t_mapb	*map_init(t_map *map)
 {
 	t_dot	spot;
 
-	map->start = block_add(map, B_START + BLOCKH, dot(0, 0),
-		ft_strdup(MAP_SPAWN_FLAG));
+	map->start = block_add(map, B_EMPTY, dot(0, 0), NULL);
 	spot.y = map->top.y - 1;
 	while (++spot.y <= map->bottom.y)
 	{
 		spot.x = map->top.x - 1;
 		while (++spot.x <= map->bottom.x)
-		{
-			if (block_edit(map, B_EMPTY, spot, NULL))
-				printf("block added %d %d\n", spot.x, spot.y);
-		}
+			block_edit(map, B_EMPTY, spot, NULL);
 	}
 	block_edit(map, B_END + BLOCKSE, dot(0, 5),
 		ft_strdup(MAP_END_FLAG));
+	block_edit(map, B_START + BLOCKH, dot(0, 0),
+		ft_strdup(MAP_SPAWN_FLAG));
+	printf("base map created\n");//
 	return (map->start);
 }
 

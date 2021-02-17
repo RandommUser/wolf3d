@@ -102,7 +102,7 @@ static t_mapb	*find_last(t_mapb *start)
 
 int 		block_check(t_mapb *block, char *str)
 {
-	return (block && block->param && !ft_strcmp(block->param, str));
+	return (block && block->param && ft_strstr(block->param, str));
 }
 
 static void block_param(t_mapb *block, char *param)
@@ -132,7 +132,7 @@ int		map_valid(t_map *map)
 	curr = map->start;
 	while (curr)
 	{
-		if(block_check(curr, MAP_SPAWN_FLAG))
+		if(block_check(curr, MAP_SPAWN_FLAG) && !is_wall(0, curr, dot(0, 0)))
 			if (goals.x++)
 			{
 				ft_putstr("TOO MANY SPAWNS\n");
@@ -196,7 +196,7 @@ int		block_edit(t_map *map, int block, t_dot spot, char *param)
 	if (!map || !map->start)
 		return (0);
 	curr = find_spot(map->start, spot);
-	if (curr && !(curr->block == 6 && block_check(curr, MAP_SPAWN_FLAG)))
+	if (curr)// && !(curr->block == 6 && block_check(curr, MAP_SPAWN_FLAG)))
 	{
 		block_undo(map, curr, block, param);
 		curr->block = block;

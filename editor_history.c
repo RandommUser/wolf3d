@@ -40,6 +40,13 @@ static int	block_comp(t_mapb *block, t_mapb *history, int b, char *param)
 	return (0);
 }
 
+static int	last_hist(t_mapb *history[EDI_HISTORY + 1], int i)
+{
+	while (history[i])
+		i++;
+	return (i);
+}
+
 void		block_undo(t_map *map, t_mapb *block, int b, char *param)
 {
 	static t_mapb	*history[EDI_HISTORY + 1];
@@ -49,8 +56,7 @@ void		block_undo(t_map *map, t_mapb *block, int b, char *param)
 	i = 0;
 	if (!undo && block && block_comp(block, history[i], b, param))
 	{
-		while (history[i])
-			i++;
+		i = last_hist(history, i);
 		if (i == EDI_HISTORY)
 			block_free(history[--i]);
 		while (i-- > 0)
@@ -61,7 +67,8 @@ void		block_undo(t_map *map, t_mapb *block, int b, char *param)
 	{
 		if (history[i] && (undo = 1))
 		{
-			block_edit(map, history[i]->block, history[i]->pos, history[i]->param);
+			block_edit(map, history[i]->block, history[i]->pos,
+				history[i]->param);
 			free(history[i]);
 		}
 		while (!(undo = 0) && i++ < EDI_HISTORY)
