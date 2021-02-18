@@ -12,7 +12,7 @@
 
 #include "header.h"
 
-void	image_wipe(int *img_dat, int color, int width, int height)
+void		image_wipe(int *img_dat, int color, int width, int height)
 {
 	int	i;
 
@@ -45,7 +45,7 @@ static void	write_tex(t_box box)
 	}
 }
 
-void	edi_block_image(t_box box)
+void		edi_block_image(t_box box)
 {
 	box.step = 1 * box.edit->zoom;
 	box.image.x = iround(pmap(box.spot.x, nmap(box.edit->offset.x - box.w,

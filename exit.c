@@ -17,9 +17,7 @@ void	good_exit(int code, char *msg)
 	if (msg)
 		ft_putendl(msg);
 	if (code == USAGE)
-	{
-		//usage here
-	}
+		ft_putstr("usage: ./wolf3d (editor) map_file.map\n");
 	exit(EXIT_SUCCESS);
 }
 

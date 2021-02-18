@@ -38,11 +38,11 @@ static char	*p_text(int i)
 	};
 
 	if (i < 4)
-		return(msg[i]);
+		return (msg[i]);
 	return (NULL);
 }
 
-void	pause_menu(t_game *game, char action)
+void		pause_menu(t_game *game, char action)
 {
 	int	selected;
 

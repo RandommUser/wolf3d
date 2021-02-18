@@ -27,7 +27,7 @@ static t_mapb	*dube_block(t_mapb *block)
 	return (ret);
 }
 
-static int	block_comp(t_mapb *block, t_mapb *history, int b, char *param)
+static int		block_comp(t_mapb *block, t_mapb *history, int b, char *param)
 {
 	if (!history)
 		return (1);
@@ -40,14 +40,14 @@ static int	block_comp(t_mapb *block, t_mapb *history, int b, char *param)
 	return (0);
 }
 
-static int	last_hist(t_mapb *history[EDI_HISTORY + 1], int i)
+static int		last_hist(t_mapb *history[EDI_HISTORY + 1], int i)
 {
 	while (history[i])
 		i++;
 	return (i);
 }
 
-void		block_undo(t_map *map, t_mapb *block, int b, char *param)
+void			block_undo(t_map *map, t_mapb *block, int b, char *param)
 {
 	static t_mapb	*history[EDI_HISTORY + 1];
 	static int		undo = 0;

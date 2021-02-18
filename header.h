@@ -10,29 +10,17 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PRECISION
-# define PRECISION
-
-/*
-** don't ask...
-*/
-
-typedef double	t_precision;
-#endif
-
 #ifndef HEADER_H
 # define HEADER_H
 
-
+# include "precision.h"
 # include "libft.h"
 # include "mlx.h"
 # include <math.h>
 # include <stdlib.h>
 # include <time.h>
-# include <fcntl.h> // open
-# include <unistd.h> // close
-# include <pthread.h>
-#	include <stdio.h>// <printf>, fprintf
+# include <fcntl.h>
+# include <unistd.h>
 
 /*
 ** Key definitions
@@ -123,14 +111,13 @@ typedef double	t_precision;
 # define MSELECTED 0xfff600
 # define MNORMAL 0xffffff
 
-
 /*
 ** Map definitions
 */
 
 # define MAP_ENDING ".map"
 # define MAP_VERSION VERSION
-# define MAP_V "V: "MAP_VERSION // write it out
+# define MAP_V "V: 0.02"
 # define MAP_NAME "Name: "
 # define MAP_DESC "Desc: "
 # define MAP_NEXT "Next: "
@@ -167,8 +154,8 @@ typedef double	t_precision;
 */
 
 # define BAR_BLOCKW EDI_BLOCKW
-# define BAR_WIDTH BLOCKS * BAR_BLOCKW // write it out
-# define BAR_HEIGHT BAR_BLOCKW + 30 // write it out
+# define BAR_WIDTH 200
+# define BAR_HEIGHT 70
 # define BAR_HOVERC 0xfff700
 # define BAR_SELECTC 0xff0000
 # define BAR_C_GOOD 0x00ff00
@@ -182,7 +169,7 @@ typedef double	t_precision;
 # define BLOCKW EDI_BLOCKW
 # define BLOCKS EDI_BLOCK
 # define BLOCKH EDI_BLOCK
-# define BLOCKSE EDI_BLOCK * 2 // write it out
+# define BLOCKSE 10
 # define BLOCK0 0
 # define BLOCK1 1
 # define BLOCK2 2
@@ -325,7 +312,6 @@ typedef struct		s_move
 	int			view;
 }					t_move;
 
-
 typedef struct		s_editor
 {
 	t_mlx		mlx;
@@ -360,7 +346,6 @@ typedef struct		s_nmap
 	t_precision	p;
 }					t_nmap;
 
-
 typedef struct		s_box
 {
 	int			*img_dat;
@@ -391,7 +376,6 @@ typedef struct		s_print
 	char	*str;
 }					t_print;
 
-
 void				good_exit(int code, char *msg);
 void				err_exit(int error, char *msg);
 
@@ -404,6 +388,8 @@ int					game_key_up(int key, t_game *game);
 
 int					player_move(t_game *game);
 void				raycast(t_game game);
+t_ray				ray_setup(t_game game, t_ray ray);
+t_ray				ray_colors(t_ray ray);
 void				pause_menu(t_game *game, char action);
 void				end_menu(t_game *game, char action);
 
@@ -413,7 +399,7 @@ void				tex_init(void *mlx_ptr, void **text, int width, int height);
 t_mapb				*block_add(t_map *map, int block, t_dot spot, char *param);
 int					block_edit(t_map *map, int block, t_dot spot, char *param);
 void				block_free(t_mapb *block);
-int 				block_check(t_mapb *block, char *str);
+int					block_check(t_mapb *block, char *str);
 void				block_tree_del(t_mapb *start);
 void				block_undo(t_map *map, t_mapb *block, int b, char *param);
 void				block_to_image(t_editor *edit);
@@ -424,7 +410,12 @@ int					is_transparent(t_mapb *start, t_mapb *block, t_dot spot);
 int					is_goal(t_mapb *start, t_dot spot);
 
 int					map_reader(char *name, t_map *map);
+int					map_header(char *name, int fd, t_map *map);
+int					block_read(int fd, t_map *map);
 int					map_write(t_map *map);
+void				map_save(t_editor *edit);
+void				b_block_place(t_editor *edi, int x, int y);
+t_mapb				*block_write(t_editor *edi, int x, int y);
 
 void				edi_block_image(t_box box);
 void				image_wipe(int *img_dat, int color, int width, int height);
@@ -436,9 +427,9 @@ int					tool_exit(t_toolbar *param);
 int					bar_key_press(int key, t_toolbar *bar);
 
 int					key_press(int key, t_editor *edi);
-int 				key_release(int key, t_editor *edi);
-int 				button_pressed(int button, int x, int y, t_editor *edi);
-int 				button_released(int button, int x, int y, t_editor *edi);
+int					key_release(int key, t_editor *edi);
+int					button_pressed(int button, int x, int y, t_editor *edi);
+int					button_released(int button, int x, int y, t_editor *edi);
 int					motion_notify(int x, int y, t_editor *edi);
 int					editor_exit(t_editor *edit);
 
@@ -448,25 +439,30 @@ int					key_controls(int *tab, int n, int key, char ac);
 
 void				spawn_color(int *text, t_dot size, int color1, int color2);
 void				wall_color(int *text, t_dot size, int color1, int color2);
-void				outline_color(int *text, t_dot size, int color1, int color2);
+void				outline_color(int *text, t_dot size, int color1,
+						int color2);
 void				solid_color(int *text, t_dot size, int color);
 
 t_dot				dot(int x, int y);
 t_pdot				pdot(t_precision x, t_precision y);
-t_nmap				nmap(t_precision ran11, t_precision ran12, t_precision ran21, t_precision ran22);
+t_nmap				nmap(t_precision ran11, t_precision ran12,
+						t_precision ran21, t_precision ran22);
 
 void				map_delete(t_map *map);
 t_map				map_empty(void);
 
 int					t_mlx_delete(t_mlx *mlx);
-t_mlx				mlx_start(void *mlx_ptr, int width, int height, char *title);
+t_mlx				mlx_start(void *mlx_ptr, int width, int height,
+						char *title);
 
-void				write_to_screen(t_mlx mlx, t_dot pos, int color, char *str);
+void				write_to_screen(t_mlx mlx, t_dot pos, int color,
+						char *str);
 int					mlx_image_place(t_mlx mlx, void *img_ptr, t_dot pos);
 int					mlx_pixel_place(t_mlx mlx, t_dot pos, int color);
 void				t_image_del(t_image *image);
 t_image				mlx_image(t_mlx mlx, t_dot size, int def);
-int					mlx_line_to_image(t_image image, t_dot spos, t_dot epos, int color);
+int					mlx_line_to_image(t_image image, t_dot spos, t_dot epos,
+						int color);
 void				image_set(t_image image, int color);
 void				image_combine(t_image img1, t_image img2, int empty);
 int					*mlx_int_map(void *img_ptr, t_box box);

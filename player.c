@@ -21,6 +21,6 @@ t_player	player_reset(t_game *game)
 	player.plane = pdot(0, FOV);
 	player.dir = pdot(-1, 0);
 	player.collision = 1;
-	player.look = HEAD_TILT;/*game->mlx.size.y / 2 + *///1;  // change +1 to HEAD_TILT ?
+	player.look = HEAD_TILT;
 	return (player);
 }

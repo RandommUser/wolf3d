@@ -12,7 +12,7 @@
 
 #include "header.h"
 
-static int	in_screen(t_dot pos, t_dot size, char *str)
+static int		in_screen(t_dot pos, t_dot size, char *str)
 {
 	int i;
 
@@ -34,7 +34,7 @@ static t_print	print_split(t_print print, int *prog, int *i)
 	char	*temp;
 
 	if (!(temp = ft_strsub(print.str, 0, *i)))
-		err_exit(ERR_MEMORY, "write_to_screen temp alloc"); // error exit
+		err_exit(ERR_MEMORY, "write_to_screen temp alloc");
 	if (print.str[*i - 1] == '-')
 		*i = *i - 1;
 	mlx_string_put(print.mlx.mlx_ptr, print.mlx.mlx_win, *prog - *i *
@@ -45,7 +45,7 @@ static t_print	print_split(t_print print, int *prog, int *i)
 	if (print.str[-1] == '\t')
 	{
 		*prog += TEXT_WIDTH * 4;
-		if (!in_screen(dot(*prog, print.pos.y), print.mlx.size, print.str)) // test if wrapping after tab is needed
+		if (!in_screen(dot(*prog, print.pos.y), print.mlx.size, print.str))
 		{
 			*prog = print.pos.x;
 			print.pos.y += TEXT_HEIGHT;
@@ -58,20 +58,20 @@ static t_print	print_split(t_print print, int *prog, int *i)
 	return (print);
 }
 
-void	write_screen(t_print print)
+void			write_screen(t_print print)
 {
 	int		i;
 	int		prog;
 
 	i = -1;
-	print.pos = dot(print.pos.x - 2, print.pos.y - 4); // offset correction;
+	print.pos = dot(print.pos.x - 2, print.pos.y - 4);
 	prog = print.pos.x;
 	while (print.str[++i] && print.pos.y < print.mlx.size.y)
 	{
-		if (print.str[i] == '\n' || print.str[i] == '\t') // encounters a linebreak or tabulations
+		if (print.str[i] == '\n' || print.str[i] == '\t')
 			print = print_split(print, &prog, &i);
 		else if ((ft_iswspace(print.str[i]) || (print.str[i] == '-')) &&
-		!in_screen(dot(prog, print.pos.y), print.mlx.size, &print.str[i + 1]))// encounters any other kind of white-space or - and wrapping is needed
+		!in_screen(dot(prog, print.pos.y), print.mlx.size, &print.str[i + 1]))
 		{
 			if (print.str[i] == '-')
 			{
@@ -87,7 +87,7 @@ void	write_screen(t_print print)
 	print_split(print, &prog, &i);
 }
 
-void	write_to_screen(t_mlx mlx, t_dot pos, int color, char *str)
+void			write_to_screen(t_mlx mlx, t_dot pos, int color, char *str)
 {
 	t_print print;
 

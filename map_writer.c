@@ -19,7 +19,7 @@ static char	*file_format(char *name)
 	i = -1;
 	while (name[++i])
 	{
-		if (!ft_strcmp(&name[i], MAP_ENDING)) // ignore .map part at the end
+		if (!ft_strcmp(&name[i], MAP_ENDING))
 			break ;
 		name[i] = ft_iswspace(name[i]) ? '_' : name[i];
 		name[i] = name[i] != '_' && !ft_isalnum(name[i]) ? '-' : name[i];
@@ -28,7 +28,7 @@ static char	*file_format(char *name)
 	return (name);
 }
 
-static void	map_header(int fd, t_map *map)
+static void	wmap_header(int fd, t_map *map)
 {
 	ft_putendl_fd(MAP_V, fd);
 	ft_putstr_fd(MAP_NAME, fd);
@@ -44,11 +44,11 @@ static void	map_loop(int fd, t_map *map)
 	t_dot	pos;
 	t_mapb	*block;
 
-	pos.y = map->top.y - 1;//-map->size.y - 1;
-	while (++pos.y <= map->bottom.y) // size.y
+	pos.y = map->top.y - 1;
+	while (++pos.y <= map->bottom.y)
 	{
-		pos.x = map->top.x - 1;//-map->size.x - 1;
-		while (++pos.x <= map->bottom.x)//map->size.x)
+		pos.x = map->top.x - 1;
+		while (++pos.x <= map->bottom.x)
 		{
 			if (!(block = find_spot(map->start, pos)) || !block->block)
 				ft_putchar_fd(MAP_EMPTY, fd);
@@ -67,8 +67,7 @@ static void	map_loop(int fd, t_map *map)
 	}
 }
 
-
-int	map_write(t_map *map)
+int			map_write(t_map *map)
 {
 	int		fd;
 	char	*temp[2];
@@ -90,7 +89,7 @@ int	map_write(t_map *map)
 		return (0);
 	}
 	free(temp[1]);
-	map_header(fd, map);
+	wmap_header(fd, map);
 	map_loop(fd, map);
 	close(fd);
 	return (1);

@@ -39,7 +39,7 @@ static t_pdot	collision(t_game *game, t_mapb *start, t_pdot new, t_pdot old)
 	return (new);
 }
 
-static void	player_rota(t_player *player, t_precision dir)
+static void		player_rota(t_player *player, t_precision dir)
 {
 	t_pdot	oplane;
 	t_pdot	odir;
@@ -106,18 +106,13 @@ static t_move	p_move(t_game *game, t_move mov)
 	return (mov);
 }
 
-int	player_move(t_game *game)
+int				player_move(t_game *game)
 {
 	t_move	mov;
 
 	mov.move = pdot(0, 0);
 	mov.turn = 0;
 	mov.view = 0;
-	if (is_pressed(game->key, KEY_DOWN, K_R)) // REMOVE AFTER TESTING
-	{
-		game->player = player_reset(game);
-		return (1);
-	}
 	mov = read_mov(game, mov);
 	if (!mov.view && !mov.move.y && !mov.move.x && !mov.turn)
 		return (0);

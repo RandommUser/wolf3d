@@ -12,7 +12,7 @@
 
 #include "header.h"
 
-static	t_mapb	*map_init(t_map *map)
+static	t_mapb		*map_init(t_map *map)
 {
 	t_dot	spot;
 
@@ -28,11 +28,10 @@ static	t_mapb	*map_init(t_map *map)
 		ft_strdup(MAP_END_FLAG));
 	block_edit(map, B_START + BLOCKH, dot(0, 0),
 		ft_strdup(MAP_SPAWN_FLAG));
-	printf("base map created\n");//
 	return (map->start);
 }
 
-static t_editor	editor_init(int width, int height, void **img)
+static t_editor		editor_init(int width, int height, void **img)
 {
 	t_editor	ret;
 
@@ -47,7 +46,7 @@ static t_editor	editor_init(int width, int height, void **img)
 	ret.offset.y = 0;
 	ret.zoom = 1;
 	ret.select = B_FLOOR;
-	ft_memset(ret.key, NO_KEY,sizeof(int[KEY_DOWN]));
+	ft_memset(ret.key, NO_KEY, sizeof(int[KEY_DOWN]));
 	ft_memset(ret.button, NO_KEY, sizeof(int[MOUSE_DOWN]));
 	ret.map.start = map_init(&ret.map);
 	ret.edit = NULL;
@@ -55,7 +54,7 @@ static t_editor	editor_init(int width, int height, void **img)
 	return (ret);
 }
 
-static	t_toolbar toolbar_init(t_editor *edit)
+static t_toolbar	toolbar_init(t_editor *edit)
 {
 	t_toolbar bar;
 
@@ -64,7 +63,7 @@ static	t_toolbar toolbar_init(t_editor *edit)
 	return (bar);
 }
 
-static void	editor_loop_init(t_editor *editor, t_toolbar *toolbar)
+static void			editor_loop_init(t_editor *editor, t_toolbar *toolbar)
 {
 	mlx_hook(editor->mlx.mlx_win, KEY_PRESS, 0, &key_press, editor);
 	mlx_hook(editor->mlx.mlx_win, KEY_RELEASE, 0, &key_release, editor);
@@ -78,7 +77,7 @@ static void	editor_loop_init(t_editor *editor, t_toolbar *toolbar)
 	mlx_hook(toolbar->mlx.mlx_win, KEY_PRESS, 0, &bar_key_press, toolbar);
 }
 
-void	editor(char *arg)
+void				editor(char *arg)
 {
 	void		*mlx_ptr;
 	t_editor	editor;

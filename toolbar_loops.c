@@ -26,7 +26,7 @@ static int	block_select(int x, int y)
 			return (i);
 	}
 	if (x >= BAR_BLOCKW * (i - 1) && x <= BAR_BLOCKW * i)
-			return (0);
+		return (0);
 	return (-1);
 }
 

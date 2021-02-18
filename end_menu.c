@@ -64,7 +64,7 @@ static void	em_opt(t_game *game, int options, int selected)
 		p_print(game, e_text(3), -1, MNORMAL);
 }
 
-void	end_menu(t_game *game, char action)
+void		end_menu(t_game *game, char action)
 {
 	int		selected;
 	int		options;

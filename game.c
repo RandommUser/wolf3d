@@ -30,7 +30,6 @@ static t_game	game_init(void)
 	game.state = START_SCREEN;
 	game.mselect = 0;
 	game.menu = MENU_PAUSE;
-	printf("frametime %lf'\n", game.frame / CLOCKS_PER_SEC);
 	return (game);
 }
 
@@ -61,7 +60,6 @@ void			game(char *name)
 		err_exit(ERR_PARA, "Bad map game()");
 	if (!(game.mlx.mlx_ptr = mlx_init()))
 		err_exit(ERR_MLX, "MLX failed to init game()");
-	printf("map path is %s\n", game.map.path);//
 	game.mlx = mlx_start(game.mlx.mlx_ptr, GWIDTH, GHEIGHT, "Wolf3D");
 	game.player = player_reset(&game);
 	game.image[0] = mlx_image(game.mlx, game.mlx.size, 0x000000);

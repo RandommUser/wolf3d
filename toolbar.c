@@ -14,8 +14,8 @@
 
 static char	*block_name(int block)
 {
-	static char	block_name[BLOCKS + 1][100] = {
-		"EMPTY" ,  "START", "EXIT", "WALL", "FLOOR", "\0"
+	static char	*block_name[BLOCKS + 1] = {
+		"EMPTY", "START", "EXIT", "WALL", "WALL2", "\0"
 	};
 
 	return (block_name[block]);
@@ -90,7 +90,6 @@ int			tool_exit(t_toolbar *param)
 
 	bar = param;
 	t_mlx_delete(&bar->mlx);
-	//mlx_destroy_window(bar->mlx.mlx_ptr, bar->mlx.mlx_win);
 	key_press(ESC_KEY, bar->editor);
 	return (0);
 }
