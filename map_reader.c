@@ -73,11 +73,10 @@ static int	file_ending(char *str, char *end)
 
 	i = ft_strlen(str);
 	y = ft_strlen(end);
-	while (--i >= 0 && --y >= 0)
-	{
-		if (str[i] != end[y])
-			return (0);
-	}
+	if (i <= y)
+		return (0);
+	if (ft_strcmp(&str[i - y], end))
+		return (0);
 	return (1);
 }
 
