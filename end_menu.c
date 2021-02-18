@@ -75,7 +75,7 @@ static void	end_select(t_game *game, int selected)
 	{
 		game->player = player_reset(game);
 		start_menu(game);
-	}	
+	}
 	else if (selected == 2)
 		game_key_down(ESC_KEY, game);
 }

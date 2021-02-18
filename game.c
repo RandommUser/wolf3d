@@ -52,16 +52,6 @@ void			start_menu(t_game *game)
 
 static void		game_start(t_game game)
 {
-	/*
-	raycast(game);
-	image_combine(game.image[0], game.image[1], 0x000000);
-	mlx_image_place(game.mlx, game.image[0].img_ptr, dot(0, 0));
-	write_to_screen(game.mlx, dot(game.mlx.size.x / 2 - (int)(ft_strlen(
-		game.map.name) / 2) * TEXT_WIDTH, 50), MSELECTED, game.map.name);
-	write_to_screen(game.mlx, dot(100, 200), MNORMAL, game.map.desc);
-	write_to_screen(game.mlx, dot(game.mlx.size.x / 2 - (int)(ft_strlen(
-		"Press Enter to start") / 2) * TEXT_WIDTH, game.mlx.size.y - 50),
-		MNORMAL, "Press Enter to start");*/
 	start_menu(&game);
 	mlx_loop_hook(game.mlx.mlx_ptr, &game_loop, &game);
 	mlx_hook(game.mlx.mlx_win, KEY_PRESS, 0, &game_key_down, &game);
