@@ -42,19 +42,23 @@ static char	*p_text(int i)
 	return (NULL);
 }
 
+static void	pause_select(t_game *game, int selected)
+{
+	game->state = RUNNING;
+	if (selected == 1)
+	{
+		game->player = player_reset(game);
+		start_menu(game);
+	}
+	if (selected == 2)
+		game_key_down(ESC_KEY, game);
+}
+
 void		pause_menu(t_game *game, char action)
 {
 	int	selected;
 
 	selected = men_init(game, MENU_PAUSE, 3);
-	if (action == '+')
-	{
-		game->state = RUNNING;
-		if (selected == 1)
-			game->player = player_reset(game);
-		if (selected == 2)
-			game_key_down(ESC_KEY, game);
-	}
 	mlx_image_place(game->mlx, game->image[0].img_ptr, dot(0, 0));
 	p_print(game, p_text(0), 5, MNORMAL);
 	if (selected == 0)
@@ -69,4 +73,6 @@ void		pause_menu(t_game *game, char action)
 		p_print(game, p_text(selected + 1), 3 - selected * 2, MSELECTED);
 	else
 		p_print(game, p_text(3), -1, MNORMAL);
+	if (action == '+')
+		pause_select(game, selected);
 }

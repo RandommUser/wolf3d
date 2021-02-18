@@ -87,7 +87,7 @@ void				editor(char *arg)
 
 	editor = editor_init(EDI_WIDTH, EDI_HEIGHT, textures);
 	if (arg && !map_reader(arg, &editor.map))
-		err_exit(ERR_PARA, "Bad map\n");
+		err_exit(ERR_PARA, "Bad map");
 	if (!(mlx_ptr = mlx_init()))
 		err_exit(ERR_MLX, "editor mlx_ptr init failed");
 	editor.mlx = mlx_start(mlx_ptr, EDI_WIDTH, EDI_HEIGHT, "Map editor");

@@ -101,7 +101,7 @@
 # define MOVE_SPEED 0.1
 # define HEAD_TILT 10
 # define FOV 0.66
-# define RDIST 15
+# define RDIST 10
 # define PSIZE 0.3
 # define RUNNING 1
 # define PAUSED 0
@@ -381,6 +381,7 @@ void				err_exit(int error, char *msg);
 
 void				game(char *name);
 t_player			player_reset(t_game *game);
+void				start_menu(t_game *game);
 
 int					game_loop(t_game *game);
 int					game_key_down(int key, t_game *game);

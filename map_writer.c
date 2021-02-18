@@ -54,6 +54,7 @@ static void	map_loop(int fd, t_map *map)
 				ft_putchar_fd(MAP_EMPTY, fd);
 			else
 			{
+				block->block -= block->block >= BLOCKS * 2 ? BLOCKS : 0;
 				ft_putnbr_fd(block->block, fd);
 				if (block->param)
 				{
