@@ -34,7 +34,7 @@ static void	p_print(t_game *game, char *str, int y, int col)
 static char	*p_text(int i)
 {
 	static char	*msg[4] = {
-		"PAUSED", "Continue", "Restart", "Exit"
+		"PAUSED", "Continue", "Restart", "Exit the game"
 	};
 
 	if (i < 4)

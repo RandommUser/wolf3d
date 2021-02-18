@@ -17,10 +17,10 @@ static t_mapb	*dube_block(t_mapb *block)
 	t_mapb	*ret;
 
 	if (!(ret = malloc(sizeof(t_mapb))))
-		err_exit(ERR_MEMORY, "block add alloc fail");
+		err_exit(ERR_MEMORY, "dube block alloc fail");
 	ret->param = NULL;
 	if (block->param && !(ret->param = ft_strdup(block->param)))
-		err_exit(ERR_MEMORY, "block add alloc fail");
+		err_exit(ERR_MEMORY, "dube block alloc fail");
 	ret->pos = block->pos;
 	ret->block = block->block;
 	ret->next = NULL;

@@ -20,7 +20,7 @@ int	key_press(int key, t_editor *edi)
 		map_delete(&edi->map);
 		mlx_destroy_image(edi->mlx.mlx_ptr, edi->map_img);
 		t_mlx_delete(&edi->mlx);
-		good_exit(EXIT_SUCCESS, "esc quit");
+		good_exit(EXIT_SUCCESS, "Exiting");
 	}
 	else if (is_pressed(edi->key, KEY_DOWN, L_CTRL) &&
 		is_pressed(edi->key, KEY_DOWN, K_S))

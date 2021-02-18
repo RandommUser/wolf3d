@@ -79,7 +79,7 @@ static void	edit_param(t_editor *edit, t_mapb *block)
 	{
 		free(param);
 		if (!(param = ft_strdup(block->param)))
-			err_exit(ERR_MEMORY, "param edit editor_loop\n");
+			err_exit(ERR_MEMORY, "edit_param dup err\n");
 	}
 	else if (!ft_strcmp(param, "NULL"))
 	{

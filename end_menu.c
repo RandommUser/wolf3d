@@ -34,7 +34,7 @@ static void	p_print(t_game *game, char *str, int y, int col)
 static char	*e_text(int i)
 {
 	static char	*msg[5] = {
-		"YOU FOUND THE GOAL!!!", "Next map", "Restart", "Exit", "No next map"
+		"YOU FOUND THE GOAL!!!", "Next map", "Restart", "Exit", "Last map"
 	};
 
 	if (i < 5)
@@ -80,7 +80,7 @@ void		end_menu(t_game *game, char action)
 		{
 			if (!(next = ft_strjoin(game->map.path, game->map.next)) ||
 				!map_reader(next, &game->map))
-				err_exit(ERR_PARA, "Bad map end_menu()");
+				err_exit(ERR_PARA, "Invalid map, exiting");
 			free(next);
 			game->player = player_reset(game);
 		}

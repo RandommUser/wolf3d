@@ -57,7 +57,7 @@ void			game(char *name)
 
 	game = game_init();
 	if (!map_reader(name, &game.map))
-		err_exit(ERR_PARA, "Bad map game()");
+		err_exit(ERR_PARA, "Invalid map");
 	if (!(game.mlx.mlx_ptr = mlx_init()))
 		err_exit(ERR_MLX, "MLX failed to init game()");
 	game.mlx = mlx_start(game.mlx.mlx_ptr, GWIDTH, GHEIGHT, "Wolf3D");
