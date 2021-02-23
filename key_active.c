@@ -12,6 +12,21 @@
 
 #include "header.h"
 
+static int	key_okay(int key)
+{
+	static int	keys[] = {
+		ESC_KEY, L_CTRL, L_SHFT, K_W, K_A, K_S, K_D, K_AU, K_AR, K_AD, K_AL,
+		K_Z, K_V, K_C, K_P, K_ENT, NO_KEY
+	};
+	int			i;
+
+	i = -1;
+	while (keys[++i] != NO_KEY)
+		if (keys[i] == key)
+			return (1);
+	return (0);
+}
+
 void		log_reset(int *tab, int n, int key)
 {
 	int	i;
@@ -58,6 +73,8 @@ int			key_controls(int *tab, int n, int key, char ac)
 
 	i = -1;
 	ret = 0;
+	if (!key_okay(key))
+		return (-1);
 	while (++i < n && !ret)
 	{
 		if (ac == '-' && tab[i] == key)

@@ -86,6 +86,7 @@ int			map_reader(char *name, t_map *map)
 
 	if (!file_ending(name, MAP_ENDING) || (fd = open(name, O_RDONLY)) < 1)
 		return (0);
+	map_delete(map);
 	if (!map_header(name, fd, map))
 		return (bad_map(fd, map));
 	block_tree_del(map->start);

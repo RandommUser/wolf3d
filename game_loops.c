@@ -12,6 +12,17 @@
 
 #include "header.h"
 
+int			game_exit(t_game *game)
+{
+	t_mlx_delete(&game->mlx);
+	free(game->text[0]);
+	free(game->text[1]);
+	free(game->text[2]);
+	free(game->text[3]);
+	good_exit(EXIT_SUCCESS, NULL);
+	return (1);
+}
+
 static void	frame_draw(t_game *game)
 {
 	if (player_move(game))

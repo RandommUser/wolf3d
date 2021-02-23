@@ -12,21 +12,43 @@
 
 #include "header.h"
 
+static t_ray	ray_text(t_ray ray)
+{
+	t_precision	hit;
+
+	if (ray.side)
+		ray.tside = ray.map.y > ray.game.player.pos.y ? 0 : 1;
+	else
+		ray.tside = ray.map.x > ray.game.player.pos.x ? 2 : 3;
+	if (!ray.side)
+		hit = ray.game.player.pos.y + ray.wdist * ray.raydir.y;
+	else
+		hit = ray.game.player.pos.x + ray.wdist * ray.raydir.x;
+	hit = ft_fabs(hit);
+	hit = hit - (int)hit;
+	hit = !ray.side && ray.block && ray.block->pos.y < 0 ? 1 - hit : hit;
+	hit = ray.side && ray.block && ray.block->pos.x < 0 ? 1 - hit : hit;
+	hit = hit > 1 ? 1 : hit;
+	if (ray.block && ray.block->block < 5)
+	{
+		ray.color[0] = ray.game.text[ray.tside][iround(hit)];
+		ray.color[1] = ray.game.text[ray.tside][iround(hit) + 2];
+	}
+	return (ray);
+}
+
 t_ray			ray_colors(t_ray ray)
 {
-	if (ray.side)
-		ray.color = ray.map.y > ray.game.player.pos.y ? 0xff0000 : 0x0000ff;
+	if (ray.hit)
+		ray = ray_text(ray);
 	else
-		ray.color = ray.map.x > ray.game.player.pos.x ? 0xff8000 : 0x00ff00;
-	if (ray.hit && ray.block->block == 7)
 	{
-		ray.color = 0xffffff;
-		ray.draw.x = ray.draw.y - (ray.draw.y - ray.draw.x) / 10;
+		ray.color[0] = !ray.hit ? 0x333333 : ray.color[0];
+		ray.color[1] = !ray.hit ? 0x333333 : ray.color[1];
 	}
-	ray.color = !ray.hit ? 0x333333 : ray.color;
 	if (ray.block && ray.block->block == 7)
 	{
-		ray.color = 0xffffff;
+		ray.color[0] = 0xffffff;
 		ray.draw.x = ray.draw.y - (ray.draw.y - ray.draw.x) / 10;
 	}
 	return (ray);

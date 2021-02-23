@@ -16,6 +16,28 @@
 ** color1 = highlight, color2 = base
 */
 
+void	wall_text(int *text, t_dot size, int color1, int color2)
+{
+	t_dot	spot;
+
+	if (!text)
+		return ;
+	spot.y = -1;
+	while (++spot.y < size.y / 2)
+	{
+		spot.x = -1;
+		while (++spot.x < size.x)
+			text[spot.x + spot.y * size.y] = spot.x % 2 ? color1 : color2;
+	}
+	spot.y--;
+	while (++spot.y < size.y)
+	{
+		spot.x = -1;
+		while (++spot.x < size.x)
+			text[spot.x + spot.y * size.y] = spot.x % 2 ? color2 : color1;
+	}
+}
+
 void	spawn_color(int *text, t_dot size, int color1, int color2)
 {
 	t_dot	spot;

@@ -31,26 +31,18 @@
 # define ESC_KEY 53
 # define L_CTRL 256
 # define L_SHFT 257
-# define L_CMND 259
 # define K_W 13
 # define K_A 0
 # define K_S 1
 # define K_D 2
+# define K_P 35
 # define K_AU 126
 # define K_AR 124
 # define K_AD 125
 # define K_AL 123
-# define K_R 15
-# define K_G 5
-# define K_E 14
 # define K_Z 6
 # define K_V 9
 # define K_C 8
-# define K_P 35
-# define K_1 18
-# define K_2 19
-# define K_3 20
-# define K_4 21
 # define K_ENT 36
 
 /*
@@ -68,10 +60,6 @@
 ** MLX defitions
 */
 
-# define MIN_WIDTH 100
-# define MIN_HEIGHT 50
-# define MAX_WIDTH 2560
-# define MAX_HEIGHT 1440
 # define TEXT_WIDTH 10
 # define TEXT_HEIGHT 16
 
@@ -84,9 +72,6 @@
 # define BUTTON_PRESS 4
 # define BUTTON_RELEASE 5
 # define MOTION_NOTIFY 6
-# define ENTER_NOTIFY 7
-# define LEAVE_NOTIFY 8
-# define EXPOSE 12
 # define WINDOW_CLOSE 17
 
 /*
@@ -116,7 +101,6 @@
 */
 
 # define MAP_ENDING ".map"
-# define MAP_VERSION VERSION
 # define MAP_V "V: 0.02"
 # define MAP_NAME "Name: "
 # define MAP_DESC "Desc: "
@@ -129,12 +113,7 @@
 # define MAP_PARAMS 2
 # define MAP_SPAWN_FLAG "START"
 # define MAP_END_FLAG "END"
-# define MAP_MAX_PORT 64
 # define MAP_SIZE 15
-# define MAP_MIN_X -50
-# define MAP_MAX_X 50
-# define MAP_MIN_Y -50
-# define MAP_MAX_Y 50
 
 /*
 ** Editor definitions
@@ -159,8 +138,6 @@
 # define BAR_HOVERC 0xfff700
 # define BAR_SELECTC 0xff0000
 # define BAR_C_GOOD 0x00ff00
-# define BAR_C_WARN 0xff800
-# define BAR_C_BAD 0xff0000
 
 /*
 ** Editor block definitions
@@ -175,7 +152,6 @@
 # define BLOCK2 2
 # define BLOCK3 3
 # define BLOCK4 4
-# define BLOCK5 5
 # define B_EMPTY BLOCK0
 # define B_START BLOCK1
 # define B_END BLOCK2
@@ -199,11 +175,9 @@
 */
 
 # define USAGE 1
-# define ERR_THREAD_VAL 2
 # define ERR_MLX 3
 # define ERR_MEMORY 4
 # define ERR_PARA 5
-# define X_EXIT 6
 
 typedef struct		s_dot
 {
@@ -271,6 +245,7 @@ typedef struct		s_game
 {
 	t_mlx		mlx;
 	t_image		image[2];
+	int			*text[4];
 	t_map		map;
 	int			key[KEY_DOWN];
 	t_player	player;
@@ -287,9 +262,10 @@ typedef struct		s_ray
 	int			x;
 	int			len;
 	int			side;
+	int			tside;
 	int			hit;
 	int			lheight;
-	int			color;
+	int			color[2];
 	t_precision	camera;
 	t_precision	wdist;
 	t_mapb		*block;
@@ -380,6 +356,7 @@ void				good_exit(int code, char *msg);
 void				err_exit(int error, char *msg);
 
 void				game(char *name);
+int					game_exit(t_game *game);
 t_player			player_reset(t_game *game);
 void				start_menu(t_game *game);
 
@@ -438,6 +415,7 @@ void				log_reset(int *tab, int n, int key);
 int					is_pressed(int *tab, int n, int key);
 int					key_controls(int *tab, int n, int key, char ac);
 
+void				wall_text(int *text, t_dot size, int color1, int color2);
 void				spawn_color(int *text, t_dot size, int color1, int color2);
 void				wall_color(int *text, t_dot size, int color1, int color2);
 void				outline_color(int *text, t_dot size, int color1,

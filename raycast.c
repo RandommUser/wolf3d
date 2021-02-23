@@ -45,12 +45,12 @@ void	traycast(t_ray ray)
 	ray = ray_bsize(ray);
 	ray = ray_colors(ray);
 	mlx_line_to_image(ray.game.image[1], dot(ray.x, ray.draw.x),
-		dot(ray.x, ray.draw.y), ray.color);
+		dot(ray.x, ray.draw.y), ray.color[0]);
 	ray = ray_move(ray);
 	ray = ray_bsize(ray);
 	ray = ray_colors(ray);
 	mlx_line_to_image(ray.game.image[1], dot(ray.x, ray.draw.x),
-		dot(ray.x, ray.draw.y), ray.color);
+		dot(ray.x, ray.draw.y), ray.color[0]);
 }
 
 void	raycast(t_game game)
@@ -76,6 +76,8 @@ void	raycast(t_game game)
 		ray.draw.x = ray.draw.x < 0 ? 0 : ray.draw.x;
 		ray = ray_colors(ray);
 		mlx_line_to_image(game.image[0], dot(ray.x, ray.draw.x),
-			dot(ray.x, ray.draw.y), ray.color);
+			dot(ray.x, ray.game.player.look), ray.color[0]);
+		mlx_line_to_image(game.image[0], dot(ray.x, ray.game.player.look - 1),
+			dot(ray.x, ray.draw.y), ray.color[1]);
 	}
 }

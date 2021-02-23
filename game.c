@@ -12,13 +12,6 @@
 
 #include "header.h"
 
-int				game_exit(t_game *game)
-{
-	t_mlx_delete(&game->mlx);
-	good_exit(EXIT_SUCCESS, NULL);
-	return (1);
-}
-
 static t_game	game_init(void)
 {
 	t_game	game;
@@ -50,8 +43,22 @@ void			start_menu(t_game *game)
 		MNORMAL, "Press Enter to start");
 }
 
+static t_game	game_text(t_game game)
+{
+	game.text[0] = ft_memalloc((sizeof(int) * 4));
+	game.text[1] = ft_memalloc((sizeof(int) * 4));
+	game.text[2] = ft_memalloc((sizeof(int) * 4));
+	game.text[3] = ft_memalloc((sizeof(int) * 4));
+	wall_text(game.text[0], dot(2, 2), 0xad0864, 0x288217);
+	wall_text(game.text[1], dot(2, 2), 0xb0b02b, 0xed390d);
+	wall_text(game.text[2], dot(2, 2), 0x0dce5c, 0x717b75);
+	wall_text(game.text[3], dot(2, 2), 0x00f0ec, 0xf000e5);
+	return (game);
+}
+
 static void		game_start(t_game game)
 {
+	game = game_text(game);
 	start_menu(&game);
 	mlx_loop_hook(game.mlx.mlx_ptr, &game_loop, &game);
 	mlx_hook(game.mlx.mlx_win, KEY_PRESS, 0, &game_key_down, &game);

@@ -26,6 +26,8 @@ void	map_delete(t_map *map)
 	map->version = NULL;
 	block_tree_del(map->start);
 	map->start = NULL;
+	free(map->path);
+	map->path = NULL;
 }
 
 t_map	map_empty(void)
@@ -35,6 +37,7 @@ t_map	map_empty(void)
 	ret.name = NULL;
 	ret.desc = NULL;
 	ret.next = NULL;
+	ret.path = NULL;
 	ret.size = dot(0, 0);
 	ret.top = dot(0, 0);
 	ret.bottom = dot(0, 0);
