@@ -40,7 +40,7 @@ INC=-I ./minilibx -I libft
 LIB=-L ./minilibx -lmlx -L ./libft -lft 
 FLAGS=-Wall -Wextra -Werror
 FRAMEWORK=-framework OpenGL -framework AppKit 
-PREFRAMEWORK=-lpthread -pthread 
+PREFRAMEWORK=
 
 
 all : $(NAME)
