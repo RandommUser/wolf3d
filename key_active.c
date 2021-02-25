@@ -16,7 +16,7 @@ static int	key_okay(int key)
 {
 	static int	keys[] = {
 		ESC_KEY, L_CTRL, L_SHFT, K_W, K_A, K_S, K_D, K_AU, K_AR, K_AD, K_AL,
-		K_Z, K_V, K_C, K_P, K_ENT, NO_KEY
+		K_Z, K_V, K_C, K_P, K_ENT, MOU_M, NO_KEY
 	};
 	int			i;
 
